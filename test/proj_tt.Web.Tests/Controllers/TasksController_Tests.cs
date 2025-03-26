@@ -1,10 +1,10 @@
 ﻿using System.Linq;
-using proj_tt.Tasks;
 using proj_tt.Web.Controllers;
 using AngleSharp.Html.Parser;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using Xunit;
+using proj_tt.Tasks;
 
 namespace proj_tt.Web.Tests.Controllers
 {

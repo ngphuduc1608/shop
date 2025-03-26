@@ -1,6 +1,7 @@
 ﻿using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using Abp.Timing;
+using proj_tt.Persons;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -32,12 +33,25 @@ namespace proj_tt.Tasks
             State = TaskState.Open;
         }
 
-        public Task(string title, string description = null) : this()
+
+        [ForeignKey(nameof(AssignedPersonId))]
+        public Guid? AssignedPersonId
+        {
+            get;
+            set;
+
+        }
+        public Person AssignedPerson { get; set; }
+
+
+        public Task(string title, string description = null,Guid? assignedPersonId= null) : this()
         {
             Title = title;
             Description = description;
-
+            AssignedPersonId = assignedPersonId;
         }
+
+       
     }
 
 

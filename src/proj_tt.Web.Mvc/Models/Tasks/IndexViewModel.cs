@@ -1,10 +1,10 @@
 ﻿using proj_tt.Tasks.Dto;
-using proj_tt.Tasks;
 using System.Collections.Generic;
 using Abp.Localization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Linq;
+using proj_tt.Tasks;
 
 namespace proj_tt.Web.Models.Tasks
 {
