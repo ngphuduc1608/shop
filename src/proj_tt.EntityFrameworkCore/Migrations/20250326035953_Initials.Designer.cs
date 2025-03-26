@@ -12,7 +12,7 @@ using proj_tt.EntityFrameworkCore;
 namespace proj_tt.Migrations
 {
     [DbContext(typeof(proj_ttDbContext))]
-    [Migration("20250325103200_Initials")]
+    [Migration("20250326035953_Initials")]
     partial class Initials
     {
         /// <inheritdoc />
