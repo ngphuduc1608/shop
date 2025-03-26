@@ -51,13 +51,7 @@ namespace proj_tt
     }
 
 
-    public interface ITaskAppService:IApplicationService
-    {
-        
-
-        Task<ListResultDto<TaskListDto>> GetAll(GetAllTasksInput input);
-
-    }
+    
 
     
     

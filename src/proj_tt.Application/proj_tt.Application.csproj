@@ -14,7 +14,4 @@
   <ItemGroup>
     <ProjectReference Include="..\proj_tt.Core\proj_tt.Core.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Tasks\Dto\" />
-  </ItemGroup>
 </Project>
