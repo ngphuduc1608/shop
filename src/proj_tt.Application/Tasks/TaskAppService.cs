@@ -15,16 +15,25 @@ namespace proj_tt.Tasks
     public class TaskAppService : proj_ttAppServiceBase, ITaskAppService
     {
         private readonly IRepository<Task> _taskRepository;
+        
+
 
         public TaskAppService(IRepository<Task> taskRepository)
         {
             _taskRepository = taskRepository;
         }
 
+        public async System.Threading.Tasks.Task Create(CreateTaskInput input)
+        {
+            var task = ObjectMapper.Map<Task>(input);
+            await _taskRepository.InsertAsync(task);
+        }
+
         public async Task<ListResultDto<TaskListDto>> GetAll(GetAllTasksInput input)
         {
             var tasks = await _taskRepository
                 .GetAll()
+                .Include(t=>t.AssignedPerson)
                 .WhereIf(input.State.HasValue, t => t.State == input.State.Value)
                 .OrderByDescending(t => t.CreationTime)
                 .ToListAsync();
@@ -33,5 +42,8 @@ namespace proj_tt.Tasks
                 ObjectMapper.Map<List<TaskListDto>>(tasks)
             );
         }
+
+
+
     }
 }
