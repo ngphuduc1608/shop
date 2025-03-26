@@ -20,8 +20,14 @@ namespace proj_tt.Web.Startup
                         url: "About",
                         icon: "fas fa-info-circle"
                     )
-                )
-                .AddItem(
+                ).AddItem(
+                    new MenuItemDefinition(
+                        "TaskList",
+                        L("TaskList"),
+                        url: "Tasks",
+                        icon: "fas fa-tasks"
+                    )
+                ).AddItem(
                     new MenuItemDefinition(
                         PageNames.Home,
                         L("HomePage"),
