@@ -47,7 +47,7 @@ namespace proj_tt.Web.Models.Tasks
                     .Select(state =>
                         new SelectListItem
                         {
-                            Text = localizationManager.GetString(proj_ttConsts.LocalizationSourceName, $"TaskState_{state}"),
+                            Text = localizationManager.GetString(proj_ttConsts.LocalizationSourceName, $"{state}"),
                             Value = state.ToString(),
                             Selected = state == SelectedTaskState
                         })

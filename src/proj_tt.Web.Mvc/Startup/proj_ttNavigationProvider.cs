@@ -22,7 +22,7 @@ namespace proj_tt.Web.Startup
                     )
                 ).AddItem(
                     new MenuItemDefinition(
-                        "TaskList",
+                        PageNames.Tasks,
                         L("TaskList"),
                         url: "Tasks",
                         icon: "fas fa-tasks"
@@ -148,5 +148,6 @@ namespace proj_tt.Web.Startup
         {
             return new LocalizableString(name, proj_ttConsts.LocalizationSourceName);
         }
+
     }
 }

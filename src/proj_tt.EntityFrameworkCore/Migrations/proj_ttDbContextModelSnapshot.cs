@@ -1698,10 +1698,12 @@ namespace proj_tt.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(65536)
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AssignedPersonId");
 
                     b.ToTable("AppTasks");
                 });
@@ -1949,6 +1951,15 @@ namespace proj_tt.Migrations
                     b.Navigation("Edition");
 
                     b.Navigation("LastModifierUser");
+                });
+
+            modelBuilder.Entity("proj_tt.Tasks.Task", b =>
+                {
+                    b.HasOne("proj_tt.Persons.Person", "AssignedPerson")
+                        .WithMany()
+                        .HasForeignKey("AssignedPersonId");
+
+                    b.Navigation("AssignedPerson");
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>

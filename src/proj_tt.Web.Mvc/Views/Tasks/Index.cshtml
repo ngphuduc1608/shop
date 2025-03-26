@@ -14,8 +14,9 @@
         <script src="~/js/views/tasks/index.min.js"></script>
     </environment>
 }
-<h2>
-    @L("TaskList")
+<h2 style="display: flex; justify-content: space-between;">
+    @("TaskList")
+    <span><a class="btn btn-primary btn-sm" asp-action="Create">@("AddNew")</a></span>
     <span class="pull-right">
         @Html.DropDownListFor(
                  model => model.SelectedTaskState,
@@ -29,16 +30,22 @@
 </h2>
 
 <div class="row">
-    <div>
+    <div style="width: 100%; padding: 0 20px;">
         <ul class="list-group" id="TaskList">
             @foreach (var task in Model.Tasks)
             {
-                <li class="list-group-item">
-                    <span class="pull-right label label-lg @Model.GetTaskLabel(task)">@L($"TaskState_{task.State}")</span>
-                    <h4 class="list-group-item-heading">@task.Title</h4>
-                    <div class="list-group-item-text">
-                        @task.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")|@(task.AssignedPersonName??L("Unassigned"))
+                <li class="list-group-item" style="display: flex;justify-content: space-between;">
+                    <div>
+                        <h4 class="list-group-item-heading">@task.Title</h4>
+                        <div class="list-group-item-text">
+                            @task.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")|@(task.AssignedPersonName ?? "Unassigned")
+                        </div>
                     </div>
+
+                    <span class="pull-right label label-lg ">
+                        <div class="@Model.GetTaskLabel(task)">@task.State</div>
+                        </span>
+
                 </li>
             }
         </ul>
