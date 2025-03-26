@@ -29,3 +29,21 @@ html {
 .famfamfam-flags {
     display: inline-block;
 }
+.label-lg {
+    font-weight: bold; 
+    border-radius: 5px; 
+    display: inline-block; 
+    font-size: 14px;
+    text-align: center;
+}
+.label-success {
+    background-color: green !important;
+    color: white;
+    padding: 5px 15px;
+}
+
+.label-default {
+    background-color: gray !important;
+    color: white;
+    padding: 5px 15px;
+}

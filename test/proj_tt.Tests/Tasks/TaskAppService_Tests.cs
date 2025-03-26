@@ -22,12 +22,12 @@ namespace proj_tt.Tests.Tasks
 
         public async System.Threading.Tasks.Task Should_Get_All_Tasks()
         {
-            //UsingDbContext(async context =>
-            //{
-            //    context.Tasks.Add(new proj_tt.Tasks.Task { Title = "Task 1", State = TaskState.Open });
-            //    context.Tasks.Add(new proj_tt.Tasks.Task { Title = "Task 2", State = TaskState.Completed });
-            //    await context.SaveChangesAsync();
-            //});
+            UsingDbContext(async context =>
+            {
+                context.Tasks.Add(new proj_tt.Tasks.Task { Title = "Task 1", State = TaskState.Open });
+                context.Tasks.Add(new proj_tt.Tasks.Task { Title = "Task 2", State = TaskState.Completed });
+                await context.SaveChangesAsync();
+            });
             var output = await _taskAppService.GetAll(new GetAllTasksInput());
             
             output.Items.Count.ShouldBe(2);
@@ -47,7 +47,7 @@ namespace proj_tt.Tests.Tasks
         {
             await _taskAppService.Create(new CreateTaskInput
             {
-                Title = 'Newly created task #1'
+                Title = "Newly created task #1"
             });
 
             UsingDbContext(context =>

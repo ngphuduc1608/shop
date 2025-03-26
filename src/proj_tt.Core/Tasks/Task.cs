@@ -19,7 +19,7 @@ namespace proj_tt.Tasks
         public const int MaxTitleLength = 256;
         public const int MaxDescriptionLength = 64 * 1024;
         [Required]
-        [StringLength(MaxDescriptionLength)]
+        [StringLength(MaxTitleLength)]
         public string Title { get; set; }
         [StringLength(MaxDescriptionLength)]
         public string Description { get; set; }
@@ -35,13 +35,11 @@ namespace proj_tt.Tasks
 
 
         [ForeignKey(nameof(AssignedPersonId))]
-        public Guid? AssignedPersonId
-        {
-            get;
-            set;
-
-        }
         public Person AssignedPerson { get; set; }
+        public Guid? AssignedPersonId
+        { 
+            get;  set;
+        }
 
 
         public Task(string title, string description = null,Guid? assignedPersonId= null) : this()
