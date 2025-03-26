@@ -1,0 +1,25 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+WORKDIR /src
+COPY ["src/proj_tt.Web.Host/proj_tt.Web.Host.csproj", "src/proj_tt.Web.Host/"]
+COPY ["src/proj_tt.Web.Core/proj_tt.Web.Core.csproj", "src/proj_tt.Web.Core/"]
+COPY ["src/proj_tt.Application/proj_tt.Application.csproj", "src/proj_tt.Application/"]
+COPY ["src/proj_tt.Core/proj_tt.Core.csproj", "src/proj_tt.Core/"]
+COPY ["src/proj_tt.EntityFrameworkCore/proj_tt.EntityFrameworkCore.csproj", "src/proj_tt.EntityFrameworkCore/"]
+WORKDIR "/src/src/proj_tt.Web.Host"
+RUN dotnet restore 
+
+WORKDIR /src
+COPY ["src/proj_tt.Web.Host", "src/proj_tt.Web.Host"]
+COPY ["src/proj_tt.Web.Core", "src/proj_tt.Web.Core"]
+COPY ["src/proj_tt.Application", "src/proj_tt.Application"]
+COPY ["src/proj_tt.Core", "src/proj_tt.Core"]
+COPY ["src/proj_tt.EntityFrameworkCore", "src/proj_tt.EntityFrameworkCore"]
+WORKDIR "/src/src/proj_tt.Web.Host"
+RUN dotnet publish -c Release -o /publish --no-restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+EXPOSE 80
+WORKDIR /app
+COPY --from=build /publish .
+ENTRYPOINT ["dotnet", "proj_tt.Web.Host.dll"]
