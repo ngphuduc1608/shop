@@ -1,14 +1,12 @@
-﻿using Abp.Application.Services.Dto;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
-using AutoMapper.Internal.Mappers;
-using Microsoft.EntityFrameworkCore;
 using proj_tt.Tasks.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace proj_tt.Tasks
 {

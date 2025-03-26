@@ -1,0 +1,27 @@
+﻿@using proj_tt.Web.Startup
+@model proj_tt.Web.Models.Tasks.ViewModel
+@{
+    ViewBag.Title = L("TaskList");
+    // ViewBag.ActiveMenu = PageNames.Tasks;
+    ViewBag.ActiveMenu = "TaskList";
+
+}
+
+<h2>@L("TaskList")</h2>
+
+<div class="row">
+    <div>
+        <ul class="list-group" id="TaskList">
+            
+            @foreach(var task in Model.Tasks){
+                <li class="list-group-item">
+                    <span class="pull-right label @Model.GetTaskLabel(task)">
+                        @L($"TaskState_{task.State}")
+                    </span>
+                    <h4 class="list-group-item-heading">@task.Title</h4>
+                    <div class="list-group-item-text">@task.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")</div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

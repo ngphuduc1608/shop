@@ -20,7 +20,16 @@ namespace proj_tt.Web.Startup
                         url: "About",
                         icon: "fas fa-info-circle"
                     )
-                )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        //PageNames.Tasks,
+                        "TaskList",
+                        L("TaskList"),
+                        url: "Tasks",
+                        icon: "fas fa-tasks"
+                        )
+                    )
+
                 .AddItem(
                     new MenuItemDefinition(
                         PageNames.Home,
@@ -29,7 +38,8 @@ namespace proj_tt.Web.Startup
                         icon: "fas fa-home",
                         requiresAuthentication: true
                     )
-                ).AddItem(
+                )
+                .AddItem(
                     new MenuItemDefinition(
                         PageNames.Tenants,
                         L("Tenants"),
@@ -37,7 +47,8 @@ namespace proj_tt.Web.Startup
                         icon: "fas fa-building",
                         permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Tenants)
                     )
-                ).AddItem(
+                )
+                .AddItem(
                     new MenuItemDefinition(
                         PageNames.Users,
                         L("Users"),
