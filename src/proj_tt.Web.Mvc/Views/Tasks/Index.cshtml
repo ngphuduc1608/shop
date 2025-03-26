@@ -5,7 +5,19 @@
     ViewBag.ActiveMenu = "TaskList"; 
 }
 
-<h2>@L("TaskList")</h2>
+<h2>
+    @L("TaskList")
+    <span class="pull-right">
+        @Html.DropDownListFor(
+                 model => model.SelectedTaskState,
+                 Model.GetTasksStateSelectListItems(LocalizationManager),
+                 new
+                 {
+                     @class = "form-control",
+                     id = "TaskStateCombobox"
+                 })
+    </span>
+</h2>
 
 <div class="row">
     <div>
