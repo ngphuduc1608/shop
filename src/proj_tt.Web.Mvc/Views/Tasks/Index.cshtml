@@ -4,8 +4,29 @@
     ViewBag.Title = L("TaskList");
     ViewBag.ActiveMenu = "TaskList"; 
 }
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/js/views/tasks/index.js"></script>
+    </environment>
 
-<h2>@L("TaskList")</h2>
+    <environment names="Staging,Production">
+        <script src="~/js/views/tasks/index.min.js"></script>
+    </environment>
+}
+<h2>
+    @L("TaskList")
+    <span class="pull-right">
+        @Html.DropDownListFor(
+                 model => model.SelectedTaskState,
+                 Model.GetTasksStateSelectListItems(LocalizationManager),
+                 new
+                 {
+                     @class = "form-control",
+                     id = "TaskStateCombobox"
+                 })
+    </span>
+</h2>
 
 <div class="row">
     <div>
@@ -13,7 +34,7 @@
             @foreach (var task in Model.Tasks)
             {
                 <li class="list-group-item">
-                    <span class="pull-right label @Model.GetTaskLabel(task)">@L($"TaskState_{task.State}")</span>
+                    <span class="pull-right label label-lg @Model.GetTaskLabel(task)">@L($"TaskState_{task.State}")</span>
                     <h4 class="list-group-item-heading">@task.Title</h4>
                     <div class="list-group-item-text">
                         @task.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")
