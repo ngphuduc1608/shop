@@ -22,18 +22,18 @@ namespace proj_tt.Web.Startup
                     )
                 ).AddItem(
                     new MenuItemDefinition(
-                        PageNames.Tasks,
-                        L("TaskList"),
-                        url: "Tasks",
-                        icon: "fas fa-tasks"
-                    )
-                ).AddItem(
-                    new MenuItemDefinition(
                         PageNames.Home,
                         L("HomePage"),
                         url: "",
                         icon: "fas fa-home",
                         requiresAuthentication: true
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.Tasks,
+                        new FixedLocalizableString("TaskList"),
+                        url: "Tasks",
+                        icon: "fas fa-tasks"
                     )
                 ).AddItem(
                     new MenuItemDefinition(

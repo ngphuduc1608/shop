@@ -16,21 +16,21 @@
 
 
 <h2>
-    @L("NewTask")")
+    @("NewTask")
 </h2>
 <form id="TaskCreationForm">
     <div class="form-group">
-        <label for="Title">@L("Title")</label>
-        <input type="text" name="Title" class="form-control" placeholder="@L("Title")" required maxlength="@proj_tt.Tasks.Task.MaxTitleLength"></input>
+        <label for="Title">@("Title")</label>
+        <input type="text" name="Title" class="form-control" placeholder="@("Title")" required maxlength="@proj_tt.Tasks.Task.MaxTitleLength"></input>
     </div>    
 
     <div class="form-group">
-        <label for="Description">@L("Description")</label>
-        <input type="text" name="Description" class="form-control" placeholder="@L("Description")" required maxlength="@proj_tt.Tasks.Task.MaxDescriptionLength"></input>
+        <label for="Description">@("Description")</label>
+        <input type="text" name="Description" class="form-control" placeholder="@("Description")" required maxlength="@proj_tt.Tasks.Task.MaxDescriptionLength"></input>
     </div>
 
     <div>
-        @Html.Label(L("AssignedPerson"))
+        @Html.Label("AssignedPerson")
         
         @Html.DropDownList("AssignedPersonId", Model.People, new
         {
@@ -40,5 +40,5 @@
 
     </div>
 
-    <button type="submit" class="btn btn-default">@L("Save")</button>
+    <button type="submit" class="btn btn-default">@("Save")</button>
 </form>
