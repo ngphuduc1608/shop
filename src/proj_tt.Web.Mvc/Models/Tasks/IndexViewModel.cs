@@ -22,9 +22,9 @@ namespace proj_tt.Web.Models.Tasks
             switch (task.State)
             {
                 case TaskState.Open:
-                    return "label-success";
+                    return "bg-success";
                 default:
-                    return "label-default";
+                    return "bg-gradient-gray";
             }
         }
 
@@ -33,6 +33,7 @@ namespace proj_tt.Web.Models.Tasks
         public List<SelectListItem> GetTasksStateSelectListItems(ILocalizationManager localizationManager)
         {
             var list = new List<SelectListItem>
+            
         {
             new SelectListItem
             {

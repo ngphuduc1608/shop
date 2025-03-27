@@ -47,6 +47,7 @@ namespace proj_tt.Tasks
             Title = title;
             Description = description;
             AssignedPersonId = assignedPersonId;
+            State = assignedPersonId == null? TaskState.Completed : TaskState.Open;
         }
 
        
