@@ -169,5 +169,11 @@
     "inputFiles": [
       "wwwroot/js/views/jquery-extensions.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/views/products/create.min.js",
+    "inputFiles": [
+      "wwwroot/js/views/products/create.js"
+    ]
   }
 ]
