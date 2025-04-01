@@ -4,127 +4,178 @@
     ViewBag.ActiveMenu = "Products";
 }
 
-@section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-        @foreach (var items in Model.Products)
-        {
-            @:document.getElementById('image-@items.Id').addEventListener('change', function (event) {
-            @:    const file = event.target.files[0];
-            @:    if (file) {
-            @:        const reader = new FileReader();
-            @:        reader.onload = function (e) {
-            @:            const preview = document.getElementById('imagePreview-@items.Id');
-            @:            preview.src = e.target.result;
-            @:            preview.style.display = 'block';
-            @:        };
-            @:        reader.readAsDataURL(file);
-            @:    }
-            @:});
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Products/Index.js" asp-append-version="true"></script>
+    </environment>
 
-            @:$('#editModal-@items.Id').on('hidden.bs.modal', function () {
-            @:    $('#imagePreview-@items.Id').attr('src', '@items.ImageUrl').css('display', '@(string.IsNullOrEmpty(items.ImageUrl) ? "none" : "block")');
-            @:});
-        }
-        });
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Products/Index.min.js" asp-append-version="true"></script>
+    </environment>
 
-
-
-    </script>
 }
 
-<h1 style="display: flex; justify-content: space-between; padding:0 20px;">
-    Products
-    <span><a class="btn btn-primary btn-sm" asp-action="Create">@("Thêm")</a></span>
 
-</h1>
-<div class="container mt-4">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
-        @foreach (var items in Model.Products)
-        {
-            <div class="col">
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1>Products</h1>
+            </div>
+            <div class="col-sm-6">
+                <button class=" btn bg-blue float-sm-right" data-toggle="modal" data-target="#createModal">
+                    <i class="fa fa-plus-square"></i>
+                    @("Create")
+                </button>
+            </div>
+        </div>    
+    </div>
+</section>
+
+<section>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
                 <div class="card">
-                    <img src="@items.ImageUrl" class="card-img-top" style="height: 120px; width: auto; object-fit: cover; " alt="Sản phẩm">
-                    <div class="card-body">
-                        <h5 class="card-title" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 100%;display: block;">
-                            @items.Name
-                        </h5>
-                        <p class="card-text">
-                            <span style="font-weight: bold; color: red; margin-right: 10px;"> Giá: @((items.Price * (1 - (double)items.Discount / 100)).ToString("0.0"))₫</span>
-                            <span style="text-decoration: line-through; color: gray; opacity: 0.6;">@items.Price₫</span>
-                        </p>
-
-                        <span class="badge bg-danger">Giảm @items.Discount %</span>
-                        <button class="btn btn-primary" data-toggle="modal" data-target="#editModal-@items.Id">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <div id="editModal-@items.Id" class="modal fade" tabindex="-1" aria-labelledby="editModalLabel-@items.Id" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="editModalLabel-@items.Id">Chỉnh sửa sản phẩm</h5>
-                                    </div>
-                                    <form method="post" asp-action="Update" enctype="multipart/form-data">
-                                        <div class="modal-body">
-                                            <input type="hidden" name="Id" value="@items.Id">
-                                            <div class="mb-3">
-                                                <label for="name-@items.Id" class="form-label">Tên sản phẩm</label>
-                                                <input type="text" class="form-control" id="name-@items.Id" name="Name" value="@items.Name" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="price-@items.Id" class="form-label">Giá</label>
-                                                <input type="number" class="form-control" id="price-@items.Id" name="Price" value="@items.Price" step="0.01" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="discount-@items.Id" class="form-label">Giảm giá</label>
-                                                <input type="number" class="form-control" id="discount-@items.Id" name="Discount" value="@items.Discount" step="0.01">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Hình ảnh hiện tại</label>
-                                                <input type="hidden" name="ExistingImageUrl" value="@items.ImageUrl">
-                                                @if (!string.IsNullOrEmpty(items.ImageUrl))
-                                                {
-                                                    <img id="imagePreview-@items.Id" src="@items.ImageUrl" alt="Hình ảnh sản phẩm" class="img-thumbnail mb-2" style="max-width: 150px;">
-                                                }
-                                                <label for="image-@items.Id" class="form-label"></label>
-                                                <input type="file" class="form-control" id="image-@items.Id" name="ImageUrl" accept="image/*">
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                            <button type="submit" class="btn btn-primary">Cập nhật</button>
-                                        </div>
-                                    </form>
-                                </div>
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!--Use for bulk actions-->
                             </div>
-                        </div>
-
-                        <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal-@items.Id" style="    position: absolute;top: 0;right: 0;">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <div id="deleteModal-@items.Id" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel-@items.Id" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="deleteModalLabel-@items.Id">Xác nhận xóa</h5>
-                                    </div>
-                                    <div class="modal-body">
-                                        Bạn có chắc chắn muốn xóa sản phẩm "<strong>@items.Name</strong>" không?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                        <form method="post" asp-action="Delete" asp-route-id="@items.Id" style="display: inline;">
-                                            <button type="submit" class="btn btn-danger">Xóa</button>
-                                        </form>
-                                    </div>
-                                </div>
+                            <div class="col-md-6">
+                                @await Html.PartialAsync("~/Views/Product/Index.AdvancedSearch.cshtml")
                             </div>
                         </div>
                     </div>
+                    <div class="card-body">
+                         <div class="table-responsive">
+                            <table id="ProductsTable" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th>Discount(%)</th>
+                                        <th>ImageUrl</th>
+                                        <th>CreationTime</th>
+                                        <th>UpdateTime</th>
+                                        <th style="width: 150px">@L("Actions")</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                         </div>
+                    </div>
                 </div>
             </div>
-        }
-        
-        
+        </div>
+    </div>
+</section>
+@foreach (var items in Model.Products)
+        {
+
+    <div id="createModal" class="modal fade" tabindex="-1" aria-labelledby="createModalLabel " aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel ">Thêm sản phẩm</h5>
+                </div>
+                <form method="post" asp-action="Create" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <input type="hidden" name="Id" value="@items.Id">
+                        <div class="mb-3">
+                            <label for="name " class="form-label">Tên sản phẩm</label>
+                            <input type="text" class="form-control" id="name " name="Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price " class="form-label">Giá</label>
+                            <input type="number" class="form-control" id="price " name="Price" step="0.01"  required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="discount " class="form-label">Giảm giá</label>
+                            <input type="number" class="form-control" id="discount " name="Discount" max="100" step="0.01">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Hình ảnh</label>
+                            <div class="mt-2">
+                                <img id="imagePreview" src="#" alt="Hình ảnh sản phẩm" class="img-thumbnail mb-2" style="max-width: 150px; display: none;">
+                            </div>
+                            <input type="file" class="form-control" id="image" name="ImageUrl" accept="image/*" required>
+                            
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Ok</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+<div id="editModal" class="modal fade" tabindex="-1" aria-labelledby="editModalLabel " aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel ">Chỉnh sửa sản phẩm</h5>
+            </div>
+            <form method="post" asp-action="Update" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="Id" value="@items.Id">
+                    <div class="mb-3">
+                        <label for="name " class="form-label">Tên sản phẩm</label>
+                        <input type="text" class="form-control" id="name " name="Name" value="@items.Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price " class="form-label">Giá</label>
+                        <input type="number" class="form-control" id="price " name="Price" value="@items.Price" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="discount " class="form-label">Giảm giá</label>
+                        <input type="number" class="form-control" id="discount " name="Discount" value="@items.Discount" step="0.01">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Hình ảnh hiện tại</label>
+                        <input type="hidden" name="ExistingImageUrl" value="@items.ImageUrl">
+                        @if (!string.IsNullOrEmpty(items.ImageUrl))
+                        {
+                            <img id="imagePreview " src="@items.ImageUrl" alt="Hình ảnh sản phẩm" class="img-thumbnail mb-2" style="max-width: 150px;">
+                        }
+                        <label for="image " class="form-label"></label>
+                        <input type="file" class="form-control" id="image " name="ImageUrl" accept="image/*">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+
+<div id="deleteModal" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel " aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel ">Xác nhận xóa</h5>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa sản phẩm "<strong>@items.Name</strong>" không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <form method="post" asp-action="Delete" asp-route-id="@items.Id" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+}
