@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
+using Abp.Linq.Extensions;
 using Abp.UI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text;
 
 using System.Threading.Tasks;
@@ -29,15 +31,11 @@ namespace proj_tt.Products
 
         public async System.Threading.Tasks.Task Create(ProductListDto input)
         {
-            //var product = ObjectMapper.Map<Product>(input);
-            //await _productRepository.InsertAsync(product);
-
-
             // Xử lý upload ảnh nếu có
             string imagePath = null;
             if (input.ImageUrl != null && input.ImageUrl.Length > 0)
             {
-           
+
                 imagePath = await SaveImageAsync(input.ImageUrl);
 
             }
@@ -50,10 +48,28 @@ namespace proj_tt.Products
             await _productRepository.InsertAsync(product);
         }
 
-        
+
+        //public async Task<PagedResultDto<ProductDto>> GetListProduct(ProductInput input)
+        //{
+        //    var products = _productRepository.GetAll();
+
+        //    var count = await products.CountAsync();
+
+        //    input.Sorting = "CreationTime ASC";
+
+        //    var items = await products.PageBy(input).OrderBy(input.Sorting).ToListAsync();
+
+        //    return new PagedResultDto<ProductDto>
+        //    {
+
+        //        TotalCount = count,
+        //        Items = ObjectMapper.Map<List<ProductDto>>(products)
+        //    };
+        //}
+
         public async Task<ListResultDto<ProductDto>> GetListProduct()
         {
-            var products = await _productRepository.GetAll().OrderByDescending(t=>t.CreationTime).ToListAsync();
+            var products = await _productRepository.GetAll().OrderByDescending(t => t.CreationTime).ToListAsync();
 
             return new ListResultDto<ProductDto>(ObjectMapper.Map<List<ProductDto>>(products));
         }
@@ -116,6 +132,6 @@ namespace proj_tt.Products
             return $"/uploads/products/{fileName}"; // Trả về đường dẫn để lưu vào database
         }
 
-       
+
     }
 }

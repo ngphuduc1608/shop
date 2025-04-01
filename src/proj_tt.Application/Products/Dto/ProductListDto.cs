@@ -13,7 +13,7 @@ namespace proj_tt.Products.Dto
 
     public class ProductListDto
     {
-        public int? Id { get; set; }
+        //public int? Id { get; set; }
 
         [Required]
         [StringLength(Product.MaxNameLength)]

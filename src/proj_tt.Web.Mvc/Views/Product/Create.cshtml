@@ -3,22 +3,12 @@
 
 
 
-@section scripts
-{
-    <environment names="Development">
-        <script src="~/js/views/products/create.js"></script>
-    </environment>
-
-    <environment names="Staging,Production">
-        <script src="~/js/views/products/create.min.js"></script>
-    </environment>
-}
 
 
 <h2>
     @("New Product")
 </h2>
-<form id="ProductCreationForm" style="padding: 0 20px;" enctype="multipart/form-data" method="post">
+<form id="ProductCreationForm" style="padding: 0 20px;" enctype="multipart/form-data" method="post" asp-action="Create" asp-controller="Products">
     <div class="form-group">
         <label for="Name">@("Name")</label>
         <input type="text" name="Name" class="form-control" placeholder="@("Name")" required maxlength="@proj_tt.Products.Product.MaxNameLength"></input>
@@ -34,7 +24,7 @@
     </div>
     <div class="form-group">
         <label for="ImageUrl">@("Image")</label>
-        <input type="file" name="ImageUrl" accept="image/*"  class="form-control" placeholder="@("Image")"></input>
+        <input type="file" name="ImageUrl" accept="image/*" class="form-control" placeholder="@("Image")"></input>
     </div>
     
    
