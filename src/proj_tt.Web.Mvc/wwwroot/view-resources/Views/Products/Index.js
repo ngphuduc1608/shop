@@ -11,10 +11,11 @@
         paging: true,
         serverSide: true,
         listAction: {
-            ajaxFunction: _productService.getListProduct,
+            ajaxFunction: _productService.getProductPaged,
             inputFilter: function () {
                 //return $('#ProductsSearchForm').serializeFormToObject(true);
                 var filter = $('#ProductsSearchForm').serializeFormToObject(true);
+                
                 console.log('Dữ liệu gửi đi:', filter);  // Kiểm tra giá trị filter
                 return filter;
             }
