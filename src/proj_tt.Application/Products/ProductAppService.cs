@@ -48,25 +48,26 @@ namespace proj_tt.Products
             await _productRepository.InsertAsync(product);
         }
 
+        // phan trang product
+        public async Task<PagedResultDto<ProductDto>> GetProductPaged(PagedProductDto input)
+        {
+            //input.MaxResultCount = input.MaxResultCount > 0 ? input.MaxResultCount : 15;
+            var products = _productRepository.GetAll();
 
-        //public async Task<PagedResultDto<ProductDto>> GetListProduct(ProductInput input)
-        //{
-        //    var products = _productRepository.GetAll();
+            var count = await products.CountAsync();
 
-        //    var count = await products.CountAsync();
+            input.Sorting = "CreationTime DESC";
 
-        //    input.Sorting = "CreationTime ASC";
+            var items = await products.PageBy(input).OrderBy(input.Sorting).ToListAsync();
 
-        //    var items = await products.PageBy(input).OrderBy(input.Sorting).ToListAsync();
+            return new PagedResultDto<ProductDto>
+            {
 
-        //    return new PagedResultDto<ProductDto>
-        //    {
-
-        //        TotalCount = count,
-        //        Items = ObjectMapper.Map<List<ProductDto>>(products)
-        //    };
-        //}
-
+                TotalCount = count,
+                Items = ObjectMapper.Map<List<ProductDto>>(items)
+            };
+        }
+        //Get all product nhung ko phan trang 
         public async Task<ListResultDto<ProductDto>> GetListProduct()
         {
             var products = await _productRepository.GetAll().OrderByDescending(t => t.CreationTime).ToListAsync();

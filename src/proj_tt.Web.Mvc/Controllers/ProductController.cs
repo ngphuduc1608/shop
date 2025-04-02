@@ -24,19 +24,9 @@ namespace proj_tt.Web.Controllers
             return View(model);
         }
 
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
+        [HttpPost]
         public async Task<ActionResult> Create(ProductListDto input)
         {
-
-            if (!ModelState.IsValid)
-            {
-                return View(input);
-            }
-
             await _productAppService.Create(input);
             return RedirectToAction("Index");
         }
