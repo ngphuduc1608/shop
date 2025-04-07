@@ -58,6 +58,7 @@
                                         <th>Price</th>
                                         <th>Discount(%)</th>
                                         <th>ImageUrl</th>
+                                        <th>CategoryName</th>
                                         <th>CreationTime</th>
                                         <th>UpdateTime</th>
                                         <th style="width: 150px">@L("Actions")</th>
@@ -72,111 +73,12 @@
         </div>
     </div>
 </section>
-<div id="createModal" class="modal fade" tabindex="-1" aria-labelledby="createModalLabel " aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="createModalLabel ">Thêm sản phẩm</h5>
-            </div>
-            <form method="post" asp-action="Create" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <input type="hidden" name="Id" >
-                    <div class="mb-3">
-                        <label for="name " class="form-label">Tên sản phẩm</label>
-                        <input type="text" class="form-control" id="name " name="Name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="price " class="form-label">Giá</label>
-                        <input type="number" class="form-control" id="price " name="Price" step="0.01" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="discount " class="form-label">Giảm giá</label>
-                        <input type="number" class="form-control" id="discount " name="Discount" max="100" step="0.01">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Hình ảnh</label>
-                        <div class="mt-2">
-                            <img id="imagePreview" src="#" alt="Hình ảnh sản phẩm" class="img-thumbnail mb-2" style="max-width: 150px; display: none;">
-                        </div>
-                        <input type="file" class="form-control" id="image" name="ImageUrl" accept="image/*" required>
+@await Html.PartialAsync("~/Views/Product/_CreateModal.cshtml", Model)
 
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Ok</button>
-                </div>
-            </form>
+
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel " data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
         </div>
     </div>
 </div>
-@foreach (var items in Model.Products)
-        {
-
-    
-
-
-
-<div id="editModal" class="modal fade" tabindex="-1" aria-labelledby="editModalLabel " aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel ">Chỉnh sửa sản phẩm</h5>
-            </div>
-            <form method="post" asp-action="Update" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <input type="hidden" name="Id" value="@items.Id">
-                    <div class="mb-3">
-                        <label for="name " class="form-label">Tên sản phẩm</label>
-                        <input type="text" class="form-control" id="name " name="Name" value="@items.Name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="price " class="form-label">Giá</label>
-                        <input type="number" class="form-control" id="price " name="Price" value="@items.Price" step="0.01" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="discount " class="form-label">Giảm giá</label>
-                        <input type="number" class="form-control" id="discount " name="Discount" value="@items.Discount" step="0.01">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Hình ảnh hiện tại</label>
-                        <input type="hidden" name="ExistingImageUrl" value="@items.ImageUrl">
-                        @if (!string.IsNullOrEmpty(items.ImageUrl))
-                        {
-                            <img id="imagePreview " src="@items.ImageUrl" alt="Hình ảnh sản phẩm" class="img-thumbnail mb-2" style="max-width: 150px;">
-                        }
-                        <label for="image " class="form-label"></label>
-                        <input type="file" class="form-control" id="image " name="ImageUrl" accept="image/*">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Cập nhật</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
-<div id="deleteModal" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel " aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel ">Xác nhận xóa</h5>
-            </div>
-            <div class="modal-body">
-                Bạn có chắc chắn muốn xóa sản phẩm "<strong>@items.Name</strong>" không?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <form method="post" asp-action="Delete" asp-route-id="@items.Id" style="display: inline;">
-                    <button type="submit" class="btn btn-danger">Xóa</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-}

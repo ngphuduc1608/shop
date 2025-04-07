@@ -1,17 +1,15 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using proj_tt.Products.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace proj_tt.Products
 {
-    public interface IProductAppService:IApplicationService
+    public interface IProductAppService : IApplicationService
     {
-        Task<ListResultDto<ProductDto>> GetListProduct();
+        Task<ProductDto> GetProducts(int id);
+
+        Task<PagedResultDto<ProductDto>> GetProductPaged(PagedProductDto input);
 
         System.Threading.Tasks.Task Create(ProductListDto input);
 

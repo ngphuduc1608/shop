@@ -7,11 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using proj_tt.Products.Dto;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Text;
 
 using System.Threading.Tasks;
 
@@ -41,8 +39,15 @@ namespace proj_tt.Products
             }
 
             // Map DTO sang entity và gán ImagePath
-            var product = ObjectMapper.Map<Product>(input);
-            product.ImageUrl = imagePath;
+            //var product = ObjectMapper.Map<Product>(input);
+            //product.ImageUrl = imagePath;
+            var product = new Product(
+                input.Name,
+                input.Price,
+                imagePath,
+                input.Discount,
+                input.CategoryId
+            );
 
             // Thêm sản phẩm vào database
             await _productRepository.InsertAsync(product);
@@ -52,7 +57,12 @@ namespace proj_tt.Products
         public async Task<PagedResultDto<ProductDto>> GetProductPaged(PagedProductDto input)
         {
             //input.MaxResultCount = input.MaxResultCount > 0 ? input.MaxResultCount : 15;
-            var products = _productRepository.GetAll();
+            var products = _productRepository.GetAllIncluding(p => p.Category);
+
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                products = products.Where(p => p.Name.Contains(input.Keyword));
+            }
 
             var count = await products.CountAsync();
 
@@ -60,20 +70,23 @@ namespace proj_tt.Products
 
             var items = await products.PageBy(input).OrderBy(input.Sorting).ToListAsync();
 
-            return new PagedResultDto<ProductDto>
+            var result = items.Select(p => new ProductDto
             {
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price,
+                ImageUrl = p.ImageUrl,
+                Discount = p.Discount,
+                CategoryId = p.CategoryId ?? 0,
+                NameCategory = p.Category != null ? p.Category.NameCategory : "",
+                CreationTime = p.CreationTime,
+                LastModificationTime = p.LastModificationTime
+            }).ToList();
 
-                TotalCount = count,
-                Items = ObjectMapper.Map<List<ProductDto>>(items)
-            };
-        }
-        //Get all product nhung ko phan trang 
-        public async Task<ListResultDto<ProductDto>> GetListProduct()
-        {
-            var products = await _productRepository.GetAll().OrderByDescending(t => t.CreationTime).ToListAsync();
+            return new PagedResultDto<ProductDto>(count, result);
 
-            return new ListResultDto<ProductDto>(ObjectMapper.Map<List<ProductDto>>(products));
         }
+
 
         public async Task Update(UpdateProductDto input)
         {
@@ -88,7 +101,11 @@ namespace proj_tt.Products
             product.Name = input.Name;
             product.Price = input.Price;
             product.Discount = input.Discount;
-            Console.WriteLine("haha: ");
+            //product.CategoryId = 30;
+
+            product.CategoryId = input.CategoryId;
+
+
             if (input.ImageUrl != null)
             {
                 product.ImageUrl = await SaveImageAsync(input.ImageUrl);
@@ -98,7 +115,11 @@ namespace proj_tt.Products
                 product.ImageUrl = input.ExistingImageUrl; // Giữ ảnh cũ nếu không có ảnh mới
             }
 
-            ObjectMapper.Map<Product>(product);
+
+            //ObjectMapper.Map<Product>(product);
+
+
+
             await _productRepository.UpdateAsync(product); // Lưu thay đổi
 
         }
@@ -133,6 +154,10 @@ namespace proj_tt.Products
             return $"/uploads/products/{fileName}"; // Trả về đường dẫn để lưu vào database
         }
 
-
+        public async Task<ProductDto> GetProducts(int id)
+        {
+            var product = await _productRepository.GetAsync(id);
+            return ObjectMapper.Map<ProductDto>(product);
+        }
     }
 }

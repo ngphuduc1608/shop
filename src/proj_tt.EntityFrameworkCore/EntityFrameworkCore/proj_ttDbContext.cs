@@ -7,6 +7,7 @@ using Abp.EntityFrameworkCore;
 using proj_tt.Persons;
 using proj_tt.Tasks;
 using proj_tt.Products;
+using proj_tt.Categories;
 
 
 namespace proj_tt.EntityFrameworkCore
@@ -16,6 +17,9 @@ namespace proj_tt.EntityFrameworkCore
         public DbSet<Task> Tasks { get; set; }
         public DbSet<Person> Persons { get; set; }
         public DbSet<Product> Products { get; set; }
+
+        public DbSet<Category> Categories { get; set; }
+
 
 
         public proj_ttDbContext(DbContextOptions<proj_ttDbContext> options)

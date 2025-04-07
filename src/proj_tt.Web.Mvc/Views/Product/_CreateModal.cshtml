@@ -1,0 +1,52 @@
+﻿@using proj_tt.Web.Models.Common.Modals
+@model proj_tt.Web.Models.Products.IndexViewModel
+@{
+    Layout = null;
+}
+
+
+<div id="createModal" class="modal fade" tabindex="-1" aria-labelledby="createModalLabel " aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(("Tạo sản phẩm ")))
+            <form name="productCreateForm" role="form" class="form-horizontal" >
+                <div class="modal-body">
+                    <input type="hidden" name="Id">
+                    <div class="mb-3">
+                        <label for="name " class="form-label">Tên sản phẩm</label>
+                        <input type="text" class="form-control" name="Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price " class="form-label">Giá</label>
+                        <input type="number" class="form-control"  name="Price" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="discount " class="form-label">Giảm giá</label>
+                        <input type="number" class="form-control"  name="Discount" max="100" step="0.01">
+                    </div>
+                    <div class="mb-3">
+                        @Html.Label("Category Name")
+
+                        @Html.DropDownList("CategoryId", Model.Categories, new
+                            {
+                                @class = "form-control",
+                                id = "AssignedPersonCombobox"
+                            })
+
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Hình ảnh</label>
+                        <img id="imagePreview" src="#" alt="Hình ảnh sản phẩm" class="img-thumbnail mb-2" style="max-width: 150px; display: none;">
+
+                        @* <div class="mt-2"> *@
+                        @* </div> *@
+                        <input type="file" id="image" class="form-control" name="ImageUrl" accept="image/*" required>
+
+                    </div>
+                </div>
+                @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+
+            </form>
+        </div>
+    </div>
+</div>

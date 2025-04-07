@@ -1,0 +1,51 @@
+﻿@using proj_tt.Web.Models.Common.Modals
+@using proj_tt.Web.Models.Products
+@model IndexViewModel
+
+@{
+    Layout = null;
+}
+<script src="~/view-resources/Views/Products/_EditModal.js" asp-append-version="true"></script>
+
+
+@await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(("Sửa Sản Phẩm")))
+<form name="CategoryEditForm" role="form" class="form-horizontal">
+     <input type="hidden" name="Id" value="@Model.Product.Id">
+     <div class="modal-body">
+        <div class="mb-3">
+            <label for="name " class="form-label">Tên sản phẩm</label>
+            <input type="text" class="form-control"  name="Name" value="@Model.Product.Name" required>
+        </div>
+        <div class="mb-3">
+            <label for="price " class="form-label">Giá</label>
+            <input type="number" class="form-control"  name="Price" value="@Model.Product.Price" step="0.01" required>
+        </div>
+        <div class="mb-3">
+            <label for="discount " class="form-label">Giảm giá</label>
+            <input type="number" class="form-control"  name="Discount" value="@Model.Product.Discount" step="0.01">
+        </div>
+        <div class="mb-3">
+            @Html.Label("Category Name")
+
+            @Html.DropDownList("CategoryId", Model.Categories, new
+                {
+                    @class = "form-control",
+                    id = "CategoryDropdownEdit"
+                })
+
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Hình ảnh hiện tại</label>
+            <input type="hidden" name="ExistingImageUrl" value="@Model.Product.ImageUrl">
+            @if (!string.IsNullOrEmpty(Model.Product.ImageUrl))
+            {
+                <img id="imagePreview" src="@Model.Product.ImageUrl" alt="Hình ảnh sản phẩm" class="img-thumbnail mb-2" style="max-width: 150px;">
+            }
+            <label for="image " class="form-label"></label>
+            <input type="file" class="form-control" name="ImageUrl" id="image" accept="image/*">
+        </div>
+     </div>
+     @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+</form>
+
+

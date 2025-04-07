@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace proj_tt.Products.Dto
 {
@@ -25,6 +20,9 @@ namespace proj_tt.Products.Dto
         public int Discount { get; set; }
 
         public string ExistingImageUrl { get; set; } // Lưu ảnh cũ
+
+        public int CategoryId { get; set; }
+        public string NameCategory { get; set; }
     }
 
 }
