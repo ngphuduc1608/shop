@@ -1,11 +1,6 @@
 ﻿using Abp.AutoMapper;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace proj_tt.Products.Dto
 {
@@ -13,7 +8,7 @@ namespace proj_tt.Products.Dto
 
     public class ProductListDto
     {
-        //public int? Id { get; set; }
+        //public int Id { get; set; }
 
         [Required]
         [StringLength(Product.MaxNameLength)]
@@ -26,6 +21,10 @@ namespace proj_tt.Products.Dto
         public IFormFile ImageUrl { get; set; }
 
         public int Discount { get; set; }
+
+        public int CategoryId { get; set; }
+        public string NameCategory { get; set; }
+
 
 
     }

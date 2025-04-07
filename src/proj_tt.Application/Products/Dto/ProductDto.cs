@@ -1,11 +1,5 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace proj_tt.Products.Dto
 {
@@ -18,5 +12,7 @@ namespace proj_tt.Products.Dto
 
         public string ImageUrl { get; set; }
         public int Discount { get; set; }
+        public int CategoryId { get; set; }
+        public string NameCategory { get; set; }
     }
 }

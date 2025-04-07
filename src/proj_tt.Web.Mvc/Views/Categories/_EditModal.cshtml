@@ -1,0 +1,23 @@
+﻿@using proj_tt.Web.Models.Common.Modals
+@using proj_tt.Web.Models.Categories
+@model IndexViewModel
+
+@{
+    Layout = null;
+}
+<script src="~/view-resources/Views/Categories/_EditModal.js" asp-append-version="true"></script>
+
+
+@await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(("Sửa Danh Mục")))
+<form name="CategoryEditForm" role="form" class="form-horizontal">
+     <input type="hidden" name="Id" value="@Model.Category.Id">
+     <div class="modal-body">
+         <div class="mb-3">
+            <label for="NameCategory " class="form-label">Tên danh mục</label>
+            <input type="text" class="form-control" name="NameCategory" value="@Model.Category.NameCategory" required>
+         </div>
+     </div>
+     @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+</form>
+
+

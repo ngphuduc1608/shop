@@ -44,6 +44,13 @@ namespace proj_tt.Web.Startup
                     )
                 ).AddItem(
                     new MenuItemDefinition(
+                        "Categories",
+                        new FixedLocalizableString("Categories"),
+                        url: "Categories",
+                        icon: "fas fa-box"
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
                         PageNames.Tenants,
                         L("Tenants"),
                         url: "Tenants",

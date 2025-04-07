@@ -90,6 +90,8 @@
         }
 
         var user = _$form.serializeFormToObject();
+        console.log('haha', user);
+
         user.roleNames = [];
         var _$roleCheckboxes = _$form[0].querySelectorAll("input[name='role']:checked");
         if (_$roleCheckboxes) {

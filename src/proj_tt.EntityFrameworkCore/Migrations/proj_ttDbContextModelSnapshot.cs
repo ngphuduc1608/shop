@@ -1583,6 +1583,36 @@ namespace proj_tt.Migrations
                     b.ToTable("AbpUsers");
                 });
 
+            modelBuilder.Entity("proj_tt.Categories.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("NameCategory")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppCategories");
+                });
+
             modelBuilder.Entity("proj_tt.MultiTenancy.Tenant", b =>
                 {
                     b.Property<int>("Id")
@@ -1683,6 +1713,9 @@ namespace proj_tt.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
@@ -1709,10 +1742,9 @@ namespace proj_tt.Migrations
                     b.Property<float>("Price")
                         .HasColumnType("real");
 
-                    b.Property<float>("Pricea")
-                        .HasColumnType("real");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("AppProducts");
                 });
@@ -1993,6 +2025,15 @@ namespace proj_tt.Migrations
                     b.Navigation("Edition");
 
                     b.Navigation("LastModifierUser");
+                });
+
+            modelBuilder.Entity("proj_tt.Products.Product", b =>
+                {
+                    b.HasOne("proj_tt.Categories.Category", "CategoryName")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
+                    b.Navigation("CategoryName");
                 });
 
             modelBuilder.Entity("proj_tt.Tasks.Task", b =>
