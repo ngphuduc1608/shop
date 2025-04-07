@@ -93,22 +93,6 @@
 
 
 
-    //_$form.find('.save-button').on('click', (e) => {
-    //    e.preventDefault();
-
-    //    var product = _$form.serializeFormToObject();
-
-    //    abp.ui.setBusy(_$modal);
-    //    _productService.create(product).done(function () {
-    //        _$form.modal('hide');
-    //        _$form[0].reset();
-    //        abp.notify.info(l('SaveSucessFully'));
-    //        _$productsTable.ajax.reload();
-    //    }).always(function () {
-    //        abp.ui.clearBusy(_$modal);
-    //    });
-    //});
-
     _$form.find('.save-button').on('click', (e) => {
         e.preventDefault();
 
@@ -140,6 +124,23 @@
     });
 
 
+    // Preview ảnh khi chọn ảnh trong createModal
+    $('#createModal #image').on('change', function (event) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#createModal #imagePreview').attr('src', e.target.result).show();
+        };
+
+        reader.readAsDataURL(this.files[0]);
+    });
+
+    // Reset preview ảnh khi đóng modal create
+    $('#createModal').on('hidden.bs.modal', function () {
+        $('#createModal #imagePreview').attr('src', '#').hide();
+        $('#createModal #image').val('');
+    });
+
 
 
     $(document).on('click', '.edit-product', function (e) {
@@ -152,6 +153,23 @@
             dataType: 'html',
             success: function (content) {
                 $('#editModal div.modal-content').html(content);
+
+                // Thêm đoạn xử lý ảnh ở đây cho editModal
+                $('#editModal #image').on('change', function (event) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        $('#editModal #imagePreview').attr('src', e.target.result).show();
+                    };
+
+                    reader.readAsDataURL(this.files[0]);
+                });
+
+                // Reset ảnh khi đóng modal
+                $('#editModal').on('hidden.bs.modal', function () {
+                    $('#editModal #imagePreview').attr('src', '#').hide();
+                    $('#editModal #image').val('');
+                });
             },
             error: function (e) {
 
@@ -196,35 +214,6 @@
 
 
 
-
-    // xem trước ảnh trên web
-    $(document).ready(function () {
-        // Lắng nghe sự kiện thay đổi của input file
-        $("#image").change(function (event) {
-            var reader = new FileReader();
-
-            // Khi file được tải lên
-            reader.onload = function (e) {
-                // Lấy src của ảnh đã chọn
-                $("#imagePreview").attr("src", e.target.result);
-
-                // Hiển thị ảnh
-                $("#imagePreview").show();
-            };
-
-            // Đọc ảnh đã chọn
-            reader.readAsDataURL(this.files[0]);
-        });
-        //reset ảnh khi out modal
-        $('#createModal').on('hidden.bs.modal', function () {
-            // Reset lại ảnh preview và ẩn nó đi
-            $("#imagePreview").attr("src", "#");
-            $("#imagePreview").hide();
-
-            // Reset lại input file
-            $("#image").val('');
-        });
-    });
 
     $('.btn-search').on('click', (e) => {
         _$productsTable.ajax.reload();

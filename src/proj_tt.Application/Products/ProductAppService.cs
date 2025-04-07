@@ -79,6 +79,8 @@ namespace proj_tt.Products
                 Discount = p.Discount,
                 CategoryId = p.CategoryId ?? 0,
                 NameCategory = p.Category != null ? p.Category.NameCategory : "",
+                CreationTime = p.CreationTime,
+                LastModificationTime = p.LastModificationTime
             }).ToList();
 
             return new PagedResultDto<ProductDto>(count, result);

@@ -42,7 +42,7 @@
                 <img id="imagePreview" src="@Model.Product.ImageUrl" alt="Hình ảnh sản phẩm" class="img-thumbnail mb-2" style="max-width: 150px;">
             }
             <label for="image " class="form-label"></label>
-            <input type="file" class="form-control" name="ImageUrl"  accept="image/*">
+            <input type="file" class="form-control" name="ImageUrl" id="image" accept="image/*">
         </div>
      </div>
      @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
