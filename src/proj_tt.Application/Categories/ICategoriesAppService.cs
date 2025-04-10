@@ -11,7 +11,7 @@ namespace proj_tt.Categories
 
         Task<PagedResultDto<CategoriesDto>> GetAllCategories(PagedCategoriesDto input);
 
-        Task Create(CreateCategoriesDto input);
+        Task Create(CategoriesDto input);
 
         Task Update(CreateCategoriesDto input);
 

@@ -2,8 +2,10 @@
 using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
+using Abp.UI;
 using Microsoft.EntityFrameworkCore;
 using proj_tt.Categories.Dto;
+using proj_tt.Products;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
@@ -16,26 +18,37 @@ namespace proj_tt.Categories
     {
 
         private readonly IRepository<Category> _categoryRepository;
+        private readonly IRepository<Product> _productRepository;
 
-        public CategoriesAppService(IRepository<Category> categoryRepository)
+        public CategoriesAppService(IRepository<Category> categoryRepository, IRepository<Product> productRepository)
         {
             _categoryRepository = categoryRepository;
+            _productRepository = productRepository;
         }
 
-        public async Task Create(CreateCategoriesDto input)
+        public async Task Create(CategoriesDto input)
         {
-            var category= ObjectMapper.Map<Category>(input);
+            var category = ObjectMapper.Map<Category>(input);
             await _categoryRepository.InsertAsync(category);
         }
 
         public async Task Delete(int id)
         {
-           await _categoryRepository.DeleteAsync(id);
+            var category = await _categoryRepository.GetAsync(id);
+
+            // Kiểm tra xem danh mục có sản phẩm con không
+            var hasProducts = await _productRepository.GetAll().AnyAsync(p => p.CategoryId == id);
+            if (hasProducts)
+            {
+                throw new UserFriendlyException("Không thể xóa vì danh mục này đang chứa sản phẩm!");
+            }
+
+            await _categoryRepository.DeleteAsync(id);
         }
 
         public async Task<PagedResultDto<CategoriesDto>> GetAllCategories(PagedCategoriesDto input)
         {
-            var categories= _categoryRepository.GetAll();
+            var categories = _categoryRepository.GetAll();
             if (!string.IsNullOrWhiteSpace(input.Keyword))
             {
                 categories = categories.Where(p => p.NameCategory.Contains(input.Keyword));
@@ -45,14 +58,14 @@ namespace proj_tt.Categories
 
             input.Sorting = "CreationTime DESC";
 
-            var items = await categories.PageBy(input.SkipCount,input.MaxResultCount).OrderBy(input.Sorting).ToListAsync();
+            var items = await categories.PageBy(input.SkipCount, input.MaxResultCount).OrderBy(input.Sorting).ToListAsync();
 
             return new PagedResultDto<CategoriesDto> { TotalCount = count, Items = ObjectMapper.Map<List<CategoriesDto>>(items) };
         }
 
-        public async Task<CategoriesDto> GetCategories(int id )
+        public async Task<CategoriesDto> GetCategories(int id)
         {
-            var category=await _categoryRepository.GetAsync(id);
+            var category = await _categoryRepository.GetAsync(id);
             return ObjectMapper.Map<CategoriesDto>(category);
         }
 

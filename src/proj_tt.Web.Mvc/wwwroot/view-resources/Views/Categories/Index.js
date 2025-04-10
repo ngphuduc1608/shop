@@ -1,6 +1,6 @@
 ﻿(function ($) {
     var _categoriesService = abp.services.app.categories,
-        l = abp.localization.getSource('proj_tt'),
+        l = abp.localization.getSource('proj_tt'), // dịch đa ngôn ngữ 
         _$createModal = $('#createModal'),
 
         _$createForm = _$createModal.find('form'),
@@ -9,10 +9,11 @@
     var _$categoriesTable = _$table.DataTable({
         paging: true,
         serverSide: true,
+        //pageLength: 15,
+        //lengthMenu: [5, 10, 15, 20, 50],
         listAction: {
             ajaxFunction: _categoriesService.getAllCategories,
-            inputFilter: function () {
-                //return $('#ProductsSearchForm').serializeFormToObject(true);
+            inputFilter: function () { 
                 var filter = $('#CategoriesSearchForm').serializeFormToObject(true);
                 console.log('Dữ liệu gửi đi:', filter);  // Kiểm tra giá trị filter
                 return filter;
@@ -20,36 +21,49 @@
         },
         buttons: [
             {
-                name: 'refresh',
+                name: 'refresh',  // tự đặt tên , không lquan đến logic
                 text: '<i class="fas fa-redo-alt"></i>',
-                action: () => _$categoriesTable.draw(false)
+                action: () => _$categoriesTable.draw(false) // reload lại dữ liệu bảng , ko reload lại dữ liệu trang
             }
         ],
         responsive: {
             details: {
-                type: 'column'
+                type: 'column' //là khi ở tbi nhỏ sẽ tự ẩn bớt
             }
         },
         columnDefs: [
             {
-                targets: 0,
+                targets: 0,  // dùng cho chế độ responsive để hiển thị nút mở rộng hàng
                 className: 'control',
                 defaultContent: '',
             },
             {
                 targets: 1,
                 data: 'nameCategory',
+                title:'Tên danh mục',
                 sortable: false
             },
             {
                 targets: 2,
                 data: 'creationTime',
+                title: 'Thời gian tạo',
                 sortable: false,
+                render: function (data, type, row, meta) {
+                    if (!data) return '';
+                    const date = new Date(data);
+                    return date.toLocaleString('vi-VN'); // hoặc chỉnh định dạng theo ý bạn
+                }
             },
             {
                 targets: 3,
                 data: 'lastModificationTime',
+                title: 'Thời gian sửa gần nhất ',
                 sortable: false,
+                render: function (data, type, row, meta) {
+                    if (!data) return '';
+                    const date = new Date(data);
+                    return date.toLocaleString('vi-VN');
+                }
             },
             {
                 targets: 4,
@@ -59,28 +73,59 @@
                 defaultContent: '',
                 render: (data, type, row, meta) => {
                     return [
-                        `   <button type="button" class="btn btn-primary edit-category" data-category-id="${row.id}" data-toggle="modal" data-target="#editModal">`,
-                        `   <i class="fas fa-edit"></i>`,
-                        '   </button>',
-                        `   <button type="button" class="btn btn-danger delete-category" data-category-id="${row.id}" data-category-name="${row.nameCategory}">`,
-                        `       <i class="fas fa-trash"></i>`,
-                        '   </button>'
+                            `<div class="dropdown">
+                            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="actionDropdown_${row.id}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Hành động
+                            </button>
+                            <div class="dropdown-menu p-0" aria-labelledby="actionDropdown_${row.id}">
+                                <button type="button" class="dropdown-item text-secondary edit-category" data-category-id="${row.id}" data-toggle="modal" data-target="#editModal">
+                                    <i class="fas fa-edit mr-2"></i> Sửa
+                                </button>
+                                <div class="dropdown-divider m-0"></div>
+                                <button type="button" class="dropdown-item text-danger delete-category" data-category-id="${row.id}" data-category-name="${row.nameCategory}" data-toggle="modal" data-target="#deleteModal">
+                                    <i class="fas fa-trash mr-2"></i> Xóa
+                                </button>
+                            </div>
+                        </div>`
                     ].join('');
                 }
             }
         ]
     });
 
+
+
+    _$createForm.validate({
+        rules: {
+            NameCategory: {
+                required: true,
+                minlength: 1,
+                maxlength: 100
+            }
+        },
+        messages: {
+            NameCategory: {
+                required: "Tên danh mục không được để trống",
+                minlength: "Tên ít nhất 1 ký tự",
+                maxlength: "Tên tối đa 100 ký tự"
+            }
+        }
+    });
+
     _$createForm.find('.save-button').on('click', (e) => {
         e.preventDefault();
-        
+
+        if (!_$createForm.valid()) {
+            return; // không submit nếu không hợp lệ
+        }
+
         var category = _$createForm.serializeFormToObject();
 
         abp.ui.setBusy(_$createModal);
         _categoriesService.create(category).done(function () {
             _$createModal.modal('hide');
             _$createForm[0].reset();
-            abp.notify.info(l('SaveSucessFully'));
+            abp.message.success(l('Tạo danh mục thành công '), 'Thành công');
             _$categoriesTable.ajax.reload();
 
         }).always(function () {
@@ -132,7 +177,7 @@
             (isConfirmed) => {
                 if (isConfirmed) {
                     _categoriesService.delete(categoryId).done(() => {
-                        abp.notify.info(l('SuccessfullyDeleted'));
+                        abp.message.success(l('SuccessfullyDeleted'), 'Thành công');
                         _$categoriesTable.ajax.reload();
                     });
                 }

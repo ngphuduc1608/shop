@@ -66,9 +66,9 @@ namespace proj_tt.Products
 
             var count = await products.CountAsync();
 
-            input.Sorting = "CreationTime DESC";
+            input.Sorting = "Id DESC";
 
-            var items = await products.PageBy(input).OrderBy(input.Sorting).ToListAsync();
+            var items = await products.OrderBy(input.Sorting).PageBy(input).ToListAsync();
 
             var result = items.Select(p => new ProductDto
             {
@@ -101,8 +101,6 @@ namespace proj_tt.Products
             product.Name = input.Name;
             product.Price = input.Price;
             product.Discount = input.Discount;
-            //product.CategoryId = 30;
-
             product.CategoryId = input.CategoryId;
 
 
@@ -114,11 +112,6 @@ namespace proj_tt.Products
             {
                 product.ImageUrl = input.ExistingImageUrl; // Giữ ảnh cũ nếu không có ảnh mới
             }
-
-
-            //ObjectMapper.Map<Product>(product);
-
-
 
             await _productRepository.UpdateAsync(product); // Lưu thay đổi
 

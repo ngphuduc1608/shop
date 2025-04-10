@@ -15,7 +15,7 @@ namespace proj_tt.Products.Dto
         public string Name { get; set; }
         [Required]
 
-        public float Price { get; set; }
+        public decimal Price { get; set; }
         //[Required]
 
         public IFormFile ImageUrl { get; set; }
