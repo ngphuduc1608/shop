@@ -13,7 +13,7 @@ namespace proj_tt.Products.Dto
         public string Name { get; set; }
 
         [Required]
-        public float Price { get; set; }
+        public decimal Price { get; set; }
 
         public IFormFile ImageUrl { get; set; } // Có thể giữ ảnh cũ hoặc upload ảnh mới
 

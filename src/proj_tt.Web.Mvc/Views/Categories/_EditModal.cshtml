@@ -12,8 +12,8 @@
 <form name="CategoryEditForm" role="form" class="form-horizontal">
      <input type="hidden" name="Id" value="@Model.Category.Id">
      <div class="modal-body">
-         <div class="mb-3">
-            <label for="NameCategory " class="form-label">Tên danh mục</label>
+        <div class="form-group row required">
+            <label for="NameCategory " class="col-md-3 col-form-label">Tên danh mục</label>
             <input type="text" class="form-control" name="NameCategory" value="@Model.Category.NameCategory" required>
          </div>
      </div>

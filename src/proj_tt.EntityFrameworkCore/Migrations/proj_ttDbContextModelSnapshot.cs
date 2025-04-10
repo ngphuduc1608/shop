@@ -1726,6 +1726,7 @@ namespace proj_tt.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastModificationTime")
@@ -1739,8 +1740,8 @@ namespace proj_tt.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -2029,11 +2030,11 @@ namespace proj_tt.Migrations
 
             modelBuilder.Entity("proj_tt.Products.Product", b =>
                 {
-                    b.HasOne("proj_tt.Categories.Category", "CategoryName")
+                    b.HasOne("proj_tt.Categories.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId");
 
-                    b.Navigation("CategoryName");
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("proj_tt.Tasks.Task", b =>

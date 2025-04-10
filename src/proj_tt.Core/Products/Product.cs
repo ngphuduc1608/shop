@@ -1,14 +1,7 @@
-﻿using Abp.Domain.Entities;
-using Abp.Domain.Entities.Auditing;
-using Abp.Organizations;
+﻿using Abp.Domain.Entities.Auditing;
 using proj_tt.Categories;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace proj_tt.Products
 {
@@ -20,18 +13,18 @@ namespace proj_tt.Products
 
         [Required]
         [StringLength(MaxNameLength)]
-        public string Name { get ; set ; }
+        public string Name { get; set; }
 
 
         [Required]
+        public decimal Price { get; set; }
 
-        public float Price {  get; set ; }
+        [Required]
 
-        //[Required]
 
-        public string ImageUrl {  get; set ; }
+        public string ImageUrl { get; set; }
 
-        public int Discount {  get; set ; }
+        public int Discount { get; set; }
 
 
         [ForeignKey(nameof(CategoryId))]
@@ -41,7 +34,7 @@ namespace proj_tt.Products
         public int? CategoryId { get; set; }
 
 
-        public Product(string name, float price, string imageUrl, int discount=0, int? categoryId=null)
+        public Product(string name, decimal price, string imageUrl, int discount = 0, int? categoryId = null)
         {
             Name = name;
             Price = price;
