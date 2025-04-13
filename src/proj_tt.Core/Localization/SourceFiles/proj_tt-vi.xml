@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<text name="HomePage" value="Trang chủ" />
+		<text name="About" value="Giới thiệu" />
+		<text name="Tasks" value="Nhiệm vụ" />
+
+		<text name="Product" value="Sản phẩm" />
+		<text name="Categories" value="Danh mục" />
+		<text name="Price">Giá</text>
+		<text name="Discount">Giảm giá</text>
+		<text name="ImageUrl">Hình ảnh</text>
+		<text name="CategoryName">Danh mục</text>
+		<text name="CreationTime">Thời gian  tạo</text>
+		<text name="UpdateTime">Thời gian cập nhật</text>
+		<text name="EditProduct" value="Chỉnh sửa sản phẩm" />
+		<text name="CreateProduct" value="Tạo sản phẩm" />
+		<text name="EditCategory" value="Chỉnh sửa danh mục" />
+		<text name="CreateCategory" value="Tạo danh mục" />
+
+		<text name="Success" value="Thành công" />
+		<text name="Fail" value="Thất bại" />
+		<text name="SavedFailed" value="Lưu thất bại!" />
+
+
+
+
+		<text name="WelcomeMessage" value="Chào mừng đến với Admin" />
+		<text name="FormIsNotValidMessage" value="Biểu mẫu không hợp lệ. Vui lòng kiểm tra và sửa lỗi." />
+		<text name="TenantNameCanNotBeEmpty" value="Tên tenant không được để trống" />
+		<text name="InvalidUserNameOrPassword" value="Sai tên đăng nhập hoặc mật khẩu" />
+		<text name="ThereIsNoTenantDefinedWithName{0}" value="Không có tenant nào được định nghĩa với tên {0}" />
+		<text name="TenantIsNotActive" value="Tenant {0} không hoạt động." />
+		<text name="UserIsNotActiveAndCanNotLogin" value="Người dùng {0} không hoạt động và không thể đăng nhập." />
+		<text name="UserEmailIsNotConfirmedAndCanNotLogin">Địa chỉ email của bạn chưa được xác nhận. Bạn không thể đăng nhập.</text>
+		<text name="UserLockedOutMessage">Tài khoản đã bị khóa. Vui lòng thử lại sau.</text>
+		<text name="PleaseEnterLoginInformation" value="Vui lòng nhập thông tin đăng nhập" />
+		<text name="TenancyName" value="Tên tenant" />
+		<text name="UserNameOrEmail" value="Tên đăng nhập hoặc email" />
+		<text name="Password" value="Mật khẩu" />
+		<text name="ResetPassword" value="Đặt lại mật khẩu" />
+		<text name="UpdatePassword" value="Cập nhật mật khẩu" />
+		<text name="RememberMe" value="Ghi nhớ đăng nhập" />
+		<text name="LogIn" value="Đăng nhập" />
+		<text name="LoginFailed" value="Đăng nhập thất bại!" />
+		<text name="NameSurname" value="Họ và tên" />
+		<text name="UserName" value="Tên đăng nhập" />
+		<text name="Name" value="Tên" />
+		<text name="Surname" value="Họ" />
+		<text name="EmailAddress" value="Địa chỉ email" />
+		<text name="Tenants" value="Danh sách tenant" />
+		<text name="SavedSuccessfully" value="Lưu thành công" />
+		<text name="CreateNewTenant" value="Tạo tenant mới" />
+		<text name="AdminEmailAddress" value="Email quản trị viên" />
+		<text name="AdminPassword" value="Mật khẩu quản trị viên" />
+		<text name="Save" value="Lưu" />
+		<text name="Cancel" value="Hủy" />
+		<text name="TenantName_Regex_Description" value="Tên tenant phải có ít nhất 2 ký tự, bắt đầu bằng chữ cái và tiếp theo là chữ cái, số, dấu gạch ngang hoặc gạch dưới." />
+		<text name="DefaultPasswordIs" value="Mật khẩu mặc định là {0}" />
+		<text name="CanBeEmptyToLoginAsHost" value="Có thể để trống để đăng nhập với vai trò host." />
+		<text name="Register" value="Đăng ký" />
+		<text name="OrLoginWith" value="Hoặc đăng nhập với" />
+		<text name="WaitingForActivationMessage" value="Tài khoản của bạn đang chờ được quản trị viên kích hoạt." />
+		<text name="TenantSelection" value="Chọn tenant" />
+		<text name="TenantSelection_Detail" value="Vui lòng chọn một tenant từ danh sách sau." />
+		<text name="Logout" value="Đăng xuất" />
+		<text name="RegisterFormUserNameInvalidMessage">Vui lòng không nhập địa chỉ email cho tên đăng nhập.</text>
+		<text name="DatabaseConnectionString" value="Chuỗi kết nối cơ sở dữ liệu" />
+		<text name="Users" value="Người dùng" />
+		<text name="IsActive" value="Đang hoạt động" />
+		<text name="FullName" value="Họ và tên" />
+		<text name="CreateNewUser" value="Tạo người dùng mới" />
+		<text name="Yes" value="Có" />
+		<text name="No" value="Không" />
+		<text name="Optional" value="Tùy chọn" />
+		<text name="LeaveEmptyToSwitchToHost">Để trống để chuyển sang host</text>
+		<text name="CurrentTenant">Tenant hiện tại</text>
+		<text name="NotSelected">Chưa chọn</text>
+		<text name="Change">Thay đổi</text>
+		<text name="ChangeTenant">Đổi tenant</text>
+		<text name="MultiLevelMenu">Menu đa cấp</text>
+		<text name="Back">Quay lại</text>
+		<text name="SuccessfullyRegistered">Tạo thành công</text>
+		<text name="WaitingForEmailActivation">Địa chỉ email của bạn cần được kích hoạt</text>
+		<text name="Roles" value="Vai trò" />
+		<text name="DisplayName" value="Tên hiển thị" />
+		<text name="Edit" value="Chỉnh sửa" />
+		<text name="Delete" value="Xóa" />
+		<text name="CreateNewRole" value="Tạo vai trò mới" />
+		<text name="RoleName" value="Tên vai trò" />
+		<text name="Actions" value="Hành động" />
+		<text name="CouldNotCompleteLoginOperation" value="Không thể hoàn tất đăng nhập. Vui lòng thử lại sau." />
+		<text name="CouldNotValidateExternalUser" value="Không thể xác thực người dùng bên ngoài" />
+		<text name="EditRole" value="Chỉnh sửa vai trò" />
+		<text name="EditTenant" value="Chỉnh sửa tenant" />
+		<text name="EditUser" value="Chỉnh sửa người dùng" />
+		<text name="TenantIdIsNotActive{0}">TenantId {0} không hoạt động</text>
+		<text name="UnknownTenantId{0}">Không rõ tenantId {0}</text>
+		<text name="ThisFieldIsRequired">Trường này là bắt buộc</text>
+		<text name="PleaseWait">Vui lòng chờ...</text>
+		<text name="Administration">Quản trị</text>
+		<text name="ClearAll">Xóa tất cả</text>
+		<text name="ClearOthers">Xóa những cái khác</text>
+		<text name="LabelOptions">Tùy chọn nhãn</text>
+		<text name="Permissions">Quyền hạn</text>
+		<text name="RoleDescription">Mô tả vai trò</text>
+		<text name="Refresh">Làm mới</text>
+		<text name="Create">Tạo mới</text>
+		<text name="UserDetails">Chi tiết người dùng</text>
+		<text name="UserRoles">Vai trò người dùng</text>
+		<text name="ConfirmPassword">Xác nhận mật khẩu</text>
+		<text name="Version">Phiên bản</text>
+		<text name="On">Bật</text>
+		<text name="Off">Tắt</text>
+		<text name="AreYouSureWantToDelete">Bạn có chắc chắn muốn xóa {0} không?</text>
+		<text name="SuccessfullyDeleted">Xóa thành công</text>
+		<text name="StartTyping">Bắt đầu gõ</text>
+		<text name="Skins">Giao diện</text>
+		<text name="Settings">Cài đặt</text>
+		<text name="Filter">Lọc</text>
+		<text name="CurrentPassword">Mật khẩu hiện tại</text>
+		<text name="NewPassword">Mật khẩu mới</text>
+		<text name="ConfirmNewPassword">Xác nhận mật khẩu mới</text>
+		<text name="PasswordsDoNotMatch">Mật khẩu không khớp</text>
+		<text name="PasswordsMustBeAtLeast8CharactersContainLowercaseUppercaseNumber">Mật khẩu phải ít nhất 8 ký tự, chứa chữ thường, chữ hoa và số</text>
+		<text name="UserDeleteWarningMessage">Người dùng {0} sẽ bị xóa.</text>
+		<text name="RoleDeleteWarningMessage">Vai trò {0} sẽ bị xóa và gỡ khỏi tất cả người dùng được gán.</text>
+		<text name="TenantDeleteWarningMessage">Tenant {0} sẽ bị xóa.</text>
+		<text name="SearchWithThreeDot">Tìm kiếm...</text>
+		<text name="PleaseEnterAtLeastNCharacter">Vui lòng nhập ít nhất {0} ký tự</text>
+		<text name="PleaseEnterNoMoreThanNCharacter">Vui lòng không nhập quá {0} ký tự</text>
+		<text name="InvalidEmailAddress">Địa chỉ email không hợp lệ</text>
+		<text name="InvalidPattern">Không hợp lệ</text>
+		<text name="PairsDoNotMatch">Không khớp</text>
+		<text name="All">Tất cả</text>
+		<text name="TotalRecordsCount">Tổng: {0}</text>
+		<text name="Search">Tìm kiếm</text>
+		<text name="Clear">Xóa</text>
+		<text name="ResetPasswordStepOneInfo">1. Nhập mật khẩu quản trị viên</text>
+		<text name="ResetPasswordStepTwoInfo">2. Sao chép mật khẩu ngẫu nhiên để gửi cho người dùng</text>
+		<text name="UsersActivation">Kích hoạt người dùng</text>
+		<text name="403PageHeader">Bị cấm</text>
+		<text name="403PageDescription">Bạn không có quyền truy cập tài nguyên này. Vui lòng liên hệ quản trị viên.</text>
+		<text name="403PageButton">Quay lại trang chính</text>
+	</texts>
+</localizationDictionary>

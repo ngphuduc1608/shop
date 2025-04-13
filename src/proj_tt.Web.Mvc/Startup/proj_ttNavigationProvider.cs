@@ -31,21 +31,21 @@ namespace proj_tt.Web.Startup
                 ).AddItem(
                     new MenuItemDefinition(
                         PageNames.Tasks,
-                        new FixedLocalizableString("TaskList"),
+                        L("Tasks"),
                         url: "Tasks",
                         icon: "fas fa-tasks"
                     )
                 ).AddItem(
                     new MenuItemDefinition(
                         PageNames.Products,
-                        new FixedLocalizableString("Products"),
+                        L("Product"),
                         url: "Product",
                         icon: "fas fa-box"
                     )
                 ).AddItem(
                     new MenuItemDefinition(
                         "Categories",
-                        new FixedLocalizableString("Categories"),
+                        L("Categories"),
                         url: "Categories",
                         icon: "fas fa-box"
                     )

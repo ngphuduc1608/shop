@@ -6,7 +6,7 @@
 
 
     function save() {
-
+        console.log('hihi');
         if (!_$form.valid()) {
             return; // không submit nếu không hợp lệ
         }
@@ -29,12 +29,13 @@
             contentType: false, // Không đặt content-type mặc định
             success: function () {
                 _$modal.modal('hide');
-                abp.message.success(l('Sửa sản phẩm thành công '), 'Thành công');
+                abp.message.success(l('SavedSuccessfully'), l('Success'));
                 abp.event.trigger('product.edited');
             },
             error: function (err) {
+                
                 //abp.notify.error('Lỗi khi cập nhật sản phẩm!');
-                abp.message.error(l('Sửa sản phẩm thất bại '), 'Thất bại');
+                abp.message.error(l('SavedFailed'), l('Fail'));
                 console.error(err);
             },
             complete: function () {

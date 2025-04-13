@@ -1,10 +1,19 @@
 ﻿(function ($) {
     var _productService = abp.services.app.product,
         l = abp.localization.getSource('proj_tt'),
+        source = abp.localization.defaultSourceName;
         _$modal = $('#createModal'),
 
         _$form = _$modal.find('form'),
         _$table = $('#ProductsTable');
+
+    
+    var _permissions = {
+        create: abp.auth.isGranted('Pages.Products.Create'),
+        edit: abp.auth.isGranted('Pages.Products.Edit'),
+        delete: abp.auth.isGranted('Pages.Products.Delete')
+    };
+
 
     var _$productsTable = _$table.DataTable({
         paging: true,
@@ -15,6 +24,8 @@
                 //return $('#ProductsSearchForm').serializeFormToObject(true);
                 var filter = $('#ProductsSearchForm').serializeFormToObject(true);
                 console.log('Dữ liệu gửi đi:', filter);  // Kiểm tra giá trị filter
+                console.log('Dữ liệu gửi đi l:', l);  // Kiểm tra giá trị filter
+
                 return filter;
             }
         },
@@ -40,17 +51,15 @@
                 targets: 1,
                 data: 'name',
                 sortable: false,
-                title: 'Tên sản phẩm',
 
             },
             {
                 targets: 2,
                 data: 'price',
                 sortable: false,
-                title: 'Giá',
                 render: function (data, type, row, meta) {
                     if (!data) return '0';
-                    return Number(data).toLocaleString('vi-VN') + ' đ';
+                    return Number(data).toLocaleString("vi-VN") + ' VND';
                 }
             },
             {
@@ -62,7 +71,6 @@
                 targets: 4,
                 data: 'imageUrl',
                 sortable: false,
-                title: 'Hình ảnh sản phẩm',
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<img src="${data}" alt="image" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;" />`;
@@ -72,13 +80,11 @@
                 targets: 5,
                 data: 'nameCategory',
                 sortable: false,
-                title: 'Tên danh mục',
             },
             {
                 targets: 6,
                 data: 'creationTime',
                 sortable: false,
-                title: 'Thời gian tạo',
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     const date = new Date(data);
@@ -89,7 +95,6 @@
                 targets: 7,
                 data: 'lastModificationTime',
                 sortable: false,
-                title: 'Thời gian sửa gần nhất ',
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     const date = new Date(data);
@@ -106,15 +111,15 @@
                     return [
                         `<div class="dropdown">
                             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="actionDropdown_${row.id}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Hành động
+                                 ${l('Actions')}
                             </button>
                             <div class="dropdown-menu p-0" aria-labelledby="actionDropdown_${row.id}">
                                 <button type="button" class="dropdown-item text-secondary edit-product" data-product-id="${row.id}" data-toggle="modal" data-target="#editModal">
-                                    <i class="fas fa-edit mr-2"></i> Sửa
+                                    <i class="fas fa-edit mr-2"></i>  ${l('Edit')}
                                 </button>
                                 <div class="dropdown-divider m-0"></div>
                                 <button type="button" class="dropdown-item text-danger delete-product" data-product-id="${row.id}" data-product-name="${row.name}" data-toggle="modal" data-target="#deleteModal">
-                                    <i class="fas fa-trash mr-2"></i> Xóa
+                                    <i class="fas fa-trash mr-2"></i>  ${l('Delete')}
                                 </button>
                             </div>
                         </div>`
@@ -149,13 +154,16 @@
                 required: true,
                 imageExtension: true,
                 filesize: 2 * 1024 * 1024 
+            },
+            CategoryId: {
+                required: true
             }
         },
         messages: {
             Name: {
                 required: "Tên sản phẩm không được để trống",
-                minlength: "Tên ít nhất 3 ký tự",
-                maxlength: "Tên tối đa 100 ký tự"
+                minlength: l("PleaseEnterAtLeastNCharacter") ,
+                maxlength: l("PleaseEnterNoMoreThanNCharacter")
             },
             Price: {
                 required: "Vui lòng nhập giá",
@@ -172,6 +180,9 @@
                 required: "Vui lòng chọn ảnh",
                 imageExtension: "Chỉ chấp nhận file ảnh JPG, PNG, GIF, BMP",
                 filesize: "Dung lượng ảnh tối đa là 2MB"
+            },
+            CategoryId: {
+                required: "Vui lòng chọn danh mục"
             }
         }
     });
@@ -189,7 +200,13 @@
 
 
     _$form.find('.save-button').on('click', (e) => {
+
+        //if (!_permissions.create) {
+        //    abp.message.warn("Bạn không đủ quyền để thêm sản phẩm!");
+        //    return;
+        //}
         e.preventDefault(); // submit không reload trang
+
 
         if (!_$form.valid()) {
             return; // không submit nếu không hợp lệ
@@ -198,7 +215,7 @@
 
         var formElement = _$form[0];
         var formData = new FormData(formElement); // lấy cả input và ảnh
-        console.log('discount', formData.get('discount'));
+        console.log('discount', formData.get('Discount'));
 
         if (!formData.get('Discount')) {
             formData.set('Discount', 0);
@@ -215,7 +232,7 @@
             success: function () {
                 _$modal.modal('hide');
                 _$form[0].reset();
-                abp.message.success(l('Tạo sản phẩm thành công '), 'Thành công');
+                abp.message.success(l('SuccessfullyRegistered'), l('Success'));
                 _$productsTable.ajax.reload();
             },
             error: function (err) {
@@ -229,30 +246,47 @@
     });
 
 
-    // Preview ảnh khi chọn ảnh trong createModal
+    // Preview ảnh 
     $('#createModal #image').on('change', function (event) { 
         var reader = new FileReader();
 
         reader.onload = function (e) {
-            $('#createModal #imagePreview').attr('src', e.target.result).show();
+            $('#createModal #imagePreview').attr('src', e.target.result).show(); // lấy result gắn vào src
         };
+        //console.log('reader', reader);
 
         reader.readAsDataURL(this.files[0]); //chuyển sang dạng base64 và gắn vào src
     });
 
-    // Reset preview ảnh khi đóng modal create
-    $('#createModal').on('hidden.bs.modal', function () {
-        $('#createModal #imagePreview').attr('src', '#').hide(); // gắn ảnh bằng #
+    // Reset preview ảnh 
+    $('#createModal').on('hidden.bs.modal', function () { // sự kiện của bootstrap khi đóng modal
+        $('#createModal #imagePreview').attr('src', '#').hide(); 
         $('#createModal #image').val('');
     });
 
 
 
     $(document).on('click', '.edit-product', function (e) {
-        var productId = $(this).attr('data-product-id');
-        console.log('productId ', productId);
+        
 
         e.preventDefault();
+        if (!_permissions.edit) {
+            abp.message.warn("Bạn không đủ quyền để chỉnh sửa sản phẩm!");
+            $('#editModal').modal('hide');  // Đóng modal
+            $('.modal-backdrop').remove();  // Loại bỏ lớp phủ
+
+            $('body').removeClass('modal-open');  // Loại bỏ lớp modal-open
+            $('body').css('padding-right', '');   // Gỡ bỏ padding-right nếu có
+
+            return;
+        }
+        var productId = $(this).attr('data-product-id');
+        console.log('productId ', productId);
+        
+
+
+
+
         abp.ajax({
             url: abp.appPath + 'Product/EditModal?productId=' + productId,  // gọi EditModal trong ProductController và truyền productId
             type: 'POST',
@@ -279,7 +313,7 @@
                 });
             },
             error: function (e) {
-
+                
             }
         });
     });
@@ -292,9 +326,14 @@
 
 
     $(document).on('click', '.delete-product', function () {
+
+        if (!_permissions.delete) {
+            abp.message.warn("Bạn không đủ quyền để xoá sản phẩm!");
+            return;
+        }
+
         var productId = $(this).attr('data-product-id');
         var productName = $(this).attr('data-product-name');
-
         deleteProduct(productId, productName);
 
 
@@ -309,25 +348,13 @@
             (isConfirmed) => {
                 if (isConfirmed) {
                     _productService.delete(productId).done(() => {
-                        abp.message.success(l('SuccessfullyDeleted'), 'Thành công');
+                        abp.message.success(l('SuccessfullyDeleted'), l('Success'));
                         _$productsTable.ajax.reload();
-                    }).fail((error) => {
-                        let errorMessage = "Đã xảy ra lỗi khi xóa!";
-
-                        if (error.responseJSON && error.responseJSON.error && error.responseJSON.error.message) {
-                            errorMessage = error.responseJSON.error.message;
-                        }
-
-                        abp.message.error(errorMessage, "Lỗi");
                     });
                 }
             }
         );
     }
-
-
-
-
 
 
     $('.btn-search').on('click', (e) => {

@@ -35,9 +35,11 @@ namespace proj_tt
             AppRoleConfig.Configure(Configuration.Modules.Zero().RoleManagement);
 
             Configuration.Settings.Providers.Add<AppSettingProvider>();
-            
+
             Configuration.Localization.Languages.Add(new LanguageInfo("fa", "فارسی", "famfamfam-flags ir"));
-            
+            Configuration.Localization.Languages.Add(new LanguageInfo("fa", "Tiếng Việt", "famfamfam-flags vn"));
+
+
             Configuration.Settings.SettingEncryptionConfiguration.DefaultPassPhrase = proj_ttConsts.DefaultPassPhrase;
             SimpleStringCipher.DefaultPassPhrase = proj_ttConsts.DefaultPassPhrase;
         }
