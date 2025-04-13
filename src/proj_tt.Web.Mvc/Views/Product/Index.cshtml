@@ -1,4 +1,7 @@
-﻿@model proj_tt.Web.Models.Products.IndexViewModel
+﻿@using proj_tt.Authorization
+@model proj_tt.Web.Models.Products.IndexViewModel
+@inject Abp.Authorization.IPermissionChecker PermissionChecker
+
 @{
     ViewBag.Title = ("Products");
     ViewBag.ActiveMenu = "Products";
@@ -15,19 +18,36 @@
     </environment>
 
 }
+@{
+    var canCreate = await PermissionChecker.IsGrantedAsync(PermissionNames.Pages_Products_Create);
+}
 
 
 <section class="content-header">
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <h1>Products</h1>
+                <h1>@L("Product")</h1>
             </div>
             <div class="col-sm-6">
-                <button class=" btn bg-blue float-sm-right" data-toggle="modal" data-target="#createModal">
-                    <i class="fa fa-plus-square"></i>
-                    @("Create")
-                </button>
+                @* <button class=" btn bg-blue float-sm-right" data-toggle="modal" data-target="#createModal"> *@
+                @*     <i class="fa fa-plus-square"></i> *@
+                @*     @L("Create") *@
+                @* </button> *@
+                @if (canCreate)
+                {
+                    <button class=" btn bg-blue float-sm-right" data-toggle="modal" data-target="#createModal">
+                        <i class="fa fa-plus-square"></i>
+                        @L("Create")
+                    </button>
+                }
+                else
+                {
+                    <button class="btn bg-blue float-sm-right" onclick="abp.message.warn('Bạn không đủ quyền để tạo sản phẩm!')">
+                        <i class="fa fa-plus-square"></i>
+                        @L("Create")
+                    </button>
+                }
             </div>
         </div>    
     </div>
@@ -54,13 +74,13 @@
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Discount(%)</th>
-                                        <th>ImageUrl</th>
-                                        <th>CategoryName</th>
-                                        <th>CreationTime</th>
-                                        <th>UpdateTime</th>
+                                        <th>@L("Name")</th>
+                                        <th>@L("Price")</th>
+                                        <th>@L("Discount")</th>
+                                        <th>@L("ImageUrl")</th>
+                                        <th>@L("CategoryName")</th>
+                                        <th>@L("CreationTime")</th>
+                                        <th>@L("UpdateTime")</th>
                                         <th style="width: 150px">@L("Actions")</th>
                                     </tr>
                                 </thead>

@@ -1,4 +1,5 @@
-﻿@using proj_tt.Web.Models.Common.Modals
+﻿@using System.Globalization
+@using proj_tt.Web.Models.Common.Modals
 @using proj_tt.Web.Models.Products
 @model IndexViewModel
 
@@ -8,26 +9,26 @@
 <script src="~/view-resources/Views/Products/_EditModal.js" asp-append-version="true"></script>
 
 
-@await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(("Sửa Sản Phẩm")))
+@await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("EditProduct")))
 <form name="CategoryEditForm" role="form" class="form-horizontal">
      <input type="hidden" name="Id" value="@Model.Product.Id">
      <div class="modal-body">
         <div class="form-group row required">
-            <label for="name " class="col-md-3 col-form-label">Tên sản phẩm</label>
+            <label for="name " class="col-md-3 col-form-label">@L("Name")</label>
             <input type="text" class="form-control"  name="Name" value="@Model.Product.Name" required>
         </div>
         <div class="form-group row required">
-            <label for="price " class="col-md-3 col-form-label">Giá</label>
-            <input type="text" class="form-control" name="Price" value="@Model.Product.Price" step="0.01" required>
+            <label for="price " class="col-md-3 col-form-label">@L("Price")</label>
+            <input type="text" class="form-control" name="Price" value="@Model.Product.Price.ToString("0.##", CultureInfo.InvariantCulture)" required>
         </div>
         <div class="form-group row ">
-            <label for="discount " class="col-md-3 col-form-label">Giảm giá</label>
-            <input type="number" class="form-control"  name="Discount" value="@Model.Product.Discount" step="0.01">
+            <label for="discount " class="col-md-3 col-form-label">@L("Discount")</label>
+            <input type="number" class="form-control"  name="Discount" value="@Model.Product.Discount" >
         </div>
-        <div class="form-group row ">
-            @Html.Label("Category Name")
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label">@L("CategoryName")</label>
 
-            @Html.DropDownList("CategoryId", Model.Categories, new
+            @Html.DropDownList("CategoryId", Model.Categories, "--Chọn danh mục--", new
                 {
                     @class = "form-control",
                     id = "CategoryDropdownEdit"
@@ -35,7 +36,7 @@
 
         </div>
         <div class="form-group row required">
-            <label class="col-md-3 col-form-label">Hình ảnh hiện tại</label>
+            <label class="col-md-3 col-form-label">@L("ImageUrl")</label>
             <input type="hidden" name="ExistingImageUrl" value="@Model.Product.ImageUrl">
             @if (!string.IsNullOrEmpty(Model.Product.ImageUrl))
             {

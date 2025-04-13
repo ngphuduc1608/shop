@@ -8,12 +8,12 @@
 <script src="~/view-resources/Views/Categories/_EditModal.js" asp-append-version="true"></script>
 
 
-@await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(("Sửa Danh Mục")))
+@await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("EditCategory")))
 <form name="CategoryEditForm" role="form" class="form-horizontal">
      <input type="hidden" name="Id" value="@Model.Category.Id">
      <div class="modal-body">
         <div class="form-group row required">
-            <label for="NameCategory " class="col-md-3 col-form-label">Tên danh mục</label>
+            <label for="NameCategory " class="col-md-3 col-form-label">@L("Name")</label>
             <input type="text" class="form-control" name="NameCategory" value="@Model.Category.NameCategory" required>
          </div>
      </div>

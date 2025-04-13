@@ -1,10 +1,11 @@
 ﻿using Abp.Application.Services.Dto;
+using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
-using Abp.UI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using proj_tt.Authorization;
 using proj_tt.Products.Dto;
 using System;
 using System.IO;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace proj_tt.Products
 {
+    [AbpAuthorize]
     public class ProductAppService : proj_ttAppServiceBase, IProductAppService
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
@@ -24,9 +26,8 @@ namespace proj_tt.Products
         {
             _productRepository = productRepository;
             _webHostEnvironment = webHostEnvironment;
-
         }
-
+        [AbpAuthorize(PermissionNames.Pages_Products_Create)]
         public async System.Threading.Tasks.Task Create(ProductListDto input)
         {
             // Xử lý upload ảnh nếu có
@@ -37,12 +38,9 @@ namespace proj_tt.Products
                 imagePath = await SaveImageAsync(input.ImageUrl);
 
             }
-
-            // Map DTO sang entity và gán ImagePath
-            //var product = ObjectMapper.Map<Product>(input);
-            //product.ImageUrl = imagePath;
+            // Map DTO sang entity 
             var product = new Product(
-                input.Name,
+                input.Name.Trim(),
                 input.Price,
                 imagePath,
                 input.Discount,
@@ -53,6 +51,7 @@ namespace proj_tt.Products
             await _productRepository.InsertAsync(product);
         }
 
+        [AbpAuthorize]
         // phan trang product
         public async Task<PagedResultDto<ProductDto>> GetProductPaged(PagedProductDto input)
         {
@@ -61,7 +60,12 @@ namespace proj_tt.Products
 
             if (!string.IsNullOrWhiteSpace(input.Keyword))
             {
-                products = products.Where(p => p.Name.Contains(input.Keyword));
+                products = products.Where(
+                    p => p.Name.Contains(input.Keyword) ||
+                    p.Price.ToString().Contains(input.Keyword) ||
+                    p.Discount.ToString().Contains(input.Keyword) ||
+                    p.Category.NameCategory.ToString().Contains(input.Keyword)
+                );
             }
 
             var count = await products.CountAsync();
@@ -87,18 +91,12 @@ namespace proj_tt.Products
 
         }
 
-
+        [AbpAuthorize(PermissionNames.Pages_Products_Edit)]
         public async Task Update(UpdateProductDto input)
         {
             var product = await _productRepository.FirstOrDefaultAsync((int)input.Id);
 
-            if (product == null)
-            {
-                throw new UserFriendlyException("Sản phẩm không tồn tại!");
-            }
-
-            // Cập nhật thông tin
-            product.Name = input.Name;
+            product.Name = input.Name.Trim();
             product.Price = input.Price;
             product.Discount = input.Discount;
             product.CategoryId = input.CategoryId;
@@ -113,12 +111,13 @@ namespace proj_tt.Products
                 product.ImageUrl = input.ExistingImageUrl; // Giữ ảnh cũ nếu không có ảnh mới
             }
 
-            await _productRepository.UpdateAsync(product); // Lưu thay đổi
+            await _productRepository.UpdateAsync(product);
 
         }
-
+        [AbpAuthorize(PermissionNames.Pages_Products_Delete)]
         public async Task Delete(int id)
         {
+
             await _productRepository.DeleteAsync(id);
         }
 
@@ -147,8 +146,10 @@ namespace proj_tt.Products
             return $"/uploads/products/{fileName}"; // Trả về đường dẫn để lưu vào database
         }
 
+        [AbpAuthorize]
         public async Task<ProductDto> GetProducts(int id)
         {
+
             var product = await _productRepository.GetAsync(id);
             return ObjectMapper.Map<ProductDto>(product);
         }

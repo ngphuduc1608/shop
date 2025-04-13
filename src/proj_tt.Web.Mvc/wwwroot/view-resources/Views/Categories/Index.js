@@ -39,14 +39,12 @@
             },
             {
                 targets: 1,
-                data: 'nameCategory',
-                title:'Tên danh mục',
+                data: 'nameCategory',                
                 sortable: false
             },
             {
                 targets: 2,
                 data: 'creationTime',
-                title: 'Thời gian tạo',
                 sortable: false,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
@@ -57,7 +55,6 @@
             {
                 targets: 3,
                 data: 'lastModificationTime',
-                title: 'Thời gian sửa gần nhất ',
                 sortable: false,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
@@ -75,15 +72,15 @@
                     return [
                             `<div class="dropdown">
                             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="actionDropdown_${row.id}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Hành động
+                                ${l('Actions')}
                             </button>
                             <div class="dropdown-menu p-0" aria-labelledby="actionDropdown_${row.id}">
                                 <button type="button" class="dropdown-item text-secondary edit-category" data-category-id="${row.id}" data-toggle="modal" data-target="#editModal">
-                                    <i class="fas fa-edit mr-2"></i> Sửa
+                                    <i class="fas fa-edit mr-2"></i> ${l('Edit')}
                                 </button>
                                 <div class="dropdown-divider m-0"></div>
                                 <button type="button" class="dropdown-item text-danger delete-category" data-category-id="${row.id}" data-category-name="${row.nameCategory}" data-toggle="modal" data-target="#deleteModal">
-                                    <i class="fas fa-trash mr-2"></i> Xóa
+                                    <i class="fas fa-trash mr-2"></i> ${l('Delete')}
                                 </button>
                             </div>
                         </div>`
@@ -125,7 +122,7 @@
         _categoriesService.create(category).done(function () {
             _$createModal.modal('hide');
             _$createForm[0].reset();
-            abp.message.success(l('Tạo danh mục thành công '), 'Thành công');
+            abp.message.success(l('SuccessfullyRegistered'), l('Success'));
             _$categoriesTable.ajax.reload();
 
         }).always(function () {
@@ -177,8 +174,16 @@
             (isConfirmed) => {
                 if (isConfirmed) {
                     _categoriesService.delete(categoryId).done(() => {
-                        abp.message.success(l('SuccessfullyDeleted'), 'Thành công');
+                        abp.message.success(l('SuccessfullyDeleted'), l('Success'));
                         _$categoriesTable.ajax.reload();
+                    }).fail((error) => {
+                        let errorMessage = "Đã xảy ra lỗi khi xóa!";
+
+                        if (error.responseJSON && error.responseJSON.error && error.responseJSON.error.message) {
+                            errorMessage = error.responseJSON.error.message;
+                        }
+
+                        abp.message.error(errorMessage, "Lỗi");
                     });
                 }
             }

@@ -58,7 +58,7 @@ namespace proj_tt.Categories
 
             input.Sorting = "CreationTime DESC";
 
-            var items = await categories.PageBy(input.SkipCount, input.MaxResultCount).OrderBy(input.Sorting).ToListAsync();
+            var items = await categories.OrderBy(input.Sorting).PageBy(input).ToListAsync();
 
             return new PagedResultDto<CategoriesDto> { TotalCount = count, Items = ObjectMapper.Map<List<CategoriesDto>>(items) };
         }
@@ -72,7 +72,7 @@ namespace proj_tt.Categories
         public async Task Update(CreateCategoriesDto input)
         {
             var category = await _categoryRepository.GetAsync(input.Id);
-            ObjectMapper.Map(input, category);
+            category.NameCategory = input.NameCategory;
             await _categoryRepository.UpdateAsync(category);
         }
     }

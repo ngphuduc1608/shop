@@ -6,9 +6,9 @@
 
 
     function save() {
-        //if (!_$form.valid()) {
-        //    return;
-        //}
+        if (!_$editForm.valid()) {
+            return;
+        }
 
 
         var categories = _$editForm.serializeFormToObject();
@@ -18,7 +18,7 @@
         abp.ui.setBusy(_$editForm);  // hiển thị trạng thái loading
         _categoriesService.update(categories).done(function () {  // gọi update ở service
             _$editModal.modal('hide');
-            abp.message.success(l('Sửa danh mục thành công '), 'Thành công');
+            abp.message.success(l('SavedSuccessfully'), l('Success'));
             abp.event.trigger('category.edited', categories);
         }).always(function () {
             abp.ui.clearBusy(_$editForm); // tắt loading
@@ -33,7 +33,7 @@
 
 
 
-    _$createForm.validate({
+    _$editForm.validate({
         rules: {
             NameCategory: {
                 required: true,
