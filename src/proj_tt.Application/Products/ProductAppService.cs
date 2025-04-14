@@ -53,26 +53,82 @@ namespace proj_tt.Products
 
         [AbpAuthorize]
         // phan trang product
+        //public async Task<PagedResultDto<ProductDto>> GetProductPaged(PagedProductDto input)
+        //{
+        //    //input.MaxResultCount = input.MaxResultCount > 0 ? input.MaxResultCount : 15;
+        //    var products = _productRepository.GetAllIncluding(p => p.Category);
+
+        //    if (!string.IsNullOrWhiteSpace(input.Keyword))
+        //    {
+        //        products = products.Where(
+        //            p => p.Name.Contains(input.Keyword) ||
+        //            p.Price.ToString().Contains(input.Keyword) ||
+        //            p.Discount.ToString().Contains(input.Keyword) ||
+        //            p.Category.NameCategory.ToString().Contains(input.Keyword)
+        //        );
+        //    }
+
+        //    var count = await products.CountAsync();
+
+        //    //input.Sorting = "Id DESC";
+
+        //    if (!string.IsNullOrWhiteSpace(input.Sorting))
+        //    {
+        //        products = products.OrderBy(input.Sorting);
+        //    }
+        //    else
+        //    {
+        //        products = products.OrderByDescending(p => p.CreationTime);
+        //    }
+
+
+
+        //    //var items = await products.OrderBy(input.Sorting).PageBy(input).ToListAsync();
+        //    var items = await products.PageBy(input).ToListAsync();
+
+        //    var result = items.Select(p => new ProductDto
+        //    {
+        //        Id = p.Id,
+        //        Name = p.Name,
+        //        Price = p.Price,
+        //        ImageUrl = p.ImageUrl,
+        //        Discount = p.Discount,
+        //        CategoryId = p.CategoryId ?? 0,
+        //        NameCategory = p.Category != null ? p.Category.NameCategory : "",
+        //        CreationTime = p.CreationTime,
+        //        LastModificationTime = p.LastModificationTime
+        //    }).ToList();
+
+        //    return new PagedResultDto<ProductDto>(count, result);
+
+        //}
+
         public async Task<PagedResultDto<ProductDto>> GetProductPaged(PagedProductDto input)
         {
-            //input.MaxResultCount = input.MaxResultCount > 0 ? input.MaxResultCount : 15;
-            var products = _productRepository.GetAllIncluding(p => p.Category);
+            //input.MaxResultCount = input.MaxResultCount > 0 ? input.MaxResultCount : 10;
+
+            var products = _productRepository.GetAllIncluding(p => p.Category).AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(input.Keyword))
             {
-                products = products.Where(
-                    p => p.Name.Contains(input.Keyword) ||
-                    p.Price.ToString().Contains(input.Keyword) ||
-                    p.Discount.ToString().Contains(input.Keyword) ||
-                    p.Category.NameCategory.ToString().Contains(input.Keyword)
+                var keyword = input.Keyword.ToLower().Trim();
+                products = products.Where(p =>
+                    p.Name.ToLower().Contains(keyword) ||
+                    p.Price.ToString().Contains(keyword) ||
+                    p.Discount.ToString().Contains(keyword) ||
+                    p.Category.NameCategory.ToLower().Contains(keyword)
                 );
             }
 
             var count = await products.CountAsync();
 
-            input.Sorting = "Id DESC";
+            if (!string.IsNullOrWhiteSpace(input.Sorting))
+            {
+                products = products.OrderBy(input.Sorting);
+            }
 
-            var items = await products.OrderBy(input.Sorting).PageBy(input).ToListAsync();
+
+            var items = await products.PageBy(input).ToListAsync();
 
             var result = items.Select(p => new ProductDto
             {
@@ -88,8 +144,8 @@ namespace proj_tt.Products
             }).ToList();
 
             return new PagedResultDto<ProductDto>(count, result);
-
         }
+
 
         [AbpAuthorize(PermissionNames.Pages_Products_Edit)]
         public async Task Update(UpdateProductDto input)

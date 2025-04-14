@@ -43,7 +43,6 @@ namespace proj_tt.Web.Controllers
             return Ok();
         }
 
-        //[HttpPost]
         public async Task<IActionResult> Update(UpdateProductDto input)
         {
             await _productAppService.Update(input);
