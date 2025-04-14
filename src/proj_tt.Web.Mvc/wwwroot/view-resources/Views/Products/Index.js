@@ -1,7 +1,6 @@
 ﻿(function ($) {
     var _productService = abp.services.app.product,
         l = abp.localization.getSource('proj_tt'),
-        source = abp.localization.defaultSourceName;
         _$modal = $('#createModal'),
 
         _$form = _$modal.find('form'),
@@ -18,23 +17,52 @@
     var _$productsTable = _$table.DataTable({
         paging: true,
         serverSide: true,
-        listAction: {
-            ajaxFunction: _productService.getProductPaged,
-            inputFilter: function () {
-                //return $('#ProductsSearchForm').serializeFormToObject(true);
-                var filter = $('#ProductsSearchForm').serializeFormToObject(true);
-                console.log('Dữ liệu gửi đi:', filter);  // Kiểm tra giá trị filter
-                console.log('Dữ liệu gửi đi l:', l);  // Kiểm tra giá trị filter
+        ordering: true,
+        processing: true,
+        order: [[6, 'desc']],
+        //listAction: {
+        //    ajaxFunction: _productService.getProductPaged,
+        //    inputFilter: function () {
+        //        //return $('#ProductsSearchForm').serializeFormToObject(true);
+        //        var filter = $('#ProductsSearchForm').serializeFormToObject(true);
+        //        console.log('Dữ liệu gửi đi:', filter);  // Kiểm tra giá trị filter
+        //        return filter;
+        //    }
+        //},
+        ajax: function (data, callback, settings) {
+            var filter = $('#ProductsSearchForm').serializeFormToObject(true);
+            console.log('Filter:', filter);
+            console.log('DataTables params:', data);
+            console.log('settings params:', settings);
 
-                return filter;
-            }
+
+            var sortColumn = data.columns[data.order[0].column].data;
+            var sortDirection = data.order[0].dir;
+            console.log('sortColumn params:', sortColumn);
+            console.log('sortDirection params:', sortDirection);
+
+
+
+            _productService.getProductPaged($.extend({}, filter, {
+                skipCount: data.start,                // Phân trang: bắt đầu từ đâu
+                maxResultCount: data.length,          // Phân trang: bao nhiêu dòng
+                sorting: sortColumn + " " + sortDirection
+            }))
+                .done(function (result) {
+                    callback({
+                        recordsTotal: result.totalCount,
+                        recordsFiltered: result.totalCount,
+                        data: result.items
+                    });
+                });
         },
+
         buttons: [
             {
                 name: 'refresh',
                 text: '<i class="fas fa-redo-alt"></i>',
                 action: () => _$productsTable.draw(false)
-            }
+            },
         ],
         responsive: {
             details: {
@@ -46,17 +74,18 @@
                 targets: 0,
                 className: 'control',
                 defaultContent: '',
+                orderable: false
             },
             {
                 targets: 1,
                 data: 'name',
-                sortable: false,
+                orderable: true,
 
             },
             {
                 targets: 2,
                 data: 'price',
-                sortable: false,
+                orderable: true,
                 render: function (data, type, row, meta) {
                     if (!data) return '0';
                     return Number(data).toLocaleString("vi-VN") + ' VND';
@@ -65,12 +94,12 @@
             {
                 targets: 3,
                 data: 'discount',
-                sortable: false,
+                orderable: true,
             },
             {
                 targets: 4,
                 data: 'imageUrl',
-                sortable: false,
+                orderable: false,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     return `<img src="${data}" alt="image" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;" />`;
@@ -79,12 +108,12 @@
             {
                 targets: 5,
                 data: 'nameCategory',
-                sortable: false,
+                orderable: false,
             },
             {
                 targets: 6,
                 data: 'creationTime',
-                sortable: false,
+                orderable: true,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     const date = new Date(data);
@@ -94,7 +123,7 @@
             {
                 targets: 7,
                 data: 'lastModificationTime',
-                sortable: false,
+                orderable: true,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     const date = new Date(data);
@@ -104,7 +133,7 @@
             {
                 targets: 8,
                 data: null,
-                sortable: false,
+                orderable: false,
                 autoWidth: false,
                 defaultContent: '',
                 render: (data, type, row, meta) => { // data: giá trị, type: kiểu xử lý , row là toàn bộ dữ liêu của hàng đó , meta là vị trị của ô đó  
@@ -246,23 +275,30 @@
     });
 
 
-    // Preview ảnh 
-    $('#createModal #image').on('change', function (event) { 
-        var reader = new FileReader();
+    function ImagePreview(modalSelector) {
+        const $modal = $(modalSelector);
 
-        reader.onload = function (e) {
-            $('#createModal #imagePreview').attr('src', e.target.result).show(); // lấy result gắn vào src
-        };
-        //console.log('reader', reader);
+        // Preview ảnh 
+        $modal.find('#image').on('change', function () {
+            var reader = new FileReader();
 
-        reader.readAsDataURL(this.files[0]); //chuyển sang dạng base64 và gắn vào src
-    });
+            reader.onload = function (e) {
+                $modal.find('#imagePreview').attr('src', e.target.result).show(); // lấy result gắn vào src
+            };
+            //console.log('reader', reader);
 
-    // Reset preview ảnh 
-    $('#createModal').on('hidden.bs.modal', function () { // sự kiện của bootstrap khi đóng modal
-        $('#createModal #imagePreview').attr('src', '#').hide(); 
-        $('#createModal #image').val('');
-    });
+            reader.readAsDataURL(this.files[0]); //chuyển sang dạng base64 và gắn vào src
+        });
+
+        // Reset preview ảnh 
+        $modal.on('hidden.bs.modal', function () { // sự kiện của bootstrap khi đóng modal
+            $modal.find('#imagePreview').attr('src', '#').hide();
+            $modal.find('#image').val('');
+        });
+    }
+
+    ImagePreview('#createModal');
+ 
 
 
 
@@ -295,22 +331,8 @@
                 //console.log('content:', content); 
                 $('#editModal div.modal-content').html(content); // add cái form của editmodal vào index
 
-                // Thêm đoạn xử lý ảnh ở đây cho editModal
-                $('#editModal #image').on('change', function (event) {
-                    var reader = new FileReader();
+                ImagePreview('#editModal');
 
-                    reader.onload = function (e) {
-                        $('#editModal #imagePreview').attr('src', e.target.result).show();
-                    };
-
-                    reader.readAsDataURL(this.files[0]);
-                });
-
-                // Reset ảnh khi đóng modal
-                $('#editModal').on('hidden.bs.modal', function () {
-                    $('#editModal #imagePreview').attr('src', '#').hide();
-                    $('#editModal #image').val('');
-                });
             },
             error: function (e) {
                 

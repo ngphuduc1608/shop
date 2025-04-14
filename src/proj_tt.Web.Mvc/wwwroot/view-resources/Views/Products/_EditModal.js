@@ -6,13 +6,12 @@
 
 
     function save() {
-        console.log('hihi');
         if (!_$form.valid()) {
             return; // không submit nếu không hợp lệ
         }
 
-        var formElement = _$form[0]; // DOM element
-        var formData = new FormData(formElement); // Lấy toàn bộ form, bao gồm file
+        var formElement = _$form[0]; 
+        var formData = new FormData(formElement); 
 
         console.log("Giá trị categoryId:", formData.get("CategoryId"));
 
@@ -22,7 +21,7 @@
         abp.ui.setBusy(_$form);
 
         $.ajax({
-            url: abp.appPath + 'Product/Update', // Đảm bảo bạn có controller hoặc endpoint này
+            url: abp.appPath + 'Product/Update', 
             type: 'POST',
             data: formData,
             processData: false, // Không xử lý dữ liệu
@@ -72,7 +71,13 @@
             imagePreview: {
                 required: true,
                 imageExtension: true,
+
+            },
+            ImageUrl: {
                 filesize: 2 * 1024 * 1024
+            },
+            CategoryId: {
+                required: true
             }
         },
         messages: {
@@ -95,7 +100,14 @@
             imagePreview: {
                 required: "Vui lòng chọn ảnh",
                 imageExtension: "Chỉ chấp nhận file ảnh JPG, PNG, GIF, BMP",
+
+
+            },
+            ImageUrl: {
                 filesize: "Dung lượng ảnh tối đa là 2MB"
+            },
+            CategoryId: {
+                required: "Vui lòng chọn danh mục"
             }
         }
     });
