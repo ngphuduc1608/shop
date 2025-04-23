@@ -29,3 +29,49 @@ html {
 .famfamfam-flags {
     display: inline-block;
 }
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #007bff !important;
+    border: none !important;
+    color: white !important;
+    padding: 0.25rem 0.5rem !important;
+    margin-top: 0.25rem !important;
+    font-size: 0.9rem;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: #f8f9fa !important;
+}
+
+/* Thanh màu xanh chính */
+.irs-bar,
+.irs-from,
+.irs-to,
+.irs-single {
+    background: #007bff !important;
+    border-color: #007bff !important;
+    color: white !important;
+}
+.irs--flat .irs-from:before, .irs--flat .irs-to:before, .irs--flat .irs-single:before {
+    border-top-color: #007bff !important;
+}
+/* Nút kéo */
+.irs-handle > i:first-child {
+    background-color: #007bff !important;
+}
+
+/* Dải nền của slider */
+.irs-line {
+    background: #e9ecef !important;
+    border: 1px solid #dee2e6;
+}
+
+/* Text label hiển thị giá trị */
+.irs-min,
+.irs-max {
+    color: #6c757d;
+}
+
+/* Hover hiệu ứng nút kéo */
+.irs-handle:hover > i:first-child {
+    background-color: #0056b3 !important;
+}

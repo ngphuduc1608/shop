@@ -1,0 +1,67 @@
+﻿<div class="container mt-5">
+    <div class="mb-4">
+        <h2 class="text-center">Giỏ Hàng</h2>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body p-0">
+            <!-- Cart Header -->
+            <div class="cart-header d-flex align-items-center px-3">
+                <div class="cart-checkbox form-check me-3">
+                    <input class="form-check-input d-none" type="checkbox" id="check_cart">
+                    <label for="check_cart"><span></span></label>
+                </div>
+                <div class="cart-product">Sản Phẩm</div>
+                <div class="cart-price text-center">Đơn Giá</div>
+                <div class="cart-quantity text-center">Số Lượng</div>
+                <div class="cart-total text-center">Tổng Tiền</div>
+                <div class="cart-action text-center">Thao Tác</div>
+            </div>
+
+            <!-- Cart Items -->
+            <div class="listitem">
+                <div class="item d-flex align-items-center border-top pt-3 pb-2 px-3">
+                    <div class="item-checkbox form-check me-3">
+                        <input class="form-check-input d-none" type="checkbox" id="check_item">
+                        <label for="check_item"><span></span></label>
+                    </div>
+
+                    <div class="item-product d-flex align-items-center">
+                        <img src="https://cafe24img.poxo.com/chuukr/web/product/small/202201/fa5b648a249a0147c5f0f6b9fc12c014.webp" class="me-2">
+                        <p class="m-0">Fever Percent. Fingers Crossed Hoodie</p>
+                    </div>
+
+                    <div class="item-price text-center">
+                        <span>$62.00 USD</span>
+                        <span>$43.40 USD</span>
+                    </div>
+
+                    <div class="item-quantity d-flex justify-content-center align-items-center">
+                        <button class="quantity-btn btn border" data-action="decrease"><i class="fa-solid fa-minus"></i></button>
+                        <input type="text" value="1" class="mx-1 form-control text-center" style="width: 60px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <button class="quantity-btn btn border" data-action="increase"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+
+                    <div class="item-total text-danger text-center">$43.40 USD</div>
+
+                    <div class="item-remove text-center">
+                        <button class="btn btn-outline-danger btn-sm">Xóa</button>
+                    </div>
+                </div>
+
+                <!-- Item 2 (copy tương tự như trên, chỉ cần thay id: check_item1) -->
+            </div>
+
+            <!-- Payment Summary -->
+            <div class="pay d-flex justify-content-end align-items-center mt-3 pe-4">
+                <div class="pay-total me-3">
+                    <span>Tổng thanh toán (0 Sản phẩm):</span>
+                    <span class="text-danger">$0 USD</span>
+                </div>
+                <button class="btn btn-primary pay-button">
+                    Mua Hàng <i class="fa-solid fa-heart ms-2" style="color: #f0669d;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

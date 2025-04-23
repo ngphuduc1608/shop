@@ -5,6 +5,7 @@ using Abp.Linq.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using proj_tt.Authorization;
 using proj_tt.Products.Dto;
 using System;
@@ -21,11 +22,13 @@ namespace proj_tt.Products
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IRepository<Product> _productRepository;
+        private readonly IConfiguration _configuration;
 
-        public ProductAppService(IRepository<Product> productRepository, IWebHostEnvironment webHostEnvironment)
+        public ProductAppService(IRepository<Product> productRepository, IConfiguration _configuratio, IWebHostEnvironment webHostEnvironment)
         {
             _productRepository = productRepository;
             _webHostEnvironment = webHostEnvironment;
+            _configuration = _configuratio;
         }
         [AbpAuthorize(PermissionNames.Pages_Products_Create)]
         public async System.Threading.Tasks.Task Create(ProductListDto input)
@@ -44,70 +47,21 @@ namespace proj_tt.Products
                 input.Price,
                 imagePath,
                 input.Discount,
-                input.CategoryId
+                input.CategoryId,
+                input.ProductionDate
             );
 
             // Thêm sản phẩm vào database
             await _productRepository.InsertAsync(product);
         }
 
-        [AbpAuthorize]
+        //[AbpAuthorize]
         // phan trang product
-        //public async Task<PagedResultDto<ProductDto>> GetProductPaged(PagedProductDto input)
-        //{
-        //    //input.MaxResultCount = input.MaxResultCount > 0 ? input.MaxResultCount : 15;
-        //    var products = _productRepository.GetAllIncluding(p => p.Category);
-
-        //    if (!string.IsNullOrWhiteSpace(input.Keyword))
-        //    {
-        //        products = products.Where(
-        //            p => p.Name.Contains(input.Keyword) ||
-        //            p.Price.ToString().Contains(input.Keyword) ||
-        //            p.Discount.ToString().Contains(input.Keyword) ||
-        //            p.Category.NameCategory.ToString().Contains(input.Keyword)
-        //        );
-        //    }
-
-        //    var count = await products.CountAsync();
-
-        //    //input.Sorting = "Id DESC";
-
-        //    if (!string.IsNullOrWhiteSpace(input.Sorting))
-        //    {
-        //        products = products.OrderBy(input.Sorting);
-        //    }
-        //    else
-        //    {
-        //        products = products.OrderByDescending(p => p.CreationTime);
-        //    }
-
-
-
-        //    //var items = await products.OrderBy(input.Sorting).PageBy(input).ToListAsync();
-        //    var items = await products.PageBy(input).ToListAsync();
-
-        //    var result = items.Select(p => new ProductDto
-        //    {
-        //        Id = p.Id,
-        //        Name = p.Name,
-        //        Price = p.Price,
-        //        ImageUrl = p.ImageUrl,
-        //        Discount = p.Discount,
-        //        CategoryId = p.CategoryId ?? 0,
-        //        NameCategory = p.Category != null ? p.Category.NameCategory : "",
-        //        CreationTime = p.CreationTime,
-        //        LastModificationTime = p.LastModificationTime
-        //    }).ToList();
-
-        //    return new PagedResultDto<ProductDto>(count, result);
-
-        //}
-
         public async Task<PagedResultDto<ProductDto>> GetProductPaged(PagedProductDto input)
         {
             //input.MaxResultCount = input.MaxResultCount > 0 ? input.MaxResultCount : 10;
-
-            var products = _productRepository.GetAllIncluding(p => p.Category).AsNoTracking();
+            input.Normalize();
+            var products = _productRepository.GetAllIncluding(p => p.Category);
 
             if (!string.IsNullOrWhiteSpace(input.Keyword))
             {
@@ -116,19 +70,42 @@ namespace proj_tt.Products
                     p.Name.ToLower().Contains(keyword) ||
                     p.Price.ToString().Contains(keyword) ||
                     p.Discount.ToString().Contains(keyword) ||
+                    p.CreationTime.ToString().Contains(keyword) ||
+                    p.LastModificationTime.ToString().Contains(keyword) ||
                     p.Category.NameCategory.ToLower().Contains(keyword)
                 );
             }
 
-            var count = await products.CountAsync();
 
-            if (!string.IsNullOrWhiteSpace(input.Sorting))
+
+            if (input.StartDate.HasValue)
             {
-                products = products.OrderBy(input.Sorting);
+                products = products.Where(x => x.ProductionDate >= input.StartDate.Value);
+            }
+            if (input.EndDate.HasValue)
+            {
+                products = products.Where(x => x.ProductionDate <= input.EndDate.Value);
             }
 
+            if (input.MinPrice.HasValue)
+            {
+                products = products.Where(x => x.Price >= input.MinPrice.Value);
 
-            var items = await products.PageBy(input).ToListAsync();
+            }
+            if (input.MaxPrice.HasValue)
+            {
+                products = products.Where(x => x.Price <= input.MaxPrice.Value);
+            }
+
+            if (input.CategoryIds != null && input.CategoryIds.Any())
+            {
+                var selectedIds = input.CategoryIds.Select(id => Convert.ToInt32(id)).ToList();
+                products = products.Where(x => x.CategoryId.HasValue && selectedIds.Contains(x.CategoryId.Value));
+            }
+
+            var count = await products.CountAsync();
+
+            var items = await products.OrderBy(input.Sorting).PageBy(input).ToListAsync();
 
             var result = items.Select(p => new ProductDto
             {
@@ -140,7 +117,8 @@ namespace proj_tt.Products
                 CategoryId = p.CategoryId ?? 0,
                 NameCategory = p.Category != null ? p.Category.NameCategory : "",
                 CreationTime = p.CreationTime,
-                LastModificationTime = p.LastModificationTime
+                LastModificationTime = p.LastModificationTime,
+                ProductionDate = p.ProductionDate,
             }).ToList();
 
             return new PagedResultDto<ProductDto>(count, result);
@@ -150,12 +128,13 @@ namespace proj_tt.Products
         [AbpAuthorize(PermissionNames.Pages_Products_Edit)]
         public async Task Update(UpdateProductDto input)
         {
-            var product = await _productRepository.FirstOrDefaultAsync((int)input.Id);
+            var product = await _productRepository.GetAsync(input.Id);
 
             product.Name = input.Name.Trim();
             product.Price = input.Price;
             product.Discount = input.Discount;
             product.CategoryId = input.CategoryId;
+            product.ProductionDate = input.ProductionDate;
 
 
             if (input.ImageUrl != null)
@@ -177,6 +156,41 @@ namespace proj_tt.Products
             await _productRepository.DeleteAsync(id);
         }
 
+        //private async Task<string> SaveImageAsync(IFormFile file)
+        //{
+        //    if (file == null || file.Length == 0)
+        //    {
+        //        return null;
+        //    }
+        //    // Đường dẫn thư mục lưu ảnh: wwwroot/uploads/products
+        //    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images/products");
+        //    if (!Directory.Exists(uploadsFolder))
+        //    {
+        //        Directory.CreateDirectory(uploadsFolder);
+        //    }
+        //    // Tạo tên file duy nhất
+        //    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+        //    var filePath = Path.Combine(uploadsFolder, fileName);
+        //    // Lưu file ảnh vào thư mục
+        //    using (var stream = new FileStream(filePath, FileMode.Create))
+        //    {
+        //        await file.CopyToAsync(stream);
+        //    }
+        //    // Lưu đường dẫn tương đối vào database
+        //    //return $"/images/products/{fileName}"; // Trả về đường dẫn để lưu vào database
+
+
+        //    // Lấy base URL từ configuration
+        //    var baseUrl = _configuration["App:BaseUrl"];
+        //    if (string.IsNullOrEmpty((string)baseUrl))
+        //    {
+        //        throw new UserFriendlyException("BaseUrl is not configured in appsettings.json");
+        //    }
+
+        //    // Trả về đường dẫn tuyệt đối
+        //    return $"{baseUrl}/images/products/{fileName}";
+
+        //}
 
         private async Task<string> SaveImageAsync(IFormFile file)
         {
@@ -202,7 +216,7 @@ namespace proj_tt.Products
             return $"/uploads/products/{fileName}"; // Trả về đường dẫn để lưu vào database
         }
 
-        [AbpAuthorize]
+        //[AbpAuthorize]
         public async Task<ProductDto> GetProducts(int id)
         {
 

@@ -1,0 +1,54 @@
+﻿@model proj_tt.Web.Models.Tasks.IndexViewModel
+
+@{
+    ViewBag.Title = L("TaskList");
+    ViewBag.ActiveMenu = "TaskList"; 
+}
+
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/js/views/tasks/index.js"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/js/views/tasks/index.min.js"></script>
+    </environment>
+}
+<h2 style="display: flex; justify-content: space-between;">
+    @("TaskList")
+    <span><a class="btn btn-primary btn-sm" asp-action="Create">@("AddNew")</a></span>
+    <span class="pull-right">
+        @Html.DropDownListFor(
+                 model => model.SelectedTaskState,
+                 Model.GetTasksStateSelectListItems(LocalizationManager),
+                 new
+                 {
+                     @class = "form-control",
+                     id = "TaskStateCombobox"
+                 })
+    </span>
+</h2>
+
+<div class="row">
+    <div style="width: 100%; padding: 0 20px;">
+        <ul class="list-group" id="TaskList">
+            @foreach (var task in Model.Tasks)
+            {
+                <li class="list-group-item" style="display: flex;justify-content: space-between;">
+                    <div>
+                        <h4 class="list-group-item-heading">@task.Title</h4>
+                        <div class="list-group-item-text">
+                            @task.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")|@(task.AssignedPersonName ?? "Unassigned")
+                        </div>
+                    </div>
+
+                    <span class="pull-right label label-lg ">
+                        <div class="btn @Model.GetTaskLabel(task)">@task.State</div>
+                        </span>
+
+                </li>
+            }
+        </ul>
+    </div>
+</div>

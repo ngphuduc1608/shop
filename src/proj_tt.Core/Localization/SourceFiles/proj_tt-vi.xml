@@ -11,6 +11,7 @@
 		<text name="Discount">Giảm giá</text>
 		<text name="ImageUrl">Hình ảnh</text>
 		<text name="CategoryName">Danh mục</text>
+		<text name="ProductionDate">Ngày sản xuất</text>
 		<text name="CreationTime">Thời gian  tạo</text>
 		<text name="UpdateTime">Thời gian cập nhật</text>
 		<text name="EditProduct" value="Chỉnh sửa sản phẩm" />
@@ -21,6 +22,22 @@
 		<text name="Success" value="Thành công" />
 		<text name="Fail" value="Thất bại" />
 		<text name="SavedFailed" value="Lưu thất bại!" />
+		<text name="CategoryEmpty" value="--Chọn danh mục--" />
+		<text name="ProductNameRequired" value="Tên sản phẩm không được để trống" />
+		<text name="PriceRequired" value="Vui lòng nhập giá" />
+		<text name="PriceMustBeNumber" value="Giá phải là số" />
+		<text name="PriceMin" value="Giá phải lớn hơn hoặc bằng 0" />
+		<text name="PriceMax" value="Max là 2000 tỷ thôi bro 😒" />
+		<text name="DiscountMustBeNumber" value="Giảm giá phải là số" />
+		<text name="DiscountMin" value="Tối thiểu là 0%" />
+		<text name="DiscountMax" value="Tối đa là 100%" />
+		<text name="ImageRequired" value="Vui lòng chọn ảnh" />
+		<text name="ImageExtensionInvalid" value="Chỉ chấp nhận file ảnh JPG, PNG, GIF, BMP" />
+		<text name="ImageFilesizeMax" value="Dung lượng ảnh tối đa là 2MB" />
+		<text name="CategoryRequired" value="Vui lòng chọn danh mục" />
+		<text name="AreYouSure" value="Bạn có chắc không?" />
+		<text name="DeleteCategoryError" value="Không thể xóa vì danh mục này đang chứa sản phẩm!" />
+		<text name="DeleteError" value="Đã xảy ra lỗi khi xóa!" />
 
 
 

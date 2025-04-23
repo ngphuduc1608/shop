@@ -7,6 +7,7 @@ namespace proj_tt.Products
 {
     public interface IProductAppService : IApplicationService
     {
+
         Task<ProductDto> GetProducts(int id);
 
         Task<PagedResultDto<ProductDto>> GetProductPaged(PagedProductDto input);

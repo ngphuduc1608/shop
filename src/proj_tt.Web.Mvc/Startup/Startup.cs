@@ -1,22 +1,23 @@
-﻿using System.Text.Encodings.Web;
-using System.Text.Unicode;
+﻿using Abp.AspNetCore;
+using Abp.AspNetCore.Mvc.Antiforgery;
+using Abp.AspNetCore.SignalR.Hubs;
+using Abp.Castle.Logging.Log4Net;
+using Castle.Facilities.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Castle.Facilities.Logging;
-using Abp.AspNetCore;
-using Abp.AspNetCore.Mvc.Antiforgery;
-using Abp.Castle.Logging.Log4Net;
+using Microsoft.Extensions.WebEncoders;
 using proj_tt.Authentication.JwtBearer;
 using proj_tt.Configuration;
 using proj_tt.Identity;
+using proj_tt.Products;
 using proj_tt.Web.Resources;
-using Abp.AspNetCore.SignalR.Hubs;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.WebEncoders;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 namespace proj_tt.Web.Startup
 {
@@ -49,7 +50,16 @@ namespace proj_tt.Web.Startup
             {
                 options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
             });
-
+            // thieets laapj PORT
+            services.AddScoped<IProductAppService, ProductAppService>();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowClient",
+                    builder => builder
+                        .WithOrigins("https://localhost:44311")  // URL của client
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
             services.AddScoped<IWebResourceManager, WebResourceManager>();
 
             services.AddSignalR();
@@ -81,6 +91,7 @@ namespace proj_tt.Web.Startup
             }
 
             app.UseStaticFiles();
+            app.UseCors("AllowClient");
 
             app.UseRouting();
 
