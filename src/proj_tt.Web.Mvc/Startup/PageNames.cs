@@ -10,6 +10,10 @@
         public const string Tasks = "Tasks";
         public const string Products = "Product";
         public const string Categories = "Categories";
+        public const string Carts = "Carts";
+        public const string Orders = "Orders";
+
+
 
 
 

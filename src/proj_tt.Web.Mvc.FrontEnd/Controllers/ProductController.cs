@@ -51,9 +51,9 @@ namespace proj_tt.Web.Controllers
             return Ok();
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int productId)
         {
-            var product = await _productAppService.GetProducts(id);
+            var product = await _productAppService.GetProducts(productId);
             var model = new IndexViewModel
             {
                 Product = product

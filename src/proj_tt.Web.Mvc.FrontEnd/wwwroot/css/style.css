@@ -1170,6 +1170,34 @@ ul {
     color: #6c757d;
 }
 
+
+/* Breadcrumb styles */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+    font-weight: 400;
+}
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+.breadcrumb-item.active {
+    color: #000;
+    font-weight: 500;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: ">";
+    color: #666;
+}
+
 /* Sort dropdown */
 .sort-dropdown .dropdown-toggle {
     width: 100%;
@@ -1177,12 +1205,7 @@ ul {
     position: relative;
 }
 
-.sort-dropdown .dropdown-toggle:after {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-}
+
 
 /* Responsive adjustments */
 @media (max-width: 991px) {

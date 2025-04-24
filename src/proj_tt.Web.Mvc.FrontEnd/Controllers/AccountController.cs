@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Abp;
+﻿using Abp;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.Authorization;
 using Abp.Authorization.Users;
@@ -16,12 +8,13 @@ using Abp.Domain.Uow;
 using Abp.Extensions;
 using Abp.MultiTenancy;
 using Abp.Notifications;
-using Abp.Runtime.Session;
 using Abp.Threading;
 using Abp.Timing;
 using Abp.UI;
 using Abp.Web.Models;
 using Abp.Zero.Configuration;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using proj_tt.Authorization;
 using proj_tt.Authorization.Users;
 using proj_tt.Controllers;
@@ -30,6 +23,12 @@ using proj_tt.MultiTenancy;
 using proj_tt.Sessions;
 using proj_tt.Web.Models.Account;
 using proj_tt.Web.Views.Shared.Components.TenantChange;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace proj_tt.Web.Controllers
 {
@@ -368,15 +367,15 @@ namespace proj_tt.Web.Controllers
         #endregion
 
         #region 403 Forbidden
-        
+
         [Route("/Account/Forbidden")]
         public ActionResult Error403()
         {
             return View();
         }
-        
+
         #endregion
-        
+
         #region Helpers
 
         public ActionResult RedirectToAppHome()
@@ -386,7 +385,7 @@ namespace proj_tt.Web.Controllers
 
         public string GetAppHomeUrl()
         {
-            return Url.Action("Index", "About");
+            return Url.Action("Index", "Home");
         }
 
         #endregion

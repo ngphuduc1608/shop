@@ -5,7 +5,6 @@ using Abp.Linq.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using proj_tt.Authorization;
 using proj_tt.Products.Dto;
 using System;
@@ -17,18 +16,18 @@ using System.Threading.Tasks;
 
 namespace proj_tt.Products
 {
-    [AbpAuthorize]
+    //[AbpAuthorize]
     public class ProductAppService : proj_ttAppServiceBase, IProductAppService
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IRepository<Product> _productRepository;
-        private readonly IConfiguration _configuration;
+        private readonly string _imageRootPath;
 
-        public ProductAppService(IRepository<Product> productRepository, IConfiguration _configuratio, IWebHostEnvironment webHostEnvironment)
+        public ProductAppService(IRepository<Product> productRepository, IWebHostEnvironment webHostEnvironment)
         {
             _productRepository = productRepository;
             _webHostEnvironment = webHostEnvironment;
-            _configuration = _configuratio;
+            _imageRootPath = Path.Combine("D:", "upload", "Product");
         }
         [AbpAuthorize(PermissionNames.Pages_Products_Create)]
         public async System.Threading.Tasks.Task Create(ProductListDto input)
@@ -56,6 +55,8 @@ namespace proj_tt.Products
         }
 
         //[AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Pages_Products)]
+
         // phan trang product
         public async Task<PagedResultDto<ProductDto>> GetProductPaged(PagedProductDto input)
         {
@@ -192,31 +193,54 @@ namespace proj_tt.Products
 
         //}
 
+        //private async Task<string> SaveImageAsync(IFormFile file)
+        //{
+        //    if (file == null || file.Length == 0)
+        //    {
+        //        return null;
+        //    }
+        //    // Đường dẫn thư mục lưu ảnh: wwwroot/uploads/products
+        //    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads/products");
+        //    if (!Directory.Exists(uploadsFolder))
+        //    {
+        //        Directory.CreateDirectory(uploadsFolder);
+        //    }
+        //    // Tạo tên file duy nhất
+        //    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+        //    var filePath = Path.Combine(uploadsFolder, fileName);
+        //    // Lưu file ảnh vào thư mục
+        //    using (var stream = new FileStream(filePath, FileMode.Create))
+        //    {
+        //        await file.CopyToAsync(stream);
+        //    }
+        //    // Lưu đường dẫn tương đối vào database
+        //    return $"/uploads/products/{fileName}"; // Trả về đường dẫn để lưu vào database
+        //}
+
+
         private async Task<string> SaveImageAsync(IFormFile file)
         {
             if (file == null || file.Length == 0)
-            {
                 return null;
-            }
-            // Đường dẫn thư mục lưu ảnh: wwwroot/uploads/products
-            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads/products");
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
-            // Tạo tên file duy nhất
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var filePath = Path.Combine(uploadsFolder, fileName);
-            // Lưu file ảnh vào thư mục
-            using (var stream = new FileStream(filePath, FileMode.Create))
+
+            var fileName = Guid.NewGuid().ToString("N") + Path.GetExtension(file.FileName);
+            var savePath = Path.Combine(_imageRootPath, fileName);
+
+            // Tạo thư mục nếu chưa tồn tại
+            Directory.CreateDirectory(_imageRootPath);
+
+            using (var stream = new FileStream(savePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
-            // Lưu đường dẫn tương đối vào database
-            return $"/uploads/products/{fileName}"; // Trả về đường dẫn để lưu vào database
+
+            // Trả về đường dẫn tương đối để truy cập từ trình duyệt
+            return "/upload/Product/" + fileName;
         }
 
         //[AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Pages_Products)]
+
         public async Task<ProductDto> GetProducts(int id)
         {
 

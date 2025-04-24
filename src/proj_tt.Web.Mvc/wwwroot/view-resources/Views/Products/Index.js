@@ -18,11 +18,13 @@
     var _$productsTable = _$table.DataTable({
         paging: true,
         serverSide: true,
+        ordering: true,
+        processing: true,
         listAction: {
             ajaxFunction: _productService.getProductPaged,
             inputFilter: function () {
                 var filter = $('#ProductsSearchForm').serializeFormToObject(true);
-                
+
                 // Get date range values
                 var dateRange = $('#ProductionDateRange').val();
                 if (dateRange) {
@@ -34,13 +36,26 @@
                 // Get price range values
                 var minPrice = $('#MinPriceInput').val();
                 var maxPrice = $('#MaxPriceInput').val();
+                console.log('maxPrice:', maxPrice);
+                console.log('minPrice:', minPrice);
+
                 if (minPrice) filter.minPrice = minPrice;
                 if (maxPrice) filter.maxPrice = maxPrice;
 
                 // Get selected categories
                 var selectedCategories = $('#CategoryDropdownEdit').val();
+                console.log('selectedCategories:', selectedCategories);
                 if (selectedCategories && selectedCategories.length > 0) {
                     filter.categoryIds = selectedCategories;
+                }
+                var dataTable = _$table.DataTable();
+                var order = dataTable.order(); // ví dụ: [[0, 'asc']]
+                if (order.length > 0) {
+                    var columnIndex = order[0][0];
+                    var direction = order[0][1]; // 'asc'/ 'desc'
+                    var sortField = dataTable.column(columnIndex).dataSrc(); // lay ten data cot set ở columnDefs
+
+                    filter.sorting = sortField + ' ' + direction;
                 }
 
                 console.log('Filter data:', filter);
@@ -68,22 +83,22 @@
             {
                 targets: 1,
                 data: 'name',
-                sortable: false,
+                orderable: true,
 
             },
             {
                 targets: 2,
                 data: 'price',
-                sortable: false,
+                orderable: true,
                 render: function (data, type, row, meta) {
                     if (!data) return '0';
-                    return Number(data).toLocaleString("vi-VN") + ' VND';
+                    return Number(data) + ' VND';
                 }
             },
             {
                 targets: 3,
                 data: 'discount',
-                sortable: false,
+                orderable: true,
             },
             {
                 targets: 4,
@@ -102,7 +117,7 @@
             {
                 targets: 6,
                 data: 'productionDate',
-                sortable: false,
+                orderable: true,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     const date = new Date(data);
@@ -112,7 +127,7 @@
             {
                 targets: 7,
                 data: 'creationTime',
-                sortable: false,
+                orderable: true,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     const date = new Date(data);
@@ -122,7 +137,7 @@
             {
                 targets: 8,
                 data: 'lastModificationTime',
-                sortable: false,
+                orderable: true,
                 render: function (data, type, row, meta) {
                     if (!data) return '';
                     const date = new Date(data);

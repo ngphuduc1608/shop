@@ -254,3 +254,4 @@ paket-files/
 src/proj_tt.Web.Mvc/secrets.json
 src/proj_tt.Web.Host/secrets.json
 src/proj_tt.Migrator/secrets.json
+/src/proj_tt.Application/Orders/OrderAppService.cs

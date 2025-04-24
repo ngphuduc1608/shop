@@ -4,26 +4,7 @@
 
 
 <style>
-    .breadcrumb {
-        background-color: transparent;
-        padding: 0;
-        margin: 0;
-    }
 
-    .breadcrumb-item a {
-        color: #6c757d; /* Màu xám nhạt giống ảnh */
-        text-decoration: none;
-        font-weight: 400;
-    }
-
-        .breadcrumb-item a:hover {
-            text-decoration: underline;
-        }
-
-    .breadcrumb-item.active {
-        color: #000; /* Item cuối: màu đậm */
-        font-weight: 500;
-    }
     .product-gallery-thumbnail {
         transition: all 0.3s ease;
         cursor: pointer;
@@ -83,7 +64,52 @@
         }
     }
 
-  
+    function addToCart() {
+        const quantity = parseInt(document.getElementById('quantity').value);
+        const productId = @Model.Product.Id;
+
+        $.ajax({
+            url: '/Cart/AddToCart',
+            type: 'POST',
+            data: {
+                productId: productId,
+                quantity: quantity
+            },
+            success: function(response) {
+                if (response.success) {
+                    abp.notify.success('SavedSuccessfully');
+                }
+            },
+            error: function() {
+                abp.notify.error(('FailedToSave'));
+            }
+        });
+    }
+
+    function buyNow() {
+        const quantity = parseInt(document.getElementById('quantity').value);
+        const productId = @Model.Product.Id;
+
+        $.ajax({
+            url: '/Cart/AddToCart',
+            type: 'POST',
+            data: {
+                productId: productId,
+                quantity: quantity
+            },
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = '/Order/Checkout?productId=' + productId;
+                } else {
+                    abp.notify.error(('FailedToSave'));
+                }
+            },
+            error: function() {
+                abp.notify.error(('FailedToSave'));
+            }
+        });
+    }
+
 </script>
 
 
@@ -91,7 +117,7 @@
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/"><i class="fas fa-home me-2"></i>Home</a></li>
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
             <li class="breadcrumb-item"><a href="/Product">Products</a></li>
             <li class="breadcrumb-item active" aria-current="page">@Model.Product.Name</li>
         </ol>
@@ -146,10 +172,10 @@
                     </div>
 
                     <div class="d-flex gap-2 mb-3">
-                        <button class="btn btn-success flex-grow-1">
+                        <button class="btn btn-success flex-grow-1" onclick="addToCart()">
                             <i class="fas fa-shopping-cart me-2"></i> Add to Cart
                         </button>
-                        <button class="btn btn-primary flex-grow-1">
+                        <button class="btn btn-primary flex-grow-1" onclick="buyNow()">
                             <i class="fas fa-bolt me-2"></i> Buy Now
                         </button>
                     </div>

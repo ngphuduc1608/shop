@@ -58,6 +58,20 @@ namespace proj_tt.Web.Startup
                     )
                 ).AddItem(
                     new MenuItemDefinition(
+                        "Orders",
+                        L("Orders"),
+                        url: "Orders",
+                        icon: "fas fa-box"
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        "Carts",
+                        L("Carts"),
+                        url: "Carts",
+                        icon: "fas fa-box"
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
                         "ViewUser",
                         L("ViewUser"),
                         url: "https://localhost:44311/",

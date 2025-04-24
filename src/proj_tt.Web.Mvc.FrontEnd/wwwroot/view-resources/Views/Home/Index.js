@@ -18,7 +18,7 @@
                 console.log('p:', p);
                 html += `
 <div class="col">
-    <a href="/Product/Details/${p.id}" class="product-item text-decoration-none">
+    <a href="/Product/Details?productId=${p.id}" class="product-item text-decoration-none">
         <div class="box position-relative">
             <div class="a-img">
                 <img class="thumb w-100" src="${p.imageUrl}" alt="${p.name}">

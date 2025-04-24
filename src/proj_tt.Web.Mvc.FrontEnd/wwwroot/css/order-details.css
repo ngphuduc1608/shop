@@ -1,0 +1,73 @@
+.order-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.order-details-title {
+    font-size: 1.75rem;
+    color: #333;
+    margin: 0;
+}
+
+.order-details-status {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+.order-details-section {
+    margin-bottom: 2rem;
+}
+
+.order-details-section-title {
+    font-size: 1.25rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.order-details-info {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 4px;
+}
+
+.order-details-info-item {
+    margin-bottom: 0.75rem;
+}
+
+.order-details-info-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.order-details-table {
+    margin-top: 2rem;
+}
+
+.order-details-table th {
+    background-color: #f8f9fa;
+    font-weight: 500;
+}
+
+.order-details-product-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.order-details-product-name {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.order-details-total {
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-align: right;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+} 

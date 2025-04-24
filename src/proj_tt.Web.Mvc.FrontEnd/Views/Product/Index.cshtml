@@ -1,40 +1,159 @@
-﻿@{
+﻿@model proj_tt.Web.Models.Products.IndexViewModel
+@{
     ViewBag.Title = "Products";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/>
+}
+
 @section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
     <script>
         $(document).ready(function() {
             var currentPage = 1;
             var pageSize = 15;
             var totalItems = 0;
             var totalPages = 0;
+            var selectedCategories = [];
+            var currentMinPrice = 0;
+            var currentMaxPrice = 1000;
+            var isPriceRangeAdjusted = false;
+            var currentSort = "CreationTime desc";
+
+            // Get keyword from URL if exists
+            var urlParams = new URLSearchParams(window.location.search);
+            var keyword = urlParams.get('Keyword');
+            if (keyword) {
+                $('#ProductsSearchForm input[name="Keyword"]').val(keyword);
+            }
+
+            // Initialize ionRangeSlider
+            $("#priceRange").ionRangeSlider({
+                type: "double",
+                min: 0,
+                max: 1000,
+                from: 0,
+                to: 1000,
+                step: 10,
+                grid: true,
+                prefix: "$",
+                postfix: "",
+                onFinish: function (data) {
+                    currentMinPrice = data.from;
+                    currentMaxPrice = data.to;
+                    $("#MinPriceInput").val(data.from);
+                    $("#MaxPriceInput").val(data.to);
+                    isPriceRangeAdjusted = true;
+                    isFilterApplied = true;
+                }
+            });
+
+            // Update slider when input values change
+            $("#MinPriceInput").on('change', function() {
+                var value = parseInt($(this).val()) || 0;
+                currentMinPrice = value;
+                $("#priceRange").data("ionRangeSlider").update({
+                    from: value
+                });
+                isPriceRangeAdjusted = true;
+                isFilterApplied = true;
+            });
+
+            $("#MaxPriceInput").on('change', function() {
+                var value = parseInt($(this).val()) || 1000;
+                currentMaxPrice = value;
+                var slider = $("#priceRange").data("ionRangeSlider");
+                isPriceRangeAdjusted = true;
+                isFilterApplied = true;
+
+                if (value > slider.options.max) {
+                    slider.update({
+                        max: value,
+                        to: value
+                    });
+                } else {
+                    slider.update({
+                        to: value
+                    });
+                }
+            });
+
+            // Handle category selection
+            $('.category-checkbox').on('change', function() {
+                var categoryId = $(this).val();
+                if ($(this).is(':checked')) {
+                    if (!selectedCategories.includes(categoryId)) {
+                        selectedCategories.push(categoryId);
+                    }
+                } else {
+                    selectedCategories = selectedCategories.filter(id => id !== categoryId);
+                }
+                isFilterApplied = true;
+            });
+
+            // Handle Apply Filter button click
+            $('.btn-primary').on('click', function() {
+                currentPage = 1;
+                loadProducts(currentPage);
+            });
+
+            // Handle Reset Filter button click
+            $('.btn-outline-secondary').on('click', function() {
+                $("#priceRange").data("ionRangeSlider").reset();
+                $("#MinPriceInput").val('');
+                $("#MaxPriceInput").val('');
+                $('.category-checkbox').prop('checked', false);
+                selectedCategories = [];
+                isPriceRangeAdjusted = false;
+                isFilterApplied = false;
+                currentPage = 1;
+                loadProducts(currentPage);
+            });
 
             // Function to load products
             function loadProducts(page) {
-                var input = {
-                    skipCount: (page - 1) * pageSize,
-                    maxResultCount: pageSize,
-                    sorting: "CreationTime desc"
-                };
+                var filter = {};
+                
+                // Add keyword from URL if exists
+                if (keyword) {
+                    filter.Keyword = keyword;
+                }
+                
+                // Add pagination parameters
+                filter.skipCount = (page - 1) * pageSize;
+                filter.maxResultCount = pageSize;
+                
+                // Add sorting
+                filter.sorting = currentSort;
+                
+                // Always add price range if values are set
+                if (currentMinPrice > 0 || currentMaxPrice < 1000) {
+                    filter.minPrice = currentMinPrice;
+                    filter.maxPrice = currentMaxPrice;
+                }
+                
+                // Always add categories if any selected
+                if (selectedCategories.length > 0) {
+                    filter.categoryIds = selectedCategories;
+                }
+
+                console.log('filter', filter);
+
+                // Convert filter to query string
+                var queryString = $.param(filter, true);
 
                 $.ajax({
-                    url: '/api/services/app/Product/GetProductPaged',
+                    url: '/api/services/app/Product/GetProductPaged?' + queryString,
                     type: 'GET',
-                    data: input,
                     success: function(response) {
                         if (response.success) {
                             var products = response.result.items;
                             totalItems = response.result.totalCount;
                             totalPages = Math.ceil(totalItems / pageSize);
                             
-                            // Update product grid
                             updateProductGrid(products);
-                            
-                            // Update pagination
                             updatePagination(page);
-                            
-                            // Update results count
                             updateResultsCount(page);
                         }
                     },
@@ -49,16 +168,38 @@
                 var $productList = $('.product-list');
                 $productList.empty();
 
+                if (!products || products.length === 0) {
+                    var noProductsHtml = `
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="min-height: 60vh;">
+                            <div class="text-center px-4">
+                                <img src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/search/6724b074573bd78dea13.png"
+                                     alt="No products" 
+                                     style="width: 128px; height: 128px; margin-bottom: 24px;">
+                                <h5 class="mb-3">Hix. Không có sản phẩm nào. Bạn thử tắt điều kiện lọc và tìm lại nhé?</h5>
+                                <div class="my-3">
+                                    <span class="text-muted">or</span>
+                                </div>
+                                <button class="btn btn-danger" onclick="$('.btn-outline-secondary').click();">Xóa bộ lọc</button>
+                            </div>
+                        </div>
+                    `;
+                    $productList.append(noProductsHtml);
+                    $('.pagination').parent('nav').hide();
+                    return;
+                }
+
+                $('.pagination').parent('nav').show();
+
                 products.forEach(function(product) {
                     var productHtml = `
                         <div class="col">
-                            <a href="/Product/Details/${product.id}" class="product-item text-decoration-none">
+                            <a href="/Product/Details?productId=${product.id}" class="product-item text-decoration-none">
                                 <div class="box position-relative">
                                     <div class="a-img">
                                         <img class="thumb w-100" src="${product.imageUrl}" alt="${product.name}">
                                     </div>
                                     <div class="status">
-                                        <img src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
+                                        <img style="width: 80%;" src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
                                     </div>
                                     <div class="discount-badge">
                                         <span>${product.discount}%</span>
@@ -68,8 +209,8 @@
                                             <span>${product.name}</span>
                                         </p>
                                         <div class="price-info">
-                                            <span class="current-price">$${(product.price * (1 - product.discount/100)).toFixed(2)} USD</span>
-                                            <span class="original-price">$${product.price.toFixed(2)} USD</span>
+                                            <span class="current-price">$${(product.price * (1 - product.discount/100)).toFixed(2)}</span>
+                                            <span class="original-price">$${product.price.toFixed(2)}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -133,6 +274,14 @@
                 }
             });
 
+            // Handle sort dropdown selection
+            $('.dropdown-item[data-sort]').on('click', function(e) {
+                e.preventDefault();
+                currentSort = $(this).data('sort');
+                $('#sortDropdown').text('Sort by: ' + $(this).text());
+                loadProducts(currentPage);
+            });
+
             // Initial load
             loadProducts(currentPage);
         });
@@ -140,388 +289,98 @@
 }
 
 <div class="container py-4">
-        <div class="row">
-            <!-- Filter Sidebar -->
-            <div class="col-lg-3">
-                <div class="filter-sidebar">
-                    <div class="filter-header">
-                        <h5>Filters</h5>
-                    </div>
-
-                    <!-- Categories -->
-                    <div class="filter-group">
-                        <div class="filter-title" data-bs-toggle="collapse" href="#categoryFilter" role="button" aria-expanded="true">
-                            Categories
-                        </div>
-                        <div class="filter-options collapse show" id="categoryFilter">
-                            <div class="filter-option">
-                                <input type="checkbox" id="category1" class="form-check-input">
-                                <label for="category1" class="form-check-label">Electronics</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="category2" class="form-check-input">
-                                <label for="category2" class="form-check-label">Fashion</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="category3" class="form-check-input">
-                                <label for="category3" class="form-check-label">Home & Kitchen</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="category4" class="form-check-input">
-                                <label for="category4" class="form-check-label">Beauty</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="category5" class="form-check-input">
-                                <label for="category5" class="form-check-label">Sports</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Price Range -->
-                    <div class="filter-group">
-                        <div class="filter-title" data-bs-toggle="collapse" href="#priceFilter" role="button" aria-expanded="true">
-                            Price Range
-                        </div>
-                        <div class="filter-options collapse show" id="priceFilter">
-                            <div class="price-range">
-                                <input type="range" class="form-range" min="0" max="1000" step="50" id="priceRange">
-                            </div>
-                            <div class="price-range-values">
-                                <span>$0</span>
-                                <span>$1000</span>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <button class="btn btn-primary w-100 mt-3">Apply Filters</button>
-                    <button class="btn btn-outline-secondary w-100 mt-2">Reset All</button>
+    <div class="row">
+        <!-- Filter Sidebar -->
+        <div class="col-lg-3">
+            <div class="filter-sidebar">
+                <div class="filter-header">
+                    <h5>Filters</h5>
                 </div>
-            </div>
 
-            <!-- Main Content -->
-            <div class="col-lg-9">
-                @* <!-- Active Filters --> *@
-                @* <div class="active-filters"> *@
-                @*     <span class="active-filter"> *@
-                @*         Electronics <span class="remove-filter"><i class="fas fa-times"></i></span> *@
-                @*     </span> *@
-                @*     <span class="active-filter"> *@
-                @*         $100 - $500 <span class="remove-filter"><i class="fas fa-times"></i></span> *@
-                @*     </span> *@
-                @*     <span class="active-filter"> *@
-                @*         Samsung <span class="remove-filter"><i class="fas fa-times"></i></span> *@
-                @*     </span> *@
-                @* </div> *@
-
-                <!-- Sort and Results Count -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="results-count">
-                        Showing <strong>1-10</strong> of <strong>56</strong> products
+                <!-- Categories -->
+                <div class="filter-group">
+                    <div class="filter-title" data-bs-toggle="collapse" href="#categoryFilter" role="button" aria-expanded="true">
+                        Categories
                     </div>
-                    <div class="sort-dropdown">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                Sort by: Featured
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                                <li><a class="dropdown-item" href="#">Featured</a></li>
-                                <li><a class="dropdown-item" href="#">Price: Low to High</a></li>
-                                <li><a class="dropdown-item" href="#">Price: High to Low</a></li>
-                                <li><a class="dropdown-item" href="#">Customer Reviews</a></li>
-                                <li><a class="dropdown-item" href="#">Newest Arrivals</a></li>
-                            </ul>
+                    <div class="filter-options collapse show" id="categoryFilter">
+                        @foreach (var category in Model.Categories)
+                        {
+                            <div class="filter-option">
+                                <input type="checkbox" id="category_@category.Value" class="form-check-input category-checkbox" value="@category.Value">
+                                <label for="category_@category.Value" class="form-check-label">@category.Text</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Price Range -->
+                <div class="filter-group">
+                    <div class="filter-title" data-bs-toggle="collapse" href="#priceFilter" role="button" aria-expanded="true">
+                        Price Range
+                    </div>
+                    <div class="filter-options collapse show" id="priceFilter">
+                        <div class="price-inputs mb-2">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="MinPriceInput" placeholder="Min">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="MaxPriceInput" placeholder="Max">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="price-range">
+                            <input type="text" class="js-range-slider" id="priceRange" name="priceRange" value="" />
+                            <input type="hidden" id="MinPrice" name="MinPrice" />
+                            <input type="hidden" id="MaxPrice" name="MaxPrice" />
                         </div>
                     </div>
                 </div>
 
-                <!-- Product Grid -->
-                <div class="tab-contents" style="width:100%">
-                    <div class="element-product">
-                        <div class="products">
-                            <div class="product-list row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
-                                <!-- Product 1 -->
-                                <div class="col">
-                                    <a href="/Product/Details/1" class="product-item text-decoration-none">
-                                        <div class="box position-relative">
-                                            <div class="a-img">
-                                                <img class="thumb w-100" src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fHNtYXJ0cGhvbmV8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60" alt="Galaxy S23 Ultra">
-                                            </div>
-                                            <div class="status">
-                                                <img src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
-                                            </div>
-                                            <div class="discount-badge">
-                                                <span>10%</span>
-                                            </div>
-                                            <div class="product-description">
-                                                <p class="name">
-                                                    <span>Galaxy S23 Ultra</span>
-                                                </p>
-                                                <div class="price-info">
-                                                    <span class="current-price">$809.99 USD</span>
-                                                    <span class="original-price">$899.99 USD</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                <!-- Product 2 -->
-                                <div class="col">
-                                    <a href="/Product/Details/2" class="product-item text-decoration-none">
-                                        <div class="box position-relative">
-                                            <div class="a-img">
-                                                <img class="thumb w-100" src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFjYm9va3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="MacBook Pro M2">
-                                            </div>
-                                            <div class="status">
-                                                <img src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
-                                            </div>
-                                            <div class="discount-badge">
-                                                <span>7%</span>
-                                            </div>
-                                            <div class="product-description">
-                                                <p class="name">
-                                                    <span>MacBook Pro M2</span>
-                                                </p>
-                                                <div class="price-info">
-                                                    <span class="current-price">$1,208.07 USD</span>
-                                                    <span class="original-price">$1,299.00 USD</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                <!-- Product 3 -->
-                                <div class="col">
-                                    <a href="/Product/Details/3" class="product-item text-decoration-none">
-                                        <div class="box position-relative">
-                                            <div class="a-img">
-                                                <img class="thumb w-100" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8d2F0Y2h8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60" alt="Smart Watch Series 7">
-                                            </div>
-                                            <div class="status">
-                                                <img src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
-                                            </div>
-                                            <div class="discount-badge">
-                                                <span>20%</span>
-                                            </div>
-                                            <div class="product-description">
-                                                <p class="name">
-                                                    <span>Smart Watch Series 7</span>
-                                                </p>
-                                                <div class="price-info">
-                                                    <span class="current-price">$319.20 USD</span>
-                                                    <span class="original-price">$399.00 USD</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                <!-- Product 4 -->
-                                <div class="col">
-                                    <a href="/Product/Details/4" class="product-item text-decoration-none">
-                                        <div class="box position-relative">
-                                            <div class="a-img">
-                                                <img class="thumb w-100" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aGVhZHBob25lc3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Noise Cancelling Headphones">
-                                            </div>
-                                            <div class="status">
-                                                <img src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
-                                            </div>
-                                            <div class="discount-badge">
-                                                <span>15%</span>
-                                            </div>
-                                            <div class="product-description">
-                                                <p class="name">
-                                                    <span>Noise Cancelling Headphones</span>
-                                                </p>
-                                                <div class="price-info">
-                                                    <span class="current-price">$297.49 USD</span>
-                                                    <span class="original-price">$349.99 USD</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                <!-- Product 5 -->
-                                <div class="col">
-                                    <a href="/Product/Details/5" class="product-item text-decoration-none">
-                                        <div class="box position-relative">
-                                            <div class="a-img">
-                                                <img class="thumb w-100" src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Y2FtZXJhfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60" alt="Mirrorless Camera">
-                                            </div>
-                                            <div class="status">
-                                                <img src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
-                                            </div>
-                                            <div class="discount-badge">
-                                                <span>12%</span>
-                                            </div>
-                                            <div class="product-description">
-                                                <p class="name">
-                                                    <span>Mirrorless Camera</span>
-                                                </p>
-                                                <div class="price-info">
-                                                    <span class="current-price">$703.12 USD</span>
-                                                    <span class="original-price">$799.00 USD</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                <!-- Product 6 -->
-                                <div class="col">
-                                    <a href="/Product/Details/6" class="product-item text-decoration-none">
-                                        <div class="box position-relative">
-                                            <div class="a-img">
-                                                <img class="thumb w-100" src="https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHNwZWFrZXJ8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60" alt="Bluetooth Speaker">
-                                            </div>
-                                            <div class="status">
-                                                <img src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
-                                            </div>
-                                            <div class="discount-badge">
-                                                <span>8%</span>
-                                            </div>
-                                            <div class="product-description">
-                                                <p class="name">
-                                                    <span>Bluetooth Speaker</span>
-                                                </p>
-                                                <div class="price-info">
-                                                    <span class="current-price">$110.39 USD</span>
-                                                    <span class="original-price">$119.99 USD</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                <!-- Product 7 -->
-                                <div class="col">
-                                    <a href="/Product/Details/7" class="product-item text-decoration-none">
-                                        <div class="box position-relative">
-                                            <div class="a-img">
-                                                <img class="thumb w-100" src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dGFibGV0fGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60" alt="Galaxy Tab S8">
-                                            </div>
-                                            <div class="status">
-                                                <img src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
-                                            </div>
-                                            <div class="discount-badge">
-                                                <span>15%</span>
-                                            </div>
-                                            <div class="product-description">
-                                                <p class="name">
-                                                    <span>Galaxy Tab S8</span>
-                                                </p>
-                                                <div class="price-info">
-                                                    <span class="current-price">$551.65 USD</span>
-                                                    <span class="original-price">$649.00 USD</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                <!-- Product 8 -->
-                                <div class="col">
-                                    <a href="/Product/Details/8" class="product-item text-decoration-none">
-                                        <div class="box position-relative">
-                                            <div class="a-img">
-                                                <img class="thumb w-100" src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGxhcHRvcHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Surface Laptop 5">
-                                            </div>
-                                            <div class="status">
-                                                <img src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
-                                            </div>
-                                            <div class="discount-badge">
-                                                <span>10%</span>
-                                            </div>
-                                            <div class="product-description">
-                                                <p class="name">
-                                                    <span>Surface Laptop 5</span>
-                                                </p>
-                                                <div class="price-info">
-                                                    <span class="current-price">$899.10 USD</span>
-                                                    <span class="original-price">$999.00 USD</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                <!-- Product 9 -->
-                                <div class="col">
-                                    <a href="/Product/Details/9" class="product-item text-decoration-none">
-                                        <div class="box position-relative">
-                                            <div class="a-img">
-                                                <img class="thumb w-100" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60" alt="Running Shoes">
-                                            </div>
-                                            <div class="status">
-                                                <img src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
-                                            </div>
-                                            <div class="discount-badge">
-                                                <span>20%</span>
-                                            </div>
-                                            <div class="product-description">
-                                                <p class="name">
-                                                    <span>Running Shoes</span>
-                                                </p>
-                                                <div class="price-info">
-                                                    <span class="current-price">$71.99 USD</span>
-                                                    <span class="original-price">$89.99 USD</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                <!-- Product 10 -->
-                                <div class="col">
-                                    <a href="/Product/Details/10" class="product-item text-decoration-none">
-                                        <div class="box position-relative">
-                                            <div class="a-img">
-                                                <img class="thumb w-100" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8d2F0Y2h8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60" alt="Smart Watch Pro">
-                                            </div>
-                                            <div class="status">
-                                                <img src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
-                                            </div>
-                                            <div class="discount-badge">
-                                                <span>15%</span>
-                                            </div>
-                                            <div class="product-description">
-                                                <p class="name">
-                                                    <span>Smart Watch Pro</span>
-                                                </p>
-                                                <div class="price-info">
-                                                    <span class="current-price">$254.15 USD</span>
-                                                    <span class="original-price">$299.00 USD</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pagination -->
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                <button class="btn btn-primary w-100 mt-3">Apply Filters</button>
+                <button class="btn btn-outline-secondary w-100 mt-2">Reset All</button>
             </div>
         </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Sort and Results Count -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="results-count">
+                </div>
+                <div class="sort-dropdown">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Sort by: Featured
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                            <li><a class="dropdown-item" href="#" data-sort="CreationTime desc">Featured</a></li>
+                            <li><a class="dropdown-item" href="#" data-sort="Price asc">Price: Low to High</a></li>
+                            <li><a class="dropdown-item" href="#" data-sort="Price desc">Price: High to Low</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="tab-contents" style="width:100%">
+                <div class="element-product">
+                    <div class="products">
+                        <div class="product-list row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                </ul>
+            </nav>
+        </div>
     </div>
+</div>
