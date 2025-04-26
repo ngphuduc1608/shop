@@ -1,5 +1,6 @@
 ﻿using Abp.Domain.Entities.Auditing;
 using proj_tt.Categories;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,8 +16,8 @@ namespace proj_tt.Products
         [StringLength(MaxNameLength)]
         public string Name { get; set; }
 
-
         [Required]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
         [Required]
@@ -25,6 +26,8 @@ namespace proj_tt.Products
         public string ImageUrl { get; set; }
 
         public int Discount { get; set; }
+        public DateTime ProductionDate { get; set; }
+
 
 
         [ForeignKey(nameof(CategoryId))]
@@ -34,13 +37,15 @@ namespace proj_tt.Products
         public int? CategoryId { get; set; }
 
 
-        public Product(string name, decimal price, string imageUrl, int discount = 0, int? categoryId = null)
+        public Product(string name, decimal price, string imageUrl, int discount = 0, int? categoryId = null, DateTime productionDate = default)
         {
             Name = name;
             Price = price;
             ImageUrl = imageUrl;
             Discount = discount;
             CategoryId = categoryId;
+            ProductionDate = productionDate;
+
         }
 
     }

@@ -1,0 +1,122 @@
+@using System.Globalization
+@using proj_tt.Orders
+@model proj_tt.Web.Models.Orders.MyOrdersViewModel
+
+@section styles {
+    <link href="~/css/my-orders.css" rel="stylesheet" />
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">My Orders</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">My Orders</h1>
+        </div>
+    </div>
+
+    @if (Model.Orders.Items.Count == 0)
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6 text-center">
+                <div class="p-5">
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#6c757d" class="bi bi-cart-x" viewBox="0 0 16 16">
+                            <path d="M7.354 5.646a.5.5 0 1 0-.708.708L7.793 7.5 6.646 8.646a.5.5 0 1 0 .708.708L8.5 8.207l1.146 1.147a.5.5 0 0 0 .708-.708L9.207 7.5l1.147-1.146a.5.5 0 0 0-.708-.708L8.5 6.793 7.354 5.646z"/>
+                            <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.5-2H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="fw-bold mb-3">Your order list is empty</h3>
+                    <p class="text-muted mb-4">Looks like you haven't placed any orders yet. Start shopping to see your orders here.</p>
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <a href="/Product" class="btn btn-primary px-4 gap-3">Start Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model.Orders.Items)
+                            {
+                                <tr>
+                                    <td>@order.Id</td>
+                                    <td>@order.CreationTime.ToString("f")</td>
+                                    <td>
+                                        <span class="badge bg-@(order.Status == OrderStatus.Delivered ? "success" : 
+                                                        order.Status == OrderStatus.Cancelled ? "danger" : 
+                                                        order.Status == OrderStatus.Processing ? "primary" : 
+                                                        order.Status == OrderStatus.Shipped ? "info" : "warning")">
+                                            @order.Status
+                                        </span>
+                                    </td>
+                                    <td>$@order.TotalAmount</td>
+                                    <td>
+                                        <a href="/Order/Details?orderId=@order.Id" class="btn btn-sm btn-outline-primary">
+                                            View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (Model.Orders.TotalCount > Model.PageSize)
+                {
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            @{
+                                var totalPages = (int)Math.Ceiling((double)Model.Orders.TotalCount / Model.PageSize);
+                                var startPage = Math.Max(1, Model.CurrentPage - 2);
+                                var endPage = Math.Min(totalPages, Model.CurrentPage + 2);
+                            }
+
+                            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("MyOrders", new { page = Model.CurrentPage - 1, pageSize = Model.PageSize })" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+
+                            @for (var i = startPage; i <= endPage; i++)
+                            {
+                                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("MyOrders", new { page = i, pageSize = Model.PageSize })">@i</a>
+                                </li>
+                            }
+
+                            <li class="page-item @(Model.CurrentPage == totalPages ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("MyOrders", new { page = Model.CurrentPage + 1, pageSize = Model.PageSize })" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    }
+</div> 

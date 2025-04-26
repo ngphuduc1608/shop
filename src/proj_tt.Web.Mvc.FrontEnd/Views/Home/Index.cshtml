@@ -1,0 +1,227 @@
+﻿@using proj_tt.Web.Startup
+@{
+    ViewBag.Title = L("HomePage");
+    ViewBag.CurrentPageName = PageNames.Home;
+}
+
+@section scripts
+    {
+    <environment names="Development">
+        <script src="~/view-resources/Views/Home/Index.js" asp-append-version="true"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+   
+
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Home/Index.min.js" asp-append-version="true"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    </environment>
+
+    }
+<div id="wrap">
+    <div id="container">
+        <div id="contents">
+            <!-- Main Slide Banner -->
+            <div id="top-slide-banners" class="swiper mySwiper">
+                <ul class="swiper-wrapper" id="banner-list">
+                </ul>
+                <div class="swiper-button-next" style="color: #fff;"></div>
+                <div class="swiper-button-prev" style="color: #fff;"></div>
+                <div class="swiper-pagination" style="display: none;"></div>
+                <div class="autoplay-progress">
+                    <svg viewBox="0 0 48 48">
+                        <circle cx="24" cy="24" r="20"></circle>
+                    </svg>
+                    <span></span>
+                </div>
+            </div>
+            <!-- Main banner Video -->
+            <div class="top-sub-banner">
+                <ul class="three-banner">
+                    <li>
+                        <a href="#"><img src="https://en.chuu.co.kr/chuu-en/main_banner/download%20(34).jpg" alt="Shop all items" /></a>
+                    </li>
+                    <li>
+                        <a href="#"><img src="https://en.chuu.co.kr/chuu-en/main_banner/download%20(36).jpg" alt="black friday sale" /></a>
+                    </li>
+                    <li>
+                        <a href="#"><img src="https://en.chuu.co.kr/chuu-en/main_banner/download%20(35).jpg" alt="Shop Dresses" /></a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tab-menu">
+                <h3> NEW </h3>
+            </div>
+
+            <!-- Tab-contents -->
+            <div class="tab-contents">
+                <div class="element-product">
+                    <div class="products">
+                        <!-- New -->
+                        <div class="product-list row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
+                            <!-- Items will be dynamically added here -->
+                        </div>
+                    </div>
+                    <div class="btn-list-more">
+                        <a href="/Product" class="text"> + Shop New arrivals</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Brands -->
+            <div class="brands">
+                <h3> BRANDS AND PICKS </h3>
+                <div class="swiper mySwiper" style="width: 81.8%; padding: 50px 10px;">
+                    <div class="swiper-wrapper">
+                        <ul class="swiper-slide">
+                            <li class=" swiper-slide-active">
+                                <a href="#">
+                                    <img src="https://en.chuu.co.kr/chuu-en/main_banner/coordset0510.jpg" alt="">
+                                    &nbsp;
+                                    <div class="brand-descripton">
+                                        <img src="https://en.chuu.co.kr/chuu-en/main_banner/logotwopieceset.png" alt="">
+                                        &nbsp;
+                                    </div>
+                                    <div class="btn-shop-now">Shop now</div>
+                                </a>
+                            </li>
+                            <li class=" swiper-slide-active">
+                                <a href="#">
+                                    <img src="https://en.chuu.co.kr/chuu-en/main_banner/tweedcollection0510.jpg" alt="">
+                                    &nbsp;
+                                    <div class="brand-descripton">
+                                        <img src="https://en.chuu.co.kr/chuu-en/main_banner/tweedlogohome.png" alt="">
+                                        &nbsp;
+                                    </div>
+                                    <div class="btn-shop-now">Shop now</div>
+                                </a>
+                            </li>
+                            <li class=" swiper-slide-active">
+                                <a href="#">
+                                    <img src="https://en.chuu.co.kr/chuu-en/main_banner/hapakristin0414.jpg" alt="">
+                                    &nbsp;
+                                    <div class="brand-descripton">
+                                        <img src="https://en.chuu.co.kr/chuu-en/main_banner/hapakristinlogo.png" alt="">
+                                        &nbsp;
+                                    </div>
+                                    <div class="btn-shop-now">Shop now</div>
+                                </a>
+                            </li>
+                            <li class=" swiper-slide-active">
+                                <a href="#">
+                                    <img src="https://en.chuu.co.kr/chuu-en/main_banner/5jeans0414.jpg" alt="">
+                                    &nbsp;
+                                    <div class="brand-descripton">
+                                        <img src="https://en.chuu.co.kr/images/main/brands/5kg_logo.png" alt="">
+                                        &nbsp;
+                                    </div>
+                                    <div class="btn-shop-now">Shop now</div>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="swiper-slide">
+                            <li class=" swiper-slide-active">
+                                <a href="#">
+                                    <img src="https://en.chuu.co.kr/chuu-en/main_banner/coordset0510.jpg" alt="">
+                                    &nbsp;
+                                    <div class="brand-descripton">
+                                        <img src="https://en.chuu.co.kr/chuu-en/main_banner/logotwopieceset.png" alt="">
+                                        &nbsp;
+                                    </div>
+                                    <div class="btn-shop-now">Shop now</div>
+                                </a>
+                            </li>
+                            <li class=" swiper-slide-active">
+                                <a href="#">
+                                    <img src="https://en.chuu.co.kr/chuu-en/main_banner/tweedcollection0510.jpg" alt="">
+                                    &nbsp;
+                                    <div class="brand-descripton">
+                                        <img src="https://en.chuu.co.kr/chuu-en/main_banner/tweedlogohome.png" alt="">
+                                        &nbsp;
+                                    </div>
+                                    <div class="btn-shop-now">Shop now</div>
+                                </a>
+                            </li>
+                            <li class=" swiper-slide-active">
+                                <a href="#">
+                                    <img src="https://en.chuu.co.kr/chuu-en/main_banner/hapakristin0414.jpg" alt="">
+                                    &nbsp;
+                                    <div class="brand-descripton">
+                                        <img src="https://en.chuu.co.kr/chuu-en/main_banner/hapakristinlogo.png" alt="">
+                                        &nbsp;
+                                    </div>
+                                    <div class="btn-shop-now">Shop now</div>
+                                </a>
+                            </li>
+                            <li class=" swiper-slide-active">
+                                <a href="#">
+                                    <img src="https://en.chuu.co.kr/chuu-en/main_banner/5jeans0414.jpg" alt="">
+                                    &nbsp;
+                                    <div class="brand-descripton">
+                                        <img src="https://en.chuu.co.kr/images/main/brands/5kg_logo.png" alt="">
+                                        &nbsp;
+                                    </div>
+                                    <div class="btn-shop-now">Shop now</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-pagination" style="display: none;"></div>
+                    @* <script> *@
+                    @*     var swiper = new Swiper(".brands .mySwiper", { *@
+                    @*       slidesPerView: 1, *@
+                    @*       spaceBetween: 30, *@
+                    @*       loop: true, *@
+                    @*       pagination: { *@
+                    @*         el: ".brands .swiper-pagination", *@
+                    @*         clickable: true, *@
+                    @*       }, *@
+                    @*       navigation: { *@
+                    @*         nextEl: ".brands .swiper-button-next", *@
+                    @*         prevEl: ".brands .swiper-button-prev", *@
+                    @*       }, *@
+                    @*     }); *@
+                    @* </script> *@
+                    <div class="brands-more">
+                        <a href="#" class="text">  + View All Brands </a>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <!-- Bottom Area Banners -->
+            <ul class="bottom-area-banners">
+                <li>
+                    <a href="#">
+                        <img src="https://en.chuu.co.kr/images/main/banners/bottom-area/en/membership-bn.jpg" alt="멤버십 안내">
+                        &nbsp;
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="https://en.chuu.co.kr/images/main/banners/bottom-area/en/store-bn.jpg" alt="츄스토어 매장안내">
+                        &nbsp;
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="quick-menu">
+        <ul>
+            <li id="go-top" onclick="scrollToTop()" style="display: none;">
+                <a href="#header">
+                    <img src="https://en.chuu.co.kr/images/layout/quick-menu/ico-go-top.png" alt="go top">
+                    &nbsp;
+                </a>
+            </li>
+        </ul>
+    </div>
+
+</div>

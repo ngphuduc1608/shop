@@ -11,6 +11,7 @@ namespace proj_tt.Categories
 
         [Required]
         [StringLength(MaxNameLength)]
+
         public string NameCategory { get; set; }
     }
 }

@@ -1,22 +1,24 @@
-﻿using System.Text.Encodings.Web;
-using System.Text.Unicode;
+﻿using Abp.AspNetCore;
+using Abp.AspNetCore.Mvc.Antiforgery;
+using Abp.AspNetCore.SignalR.Hubs;
+using Abp.Castle.Logging.Log4Net;
+using Castle.Facilities.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Castle.Facilities.Logging;
-using Abp.AspNetCore;
-using Abp.AspNetCore.Mvc.Antiforgery;
-using Abp.Castle.Logging.Log4Net;
+using Microsoft.Extensions.WebEncoders;
 using proj_tt.Authentication.JwtBearer;
 using proj_tt.Configuration;
 using proj_tt.Identity;
 using proj_tt.Web.Resources;
-using Abp.AspNetCore.SignalR.Hubs;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.WebEncoders;
+using System.IO;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 namespace proj_tt.Web.Startup
 {
@@ -49,7 +51,6 @@ namespace proj_tt.Web.Startup
             {
                 options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
             });
-
             services.AddScoped<IWebResourceManager, WebResourceManager>();
 
             services.AddSignalR();
@@ -80,7 +81,29 @@ namespace proj_tt.Web.Startup
                 app.UseExceptionHandler("/Error");
             }
 
-            app.UseStaticFiles();
+
+            //var staticFilePath = Path.GetFullPath(Path.Combine(env.ContentRootPath, @"..\upload\Product"));
+
+            var staticFilePath = Path.Combine("D:", "upload", "Product");
+
+            if (Directory.Exists(staticFilePath))
+            {
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(staticFilePath),
+                    RequestPath = "/upload/Product"
+                });
+            }
+
+            //var sharedImagePath = Path.GetFullPath(Path.Combine(env.ContentRootPath, @"..\upload\Product"));
+
+            app.UseStaticFiles(); // mặc định cho wwwroot
+
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(sharedImagePath),
+            //    RequestPath = "/Product"
+            //});
 
             app.UseRouting();
 

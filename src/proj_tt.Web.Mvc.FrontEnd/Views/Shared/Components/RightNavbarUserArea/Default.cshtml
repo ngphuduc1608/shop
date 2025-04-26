@@ -1,0 +1,25 @@
+﻿@model proj_tt.Web.Views.Shared.Components.RightNavbarUserArea.RightNavbarUserAreaViewModel
+<li class="nav-item dropdown nav-user-menu">
+    <a href="javascript:void(0);" class="nav-link d-flex align-items-center" data-toggle="dropdown" role="button">
+        <img class="user-image img-circle elevation-2 mr-2" src="~/libs/admin-lte/dist/img/avatar5.png" alt="User Image">
+        <div class="">
+            @Html.Raw(Model.GetShownLoginName())
+        </div>
+    </a>
+    
+    <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item" asp-controller="Users" asp-action="ChangePassword">
+            <i class="fas fa-user-edit"></i> @L("UpdatePassword")
+        </a>
+        <a class="dropdown-item" href="/Product">
+            <i class="fas fa-tshirt"></i> @L("Products")
+        </a>
+        <a class="dropdown-item" href="/Order/MyOrders">
+            <i class="fas fa-file-invoice"></i> @L("My Order")
+        </a>
+        <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
+            <i class="fas fa-sign-out-alt"></i> @L("Logout")
+        </a>
+    </div>
+</li>
+

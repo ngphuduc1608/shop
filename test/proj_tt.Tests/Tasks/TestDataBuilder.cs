@@ -1,7 +1,10 @@
 ﻿using proj_tt.EntityFrameworkCore;
 using proj_tt.Persons;
 using proj_tt.Tasks;
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace proj_tt.Tests.Tasks
 {

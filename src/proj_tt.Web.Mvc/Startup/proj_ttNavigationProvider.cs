@@ -28,8 +28,7 @@ namespace proj_tt.Web.Startup
                         icon: "fas fa-home",
                         requiresAuthentication: true
                     )
-                )
-                .AddItem(
+                ).AddItem(
                     new MenuItemDefinition(
                         PageNames.Tasks,
                         L("Tasks"),
@@ -52,14 +51,42 @@ namespace proj_tt.Web.Startup
                     )
                 ).AddItem(
                     new MenuItemDefinition(
+                        "Banners",
+                        L("Banners"),
+                        url: "Banners",
+                        icon: "fas fa-box"
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        "Orders",
+                        L("Orders"),
+                        url: "Orders",
+                        icon: "fas fa-box"
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        "Carts",
+                        L("Carts"),
+                        url: "Carts",
+                        icon: "fas fa-box"
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        "ViewUser",
+                        L("ViewUser"),
+                        url: "https://localhost:44311/",
+                        icon: "fas fa-box",
+                        target: "_blank"
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
                         PageNames.Tenants,
                         L("Tenants"),
                         url: "Tenants",
                         icon: "fas fa-building",
                         permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Tenants)
                     )
-                )
-                .AddItem(
+                ).AddItem(
                     new MenuItemDefinition(
                         PageNames.Users,
                         L("Users"),

@@ -1,0 +1,156 @@
+@using proj_tt.Orders
+@using proj_tt.Web.Startup
+@model proj_tt.Web.Models.Orders.DetailsViewModel
+@{
+    ViewBag.CurrentPageName = PageNames.Orders;
+    ViewBag.Title = L("OrderDetails");
+}
+
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Orders/Details.js" asp-append-version="true"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Orders/Details.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-12">
+                <h1 class="m-0 text-dark">@L("OrderDetails")</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!--Use for bulk actions-->
+                                @* <h3 class="card-title">@L("OrderInformation")</h3> *@
+                                <div class="card-tools">
+                                    <a href="@Url.Action("Index")" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-arrow-left"></i> @L("BackToList")
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>@L("CustomerInformation")</h4>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>@L("Username")</th>
+                                        <td>@Model.Order.Username</td>
+                                    </tr>
+                                    <tr>
+                                        <th>@L("Name")</th>
+                                        <td>@Model.Order.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <th>@L("Phone")</th>
+                                        <td>@Model.Order.Phone</td>
+                                    </tr>
+                                    <tr>
+                                        <th>@L("Address")</th>
+                                        <td>@Model.Order.Address</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>@L("OrderInformation")</h4>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>@L("OrderDate")</th>
+                                        <td>@Model.Order.CreationTime.ToString("f")</td>
+                                    </tr>
+                                    <tr>
+                                        <th>@L("Status")</th>
+                                        <td>
+                                            <span class="badge bg-@(Model.Order.Status == OrderStatus.Delivered ? "success" : 
+                                                            Model.Order.Status == OrderStatus.Cancelled ? "danger" : 
+                                                            Model.Order.Status == OrderStatus.Processing ? "primary" : 
+                                                            Model.Order.Status == OrderStatus.Shipped ? "info" : "warning")">
+                                                @Model.Order.Status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>@L("TotalAmount")</th>
+                                        <td>@Model.Order.TotalAmount.ToString("C")</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h4>@L("OrderItems")</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>@L("Product")</th>
+                                                <th>@L("Quantity")</th>
+                                                <th>@L("UnitPrice")</th>
+                                                <th>@L("TotalPrice")</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.Order.OrderItems)
+                                            {
+                                                <tr>
+                                                    <td>@item.Product.Name</td>
+                                                    <td>@item.Quantity</td>
+                                                    <td>@item.UnitPrice.ToString("C")</td>
+                                                    <td>@item.TotalPrice.ToString("C")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h4>@L("UpdateStatus")</h4>
+                                <form id="updateStatusForm" class="form-inline">
+                                    <input type="hidden" name="OrderId" value="@Model.Order.Id" />
+                                    <div class="form-group mx-sm-3 mb-2">
+                                        <select name="Status" class="form-control">
+                                            @{
+                                                foreach (var status in Model.AvailableStatuses)
+                                                {
+                                                    var isSelected = status == Model.Order.Status;
+                                                    <option value="@((int)status)" selected="@isSelected">
+                                                        @status
+                                                    </option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary mb-2">@L("UpdateStatus")</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

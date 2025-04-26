@@ -1,4 +1,9 @@
-﻿<div class="abp-advanced-search">
+﻿@using System.Globalization
+@using proj_tt.Web.Models.Common.Modals
+@using proj_tt.Web.Models.Products
+@model IndexViewModel
+
+<div class="abp-advanced-search">
     <form id="ProductsSearchForm" class="form-horizontal">
         <div class="input-group">
             <div class="input-group-prepend">
@@ -7,6 +12,57 @@
                 </button>
             </div>
             <input type="text" name="Keyword" class="form-control txt-search" />
+            <div class="dropdown input-group-append">
+                <button type="button"
+                        class="btn btn-default dropdown-toggle"
+                        data-toggle="dropdown"
+                        aria-expanded="false">
+                    <i class="fas fa-filter"></i>
+                </button>
+                <div class="dropdown-menu  dropdown-menu-right dd-menu" id="dropdownFilter" role="menu" style="padding: 0">
+                    <div class="card" style="margin-bottom: 0">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="dateRange" class="form-label fw-bold">Thời gian </label>
+
+                                <input type="text" id="ProductionDateRange" name="ProductionDateRange" class="form-control" placeholder="Chọn khoảng thời gian tạo" autocomplete="off">
+
+                                <input type="hidden" id="StartDate" name="StartDate" />
+                                <input type="hidden" id="EndDate" name="EndDate" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">@L("CategoryName")</label>
+                                <!-- Thay dropdown thành select2 -->
+                                <select id="CategoryDropdownEdit" class="form-control select2" multiple="multiple">
+                                    @foreach (var category in Model.Categories)
+                                    {
+                                        <option value="@category.Value">@category.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="priceRange" class="form-label fw-bold">Khoảng giá</label>
+                                <!-- 2 ô input để nhập trực tiếp giá -->
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        <input type="number" id="MinPriceInput" class="form-control" placeholder="Giá tối thiểu" />
+                                    </div>
+                                    <div class="col">
+                                        <input type="number" id="MaxPriceInput" class="form-control" placeholder="Giá tối đa" />
+                                    </div>
+                                </div>
+                                <input type="text" id="priceRange" name="priceRange" />
+                                <input type="hidden" id="MinPrice" name="MinPrice" />
+                                <input type="hidden" id="MaxPrice" name="MaxPrice" />
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="button" class="btn btn-default btn-clear"><i class="fas fa-backspace"></i></button>
+                            <button type="button" class="btn bg-blue float-right btn-search"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </form>
 </div>

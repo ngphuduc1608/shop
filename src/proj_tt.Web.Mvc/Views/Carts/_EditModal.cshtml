@@ -1,0 +1,28 @@
+@using proj_tt.Web.Models.Common.Modals
+@using proj_tt.Web.Models.Carts
+@model IndexViewModel
+
+@{
+    Layout = null;
+}
+<script src="~/view-resources/Views/Carts/_EditModal.js" asp-append-version="true"></script>
+
+@await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("EditCart")))
+<form name="CartEditForm" role="form" class="form-horizontal">
+    <input type="hidden" name="Id" value="@Model.Cart.Id">
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label for="UserId" class="col-md-3 col-form-label">@L("UserId")</label>
+            <input type="text" class="form-control" name="UserId" value="@Model.Cart.UserId" required>
+        </div>
+        @* <div class="form-group row required"> *@
+        @*     <label for="ProductId" class="col-md-3 col-form-label">@L("ProductId")</label> *@
+        @*     <input type="text" class="form-control" name="ProductId" value="@Model.Cart." required> *@
+        @* </div> *@
+        @* <div class="form-group row required"> *@
+        @*     <label for="Quantity" class="col-md-3 col-form-label">@L("Quantity")</label> *@
+        @*     <input type="number" class="form-control" name="Quantity" value="@Model.Cart.Quantity" required> *@
+        @* </div> *@
+    </div>
+    @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+</form> 

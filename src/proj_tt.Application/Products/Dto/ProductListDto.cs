@@ -1,5 +1,6 @@
 ﻿using Abp.AutoMapper;
 using Microsoft.AspNetCore.Http;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace proj_tt.Products.Dto
@@ -8,7 +9,6 @@ namespace proj_tt.Products.Dto
 
     public class ProductListDto
     {
-        //public int Id { get; set; }
 
         [Required]
         [StringLength(Product.MaxNameLength)]
@@ -26,6 +26,7 @@ namespace proj_tt.Products.Dto
         public string NameCategory { get; set; }
 
 
+        public DateTime ProductionDate { get; set; }
 
     }
 }

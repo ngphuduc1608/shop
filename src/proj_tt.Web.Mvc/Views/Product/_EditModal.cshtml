@@ -19,7 +19,7 @@
         </div>
         <div class="form-group row required">
             <label for="price " class="col-md-3 col-form-label">@L("Price")</label>
-            <input type="text" class="form-control" name="Price" value="@Model.Product.Price" required>
+            <input type="text" class="form-control" name="Price" value="@Model.Product.Price.ToString("0.##", CultureInfo.CurrentCulture)" required>
         </div>
         <div class="form-group row ">
             <label for="discount " class="col-md-3 col-form-label">@L("Discount")</label>
@@ -28,12 +28,16 @@
         <div class="form-group row required">
             <label class="col-md-3 col-form-label">@L("CategoryName")</label>
 
-            @Html.DropDownList("CategoryId", Model.Categories, "--Chọn danh mục--", new
+            @Html.DropDownList("CategoryId", Model.Categories, @L("CategoryEmpty"), new
                 {
                     @class = "form-control",
                     id = "CategoryDropdownEdit"
                 })
-
+                
+        </div>
+        <div class="form-group row required">
+            <label for="productionDate" class="col-md-3 col-form-label">@L("ProductionDate")</label>
+            <input type="text" id="SelectedDate" class="form-control" name="ProductionDate" value="@Model.Product.ProductionDate.ToString("yyyy-MM-dd")">
         </div>
         <div class="form-group row required">
             <label class="col-md-3 col-form-label">@L("ImageUrl")</label>

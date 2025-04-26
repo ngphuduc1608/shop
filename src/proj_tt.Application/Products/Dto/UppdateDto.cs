@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace proj_tt.Products.Dto
@@ -23,6 +24,9 @@ namespace proj_tt.Products.Dto
 
         public int CategoryId { get; set; }
         public string NameCategory { get; set; }
+
+        public DateTime ProductionDate { get; set; }
+
     }
 
 }

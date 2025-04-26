@@ -1,10 +1,12 @@
 ﻿    @using proj_tt.Authorization
+@using proj_tt.Web.Models.Common.Modals
+@using proj_tt.Web.Startup
     @model proj_tt.Web.Models.Products.IndexViewModel
     @inject Abp.Authorization.IPermissionChecker PermissionChecker
 
     @{
-        ViewBag.Title = ("Products");
-        ViewBag.ActiveMenu = "Products";
+        ViewBag.CurrentPageName = PageNames.Products;
+        ViewBag.Title = L("Product");
     }
 
     @section scripts
@@ -37,13 +39,7 @@
                             @L("Create")
                         </button>
                     }
-                    else
-                    {
-                        <button class="btn bg-blue float-sm-right" onclick="abp.message.warn('Bạn không đủ quyền để tạo sản phẩm!')">
-                            <i class="fa fa-plus-square"></i>
-                            @L("Create")
-                        </button>
-                    }
+                   
                 </div>
             </div>    
         </div>
@@ -58,9 +54,12 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <!--Use for bulk actions-->
+                                
                                 </div>
                                 <div class="col-md-6">
                                     @await Html.PartialAsync("~/Views/Product/Index.AdvancedSearch.cshtml")
+                                @* <input type="text" class="form-control" id="ProductionDateRange" name="ProductionDateRange" /> *@
+
                                 </div>
                             </div>
                         </div>
@@ -75,6 +74,7 @@
                                             <th>@L("Discount")</th>
                                             <th>@L("ImageUrl")</th>
                                             <th>@L("CategoryName")</th>
+                                            <th>@L("ProductionDate")</th>
                                             <th>@L("CreationTime")</th>
                                             <th>@L("UpdateTime")</th>
                                             <th style="width: 150px">@L("Actions")</th>

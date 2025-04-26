@@ -2,8 +2,12 @@
 using proj_tt.Tasks;
 using proj_tt.Tasks.Dto;
 using Shouldly;
-using Xunit;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace proj_tt.Tests.Tasks
 {
@@ -32,7 +36,8 @@ namespace proj_tt.Tests.Tasks
         [Fact]
         public async System.Threading.Tasks.Task Should_Get_Filtered_Tasks()
         {
-            var output = await _taskAppService.GetAll(new GetAllTasksInput { State = TaskState.Open });
+
+            var output = await _taskAppService.GetAll(new GetAllTasksInput { State=TaskState.Completed});
 
             output.Items.ShouldAllBe(t => t.State == TaskState.Open);
         }

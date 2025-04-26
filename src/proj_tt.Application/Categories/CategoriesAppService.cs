@@ -40,7 +40,7 @@ namespace proj_tt.Categories
             var hasProducts = await _productRepository.GetAll().AnyAsync(p => p.CategoryId == id);
             if (hasProducts)
             {
-                throw new UserFriendlyException("Không thể xóa vì danh mục này đang chứa sản phẩm!");
+                throw new UserFriendlyException("DeleteCategoryError");
             }
 
             await _categoryRepository.DeleteAsync(id);

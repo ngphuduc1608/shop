@@ -11,6 +11,7 @@
 	  <text name="Discount">Discount</text>
 	  <text name="ImageUrl">Image</text>
 	  <text name="CategoryName">Category</text>
+	  <text name="ProductionDate">Production Date</text>
 	  <text name="CreationTime">Created Time</text>
 	  <text name="UpdateTime">Updated Time</text>
 	  <text name="EditProduct" value="Edit Product" />
@@ -21,8 +22,26 @@
 	  <text name="Success" value="Success" />
 	  <text name="Fail" value="Fail" />
 	  <text name="SavedFailed" value="Save Failed!" />
-	  
-    <text name="WelcomeMessage" value="Welcome to proj_tt!" />
+	  <text name="CategoryEmpty" value="--Select Category--" />
+	  <text name="ProductNameRequired" value="Product name is required" />
+	  <text name="PriceRequired" value="Please enter the price" />
+	  <text name="PriceMustBeNumber" value="Price must be a number" />
+	  <text name="PriceMin" value="Price must be greater than or equal to 0" />
+	  <text name="PriceMax" value="Maximum price is 2000 billion bro 😒" />
+	  <text name="DiscountMustBeNumber" value="Discount must be a number" />
+	  <text name="DiscountMin" value="Minimum is 0%" />
+	  <text name="DiscountMax" value="Maximum is 100%" />
+	  <text name="ImageRequired" value="Please select an image" />
+	  <text name="ImageExtensionInvalid" value="Only JPG, PNG, GIF, BMP image files are accepted" />
+	  <text name="ImageFilesizeMax" value="Maximum image size is 2MB" />
+	  <text name="CategoryRequired" value="Please select a category" />
+	  <text name="AreYouSure" value="Are you sure?" />
+	  <text name="DeleteCategoryError" value="Cannot delete because this category contains products!" />
+	  <text name="DeleteError" value="An error occurred while deleting!" />
+
+
+
+	  <text name="WelcomeMessage" value="Welcome to Admin" />
     <text name="FormIsNotValidMessage" value="Form is not valid. Please check and fix errors." />
     <text name="TenantNameCanNotBeEmpty" value="Tenant name can not be empty" />
     <text name="InvalidUserNameOrPassword" value="Invalid user name or password" />
