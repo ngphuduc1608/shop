@@ -22,16 +22,6 @@ namespace proj_tt.Web.Startup
                     )
                 ).AddItem(
                     new MenuItemDefinition(
-                        //PageNames.Tasks,
-                        "TaskList",
-                        L("TaskList"),
-                        url: "Tasks",
-                        icon: "fas fa-tasks"
-                        )
-                    )
-
-                .AddItem(
-                    new MenuItemDefinition(
                         PageNames.Home,
                         L("HomePage"),
                         url: "",
@@ -40,6 +30,27 @@ namespace proj_tt.Web.Startup
                     )
                 )
                 .AddItem(
+                    new MenuItemDefinition(
+                        PageNames.Tasks,
+                        L("Tasks"),
+                        url: "Tasks",
+                        icon: "fas fa-tasks"
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.Products,
+                        L("Product"),
+                        url: "Product",
+                        icon: "fas fa-box"
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        "Categories",
+                        L("Categories"),
+                        url: "Categories",
+                        icon: "fas fa-box"
+                    )
+                ).AddItem(
                     new MenuItemDefinition(
                         PageNames.Tenants,
                         L("Tenants"),
@@ -153,5 +164,6 @@ namespace proj_tt.Web.Startup
         {
             return new LocalizableString(name, proj_ttConsts.LocalizationSourceName);
         }
+
     }
 }

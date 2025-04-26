@@ -1,4 +1,5 @@
 ﻿using proj_tt.EntityFrameworkCore;
+using proj_tt.Persons;
 using proj_tt.Tasks;
 
 
@@ -15,6 +16,10 @@ namespace proj_tt.Tests.Tasks
 
         public void Build()
         {
+            var neo = new Person("Neo");
+            _context.Persons.Add(neo);
+            _context.SaveChanges();
+
             _context.Tasks.AddRange(
                 new Task("Follow the white rabbit", "Follow the white rabbit in order to know the reality."),
                 new Task("Clean your room") { State = TaskState.Completed }

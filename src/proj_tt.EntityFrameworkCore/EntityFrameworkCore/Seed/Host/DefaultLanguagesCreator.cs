@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Abp.Localization;
+﻿using Abp.Localization;
 using Abp.MultiTenancy;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace proj_tt.EntityFrameworkCore.Seed.Host
 {
@@ -18,6 +18,7 @@ namespace proj_tt.EntityFrameworkCore.Seed.Host
             return new List<ApplicationLanguage>
             {
                 new ApplicationLanguage(tenantId, "en", "English", "famfamfam-flags us"),
+                new ApplicationLanguage(tenantId, "vi", "Tiếng Việt", "famfamfam-flags vn"),
                 new ApplicationLanguage(tenantId, "ar", "العربية", "famfamfam-flags sa"),
                 new ApplicationLanguage(tenantId, "de", "German", "famfamfam-flags de"),
                 new ApplicationLanguage(tenantId, "it", "Italiano", "famfamfam-flags it"),

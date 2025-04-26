@@ -1,6 +1,7 @@
 ﻿using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using Abp.Timing;
+using proj_tt.Persons;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,7 +19,7 @@ namespace proj_tt.Tasks
         public const int MaxTitleLength = 256;
         public const int MaxDescriptionLength = 64 * 1024;
         [Required]
-        [StringLength(MaxDescriptionLength)]
+        [StringLength(MaxTitleLength)]
         public string Title { get; set; }
         [StringLength(MaxDescriptionLength)]
         public string Description { get; set; }
@@ -32,12 +33,24 @@ namespace proj_tt.Tasks
             State = TaskState.Open;
         }
 
-        public Task(string title, string description = null) : this()
+
+        [ForeignKey(nameof(AssignedPersonId))]
+        public Person AssignedPerson { get; set; }
+        public Guid? AssignedPersonId
+        { 
+            get;  set;
+        }
+
+
+        public Task(string title, string description = null,Guid? assignedPersonId= null) : this()
         {
             Title = title;
             Description = description;
-
+            AssignedPersonId = assignedPersonId;
+            State = assignedPersonId == null? TaskState.Completed : TaskState.Open;
         }
+
+       
     }
 
 

@@ -3,6 +3,25 @@
   <texts>
     <text name="HomePage" value="Home page" />
     <text name="About" value="About" />
+
+	  <text name="Tasks" value="Tasks" />
+	  <text name="Product" value="Product" />
+	  <text name="Categories" value="Categories" />
+	  <text name="Price">Price</text>
+	  <text name="Discount">Discount</text>
+	  <text name="ImageUrl">Image</text>
+	  <text name="CategoryName">Category</text>
+	  <text name="CreationTime">Created Time</text>
+	  <text name="UpdateTime">Updated Time</text>
+	  <text name="EditProduct" value="Edit Product" />
+	  <text name="CreateProduct" value="Create Product" />
+	  <text name="EditCategory" value="Edit Category" />
+	  <text name="CreateCategory" value="Create Category" />
+
+	  <text name="Success" value="Success" />
+	  <text name="Fail" value="Fail" />
+	  <text name="SavedFailed" value="Save Failed!" />
+	  
     <text name="WelcomeMessage" value="Welcome to proj_tt!" />
     <text name="FormIsNotValidMessage" value="Form is not valid. Please check and fix errors." />
     <text name="TenantNameCanNotBeEmpty" value="Tenant name can not be empty" />
