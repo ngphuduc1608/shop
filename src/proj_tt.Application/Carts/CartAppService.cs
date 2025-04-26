@@ -70,7 +70,7 @@ namespace proj_tt.Carts
                 await _cartRepository.InsertAsync(cart);
                 await CurrentUnitOfWork.SaveChangesAsync();
             }
-
+            // n?u sp có r?i thì t?ng sl , không thì thêm vào cart
             var existingItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == input.ProductId);
             if (existingItem != null)
             {
@@ -85,6 +85,7 @@ namespace proj_tt.Carts
 
             await CurrentUnitOfWork.SaveChangesAsync();
 
+            // tr? v? c?p nh?t gi? 
             return await GetCartAsync();
         }
 
@@ -92,6 +93,8 @@ namespace proj_tt.Carts
         {
             var cartItem = await _cartItemRepository.GetAsync(input.CartItemId);
             cartItem.Quantity = input.Quantity;
+
+            //l?u db khi thay ??i sl
             await _cartItemRepository.UpdateAsync(cartItem);
             await CurrentUnitOfWork.SaveChangesAsync();
 

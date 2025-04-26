@@ -228,8 +228,8 @@
                             <tr class="cart-item">
                                 <td>
                                     <input type="checkbox" class="cart-item-checkbox" 
-                                           data-id="@item.Id" 
-                                           data-price="@(item.Product.Price * (1 - item.Product.Discount/100))" 
+                                           data-id="@item.Id"
+                                           data-price="@((item.Product.Price * (1M - item.Product.Discount / 100M)).ToString("F2"))"
                                            data-quantity="@item.Quantity"
                                            onchange="updateTotal()">
                                 </td>
@@ -320,7 +320,11 @@
                         
                         // Cập nhật tổng tiền của item
                         const totalPriceCell = row.querySelector('td:nth-last-child(2)');
+                        // console.log('totalPriceCell',totalPriceCell);
+
                         const newTotal = price * newQuantity;
+                        // console.log('newTotal',newTotal);
+
                         totalPriceCell.textContent = `$${newTotal.toFixed(2)}`;
 
                         // Cập nhật data-quantity cho checkbox
@@ -360,7 +364,7 @@
                 return;
             }
 
-            window.location.href = '/Order/Checkout';
+            window.location.href = '/Order/Checkout?selectedItems=' + selectedItems.join(',');
         }
 
         function updateTotal() {

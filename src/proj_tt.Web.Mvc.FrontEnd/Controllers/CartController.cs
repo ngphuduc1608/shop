@@ -3,7 +3,6 @@ using proj_tt.Carts;
 using proj_tt.Carts.Dto;
 using proj_tt.Controllers;
 using proj_tt.Web.Models.Carts;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace proj_tt.Web.Controllers
@@ -52,12 +51,13 @@ namespace proj_tt.Web.Controllers
             return Json(new { success = true });
         }
 
-        [HttpGet]
-        public async Task<ActionResult> GetCartCount()
-        {
-            var cart = await _cartAppService.GetCartAsync();
-            var count = cart.CartItems.Sum(item => item.Quantity);
-            return Content(count.ToString());
-        }
+        //chuc nang lay tong san pham
+        //[HttpGet]
+        //public async Task<ActionResult> GetCartCount()
+        //{
+        //    var cart = await _cartAppService.GetCartAsync();
+        //    var count = cart.CartItems.Sum(item => item.Quantity);
+        //    return Content(count.ToString());
+        //}
     }
 }

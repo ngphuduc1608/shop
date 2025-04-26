@@ -1,11 +1,9 @@
 ﻿using Abp.Application.Services.Dto;
-using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using proj_tt.Authorization;
 using proj_tt.Products.Dto;
 using System;
 using System.IO;
@@ -29,7 +27,7 @@ namespace proj_tt.Products
             _webHostEnvironment = webHostEnvironment;
             _imageRootPath = Path.Combine("D:", "upload", "Product");
         }
-        [AbpAuthorize(PermissionNames.Pages_Products_Create)]
+        //[AbpAuthorize(PermissionNames.Pages_Products_Create)]
         public async System.Threading.Tasks.Task Create(ProductListDto input)
         {
             // Xử lý upload ảnh nếu có
@@ -55,7 +53,7 @@ namespace proj_tt.Products
         }
 
         //[AbpAuthorize]
-        [AbpAuthorize(PermissionNames.Pages_Products)]
+        //[AbpAuthorize(PermissionNames.Pages_Products)]
 
         // phan trang product
         public async Task<PagedResultDto<ProductDto>> GetProductPaged(PagedProductDto input)
@@ -126,7 +124,7 @@ namespace proj_tt.Products
         }
 
 
-        [AbpAuthorize(PermissionNames.Pages_Products_Edit)]
+        //[AbpAuthorize(PermissionNames.Pages_Products_Edit)]
         public async Task Update(UpdateProductDto input)
         {
             var product = await _productRepository.GetAsync(input.Id);
@@ -150,7 +148,7 @@ namespace proj_tt.Products
             await _productRepository.UpdateAsync(product);
 
         }
-        [AbpAuthorize(PermissionNames.Pages_Products_Delete)]
+        //[AbpAuthorize(PermissionNames.Pages_Products_Delete)]
         public async Task Delete(int id)
         {
 
@@ -239,7 +237,7 @@ namespace proj_tt.Products
         }
 
         //[AbpAuthorize]
-        [AbpAuthorize(PermissionNames.Pages_Products)]
+        //[AbpAuthorize(PermissionNames.Pages_Products)]
 
         public async Task<ProductDto> GetProducts(int id)
         {

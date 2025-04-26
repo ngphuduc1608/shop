@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using Abp.Configuration.Startup;
-using proj_tt.Sessions;
+﻿using Abp.Configuration.Startup;
 using Microsoft.AspNetCore.Mvc;
+using proj_tt.Sessions;
+using System.Threading.Tasks;
 
 namespace proj_tt.Web.Views.Shared.Components.RightNavbarUserArea
 {

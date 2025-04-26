@@ -1,4 +1,5 @@
-﻿using proj_tt.Sessions.Dto;
+﻿
+using proj_tt.Sessions.Dto;
 
 namespace proj_tt.Web.Views.Shared.Components.RightNavbarUserArea
 {
@@ -12,16 +13,18 @@ namespace proj_tt.Web.Views.Shared.Components.RightNavbarUserArea
         {
             var userName = LoginInformations.User.UserName;
 
-            if (!IsMultiTenancyEnabled || LoginInformations.Tenant == null)
+            if (!IsMultiTenancyEnabled)
             {
                 return userName;
             }
 
-            //return LoginInformations.Tenant == null
-            //    ? ".\\" + userName
-            //    : LoginInformations.Tenant.TenancyName + "\\" + userName;
-            return LoginInformations.Tenant.TenancyName + "\\" + userName;
+            return LoginInformations.Tenant == null
+                ? ".\\" + userName
+                : LoginInformations.Tenant.TenancyName + "\\" + userName;
+            //return LoginInformations.Tenant.TenancyName + "\\" + userName;
+
         }
     }
 }
+
 

@@ -39,17 +39,6 @@ namespace proj_tt.Web.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Create(ProductListDto input)
-        {
-            await _productAppService.Create(input);
-            return Ok();
-        }
-
-        public async Task<IActionResult> Update(UpdateProductDto input)
-        {
-            await _productAppService.Update(input);
-            return Ok();
-        }
 
         public async Task<IActionResult> Details(int productId)
         {
@@ -62,23 +51,6 @@ namespace proj_tt.Web.Controllers
         }
 
 
-        public async Task<ActionResult> EditModal(int productId)
-        {
-            var product = await _productAppService.GetProducts(productId);
-            var categories = await _categoryAppService.GetAllCategories(new PagedCategoriesDto());
-            var model = new IndexViewModel
-            {
-                Product = product,
-                Categories = categories.Items.Select(x => new SelectListItem
-                {
-                    Value = x.Id.ToString(),
-                    Text = x.NameCategory,
-                    Selected = (x.Id == product.CategoryId)
-                }).ToList()
-            };
-
-            return PartialView("_EditModal", model);
-        }
 
 
     }
