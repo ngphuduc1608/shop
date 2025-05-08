@@ -11,85 +11,261 @@
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Cart</li>
+                    <li class="breadcrumb-item active" aria-current="page">CheckOut</li>
                 </ol>
             </nav>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <form id="checkoutForm" method="post" action="/Order/CreateOrder" accept-charset="UTF-8">
-                        @Html.AntiForgeryToken()
-                        <div class="mb-3">
-                            <label for="Name" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="Name" name="Name" required maxlength="256">
-                        </div>
-                        <div class="mb-3">
-                            <label for="Address" class="form-label">Address</label>
-                            <textarea class="form-control" id="Address" name="Address" rows="3" required maxlength="512"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="Phone" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="Phone" name="Phone" required maxlength="20" pattern="[0-9]{10,20}">
-                            <small class="form-text text-muted">Phone number must be between 10 and 20 digits</small>
-                        </div>
+    <form id="checkoutForm" method="post" action="/Order/CreateOrder" accept-charset="UTF-8">
+        @Html.AntiForgeryToken()
 
-                        @for (var i = 0; i < Model.Cart.CartItems.Count; i++)
-                        {
-                            <input type="hidden" name="OrderItems[@i].ProductId" value="@Model.Cart.CartItems[i].ProductId">
-                            <input type="hidden" name="OrderItems[@i].Quantity" value="@Model.Cart.CartItems[i].Quantity">
-                        }
-                    </form>
+        <!-- Delivery Address -->
+        <div class="card checkout-card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                        Địa chỉ nhận hàng
+                    </h5>
+                </div>
+                @if (Model.Addresses.Any())
+                {
+                    var defaultAddress = Model.Addresses.FirstOrDefault(a => a.IsDefault) ?? Model.Addresses.First();
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="fas fa-user-circle text-secondary fs-4"></i>
+                        </div>
+                        <div>
+                            <p class="fw-bold mb-1">@defaultAddress.Name</p>
+                            <p class="text-muted small mb-1">@defaultAddress.Phone</p>
+                            <p class="text-muted small mb-0">@defaultAddress.AddressLine, @defaultAddress.WardName, @defaultAddress.DistrictName, @defaultAddress.ProvinceName</p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        Bạn chưa có địa chỉ nào. Vui lòng thêm địa chỉ mới trước khi đặt hàng.
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="card checkout-card mb-3">
+            <div class="card-body">
+                @foreach (var item in Model.Cart.CartItems)
+                {
+                    <div class="d-flex mb-3 @(item != Model.Cart.CartItems.Last() ? "pb-3 border-bottom" : "")">
+                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="product-img me-3">
+                        <div class="flex-grow-1">
+                            <p class="fw-medium mb-1">@item.Product.Name</p>
+                            <p class="text-muted small mb-1">Số lượng: @item.Quantity</p>
+                        </div>
+                        <div class="text-end">
+                            <p class="text-muted small mb-1">@item.Product.Price.ToString("C", CultureInfo.CurrentCulture) x @item.Quantity</p>
+                            <p class="fw-bold text-primary mb-0">@((item.Product.Price * (1 - item.Product.Discount / 100) * item.Quantity).ToString("C", CultureInfo.CurrentCulture))</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="card checkout-card mb-3">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-credit-card text-primary me-2"></i> Phương thức thanh toán
+                </div>
+                <!-- Credit Card -->
+                <div class="payment-method p-3 border rounded mb-3" onclick="selectPayment(this)">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="PaymentMethod" id="creditCard" value="CreditCard">
+                        <label class="form-check-label fw-bold" for="creditCard">
+                            Thẻ Tín Dụng/Ghi Nợ
+                        </label>
+                    </div>
+                    <div class="mt-2 ms-4 d-flex">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196578.png" alt="Visa" height="24" class="me-2">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196561.png" alt="Mastercard" height="24" class="me-2">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196566.png" alt="JCB" height="24">
+                    </div>
+                </div>
+
+                <!-- COD -->
+                <div class="payment-method p-3 border rounded" onclick="selectPayment(this)">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="PaymentMethod" id="cod" value="COD" checked>
+                        <label class="form-check-label fw-bold" for="cod">
+                            Thanh toán khi nhận hàng (COD)
+                        </label>
+                    </div>
+                    <div class="mt-2 ms-4 text-muted small">
+                        Thanh toán khi bạn nhận được hàng
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Order Summary</h5>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <tbody>
-                                @foreach (var item in Model.Cart.CartItems)
-                                {
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
-                                                <div class="ms-3">
-                                                    <h6 class="mb-0">@item.Product.Name</h6>
-                                                    <small class="text-muted">Quantity: @item.Quantity</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="text-end">
-                                            @((item.Product.Price * (1 - item.Product.Discount/100) * item.Quantity).ToString("C", CultureInfo.CurrentCulture))
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Subtotal</span>
-                        <span>@Model.Cart.CartItems.Sum(item => item.Product.Price * (1 - item.Product.Discount/100) * item.Quantity).ToString("C", CultureInfo.CurrentCulture)</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Shipping</span>
-                        <span>Free</span>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between mb-3">
-                        <strong>Total</strong>
-                        <strong>@Model.Cart.CartItems.Sum(item => item.Product.Price * (1 - item.Product.Discount/100) * item.Quantity).ToString("C", CultureInfo.CurrentCulture)</strong>
-                    </div>
-                    <button type="submit" form="checkoutForm" class="btn btn-primary w-100">Place Order</button>
+        <!-- Order Summary -->
+        <div class="card checkout-card mb-3">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-receipt text-primary me-2"></i>Tóm tắt đơn hàng
                 </div>
+                <div class="mb-3">
+                    @{
+                        var subtotal = Model.Cart.CartItems.Sum(item => item.Product.Price * (1 - item.Product.Discount / 100) * item.Quantity);
+                        var shipping = 20000m; // Fixed shipping cost
+                        var voucherDiscount = 0m; // Fixed voucher discount
+                        var total = subtotal + shipping - voucherDiscount;
+                    }
+                    <div class="d-flex justify-content-between summary-item">
+                        <span>Tạm tính (@Model.Cart.CartItems.Count sản phẩm)</span>
+                        <span>@subtotal.ToString("C", CultureInfo.CurrentCulture)</span>
+                    </div>
+                    <div class="d-flex justify-content-between summary-item">
+                        <span>Phí vận chuyển</span>
+                        <span>@shipping.ToString("C", CultureInfo.CurrentCulture)</span>
+                    </div>
+                    <div class="d-flex justify-content-between summary-item">
+                        <span>Giảm giá voucher</span>
+                        <span class="text-success">-@voucherDiscount.ToString("C", CultureInfo.CurrentCulture)</span>
+                    </div>
+                </div>
+
+                <hr class="my-2">
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        <p class="fw-bold mb-0">Tổng thanh toán</p>
+                        <p class="text-muted small mb-0">(Đã bao gồm VAT nếu có)</p>
+                    </div>
+                    <div class="text-end">
+                        <p class="fs-5 fw-bold text-primary mb-0">@total.ToString("C", CultureInfo.CurrentCulture)</p>
+                        <p class="text-muted small">Tiết kiệm @voucherDiscount.ToString("C", CultureInfo.CurrentCulture)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Order Bar -->
+        <div class="sticky-bottom-bar">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-end">
+                        <p class="text-muted small mb-1">Tổng thanh toán</p>
+                        <p class="fs-5 fw-bold text-primary mb-0">@total.ToString("C", CultureInfo.CurrentCulture)</p>
+                    </div>
+                    <button type="submit" class="btn btn-primary px-4 py-2 fw-bold">
+                        ĐẶT HÀNG
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        @for (var i = 0; i < Model.Cart.CartItems.Count; i++)
+        {
+            <input type="hidden" name="OrderItems[@i].ProductId" value="@Model.Cart.CartItems[i].ProductId">
+            <input type="hidden" name="OrderItems[@i].Quantity" value="@Model.Cart.CartItems[i].Quantity">
+        }
+    </form>
+</div>
+
+<!-- New Address Modal -->
+<div class="modal fade" id="newAddressModal" tabindex="-1" aria-labelledby="newAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newAddressModalLabel">Quản lý địa chỉ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Address List -->
+                <div id="addressList" class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">Địa chỉ đã lưu</h6>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="showAddressForm()">
+                            <i class="fas fa-plus"></i> Thêm địa chỉ mới
+                        </button>
+                    </div>
+                    <div class="address-list">
+                        @foreach (var address in Model.Addresses)
+                        {
+                            <div class="card mb-2 address-item" data-address-id="@address.Id" style="cursor: pointer;">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="d-flex align-items-start">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input address-radio" type="radio" name="selectedAddress" value="@address.Id" @(address.IsDefault ? "checked" : "")>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-1">@address.Name</h6>
+                                                <p class="text-muted small mb-1">@address.Phone</p>
+                                                <p class="text-muted small mb-0">@address.AddressLine, @address.WardName, @address.DistrictName, @address.ProvinceName</p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="editAddress(@address.Id)">
+                                                Thay đổi
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteAddress(@address.Id)">
+                                                Xóa
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Address Form -->
+                <div id="addressForm" style="display: none;">
+                    <form id="newAddressForm">
+                        <input type="hidden" id="addressId" name="Id" value="0">
+                        <div class="mb-3">
+                            <label for="newAddressName" class="form-label">Họ và tên</label>
+                            <input type="text" class="form-control" id="newAddressName" name="Name" required maxlength="256">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newAddressPhone" class="form-label">Số điện thoại</label>
+                            <input type="tel" class="form-control" id="newAddressPhone" name="Phone" required maxlength="20" pattern="[0-9]{10,20}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="province" class="form-label">Tỉnh/Thành phố</label>
+                            <select class="form-select" id="province" name="ProvinceName" required>
+                                <option value="">Chọn Tỉnh/Thành phố</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="district" class="form-label">Quận/Huyện</label>
+                            <select class="form-select" id="district" name="DistrictName" required>
+                                <option value="">Chọn Quận/Huyện</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ward" class="form-label">Phường/Xã</label>
+                            <select class="form-select" id="ward" name="WardName" required>
+                                <option value="">Chọn Phường/Xã</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newAddressLine" class="form-label">Địa chỉ chi tiết</label>
+                            <textarea class="form-control" id="newAddressLine" name="AddressLine" required maxlength="512" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="newAddressIsDefault" name="IsDefault">
+                            <label class="form-check-label" for="newAddressIsDefault">Đặt làm địa chỉ mặc định</label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="saveNewAddress" style="display: none;">Lưu địa chỉ</button>
+                <button type="button" class="btn btn-success" id="selectAddress" style="display: none;">Chọn địa chỉ</button>
             </div>
         </div>
     </div>
@@ -97,46 +273,281 @@
 
 @section scripts {
     <script>
+        let provinces = [];
+        let districts = [];
+        let wards = [];
+        let selectedAddressId = null;
+
+        // Load provinces on page load
         $(document).ready(function() {
-            $('#checkoutForm').validate({
-                rules: {
-                    Name: {
-                        required: true,
-                        maxlength: 256
-                    },
-                    Address: {
-                        required: true,
-                        maxlength: 512
-                    },
-                    Phone: {
-                        required: true,
-                        minlength: 10,
-                        maxlength: 20,
-                        digits: true
+            loadProvinces();
+            updateSelectAddressButton();
+        });
+
+        // Handle address item click
+        $(document).on('click', '.address-item', function(e) {
+            // Don't trigger if clicking on buttons or radio
+            if ($(e.target).is('button, .btn, .address-radio')) {
+                return;
+            }
+            const radio = $(this).find('.address-radio');
+            radio.prop('checked', true).trigger('change');
+        });
+
+        // Update select address button visibility
+        function updateSelectAddressButton() {
+            const hasSelectedAddress = $('input[name="selectedAddress"]:checked').length > 0;
+            $('#selectAddress').toggle(hasSelectedAddress);
+        }
+
+        // Handle address selection
+        $(document).on('change', 'input[name="selectedAddress"]', function() {
+            selectedAddressId = $(this).val();
+            updateSelectAddressButton();
+        });
+
+        // Handle select address button click
+        $('#selectAddress').click(function() {
+            if (selectedAddressId) {
+                $.post('/Address/SetDefaultAddress', { id: selectedAddressId }, function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        abp.notify.error(response.error?.message || 'Không thể chọn địa chỉ');
+                    }
+                });
+            }
+        });
+
+        // Load provinces from API
+        function loadProvinces() {
+            $.get('https://provinces.open-api.vn/api/p', function(data) {
+                provinces = data;
+                const provinceSelect = $('#province');
+                provinceSelect.empty().append('<option value="">Chọn Tỉnh/Thành phố</option>');
+                provinces.forEach(province => {
+                    provinceSelect.append(`<option value="${province.name}" data-code="${province.code}">${province.name}</option>`);
+                });
+            });
+        }
+
+        // Load districts when province is selected
+        $('#province').change(function() {
+            const provinceName = $(this).val();
+            const provinceCode = $(this).find('option:selected').data('code');
+            if (provinceCode) {
+                $.get(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`, function(data) {
+                    districts = data.districts;
+                    const districtSelect = $('#district');
+                    districtSelect.empty().append('<option value="">Chọn Quận/Huyện</option>');
+                    districts.forEach(district => {
+                        districtSelect.append(`<option value="${district.name}" data-code="${district.code}">${district.name}</option>`);
+                    });
+                    $('#ward').empty().append('<option value="">Chọn Phường/Xã</option>');
+                });
+            }
+        });
+
+        // Load wards when district is selected
+        $('#district').change(function() {
+            const districtName = $(this).val();
+            const districtCode = $(this).find('option:selected').data('code');
+            if (districtCode) {
+                $.get(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`, function(data) {
+                    const wardSelect = $('#ward');
+                    wardSelect.empty().append('<option value="">Chọn Phường/Xã</option>');
+                    data.wards.forEach(ward => {
+                        wardSelect.append(`<option value="${ward.name}" data-code="${ward.code}">${ward.name}</option>`);
+                    });
+                });
+            }
+        });
+
+        // Show address form
+        function showAddressForm() {
+            $('#addressList').hide();
+            $('#addressForm').show();
+            $('#saveNewAddress').show();
+            $('#selectAddress').hide();
+            resetAddressForm();
+        }
+
+        // Reset address form
+        function resetAddressForm() {
+            $('#addressId').val(0);
+            $('#newAddressForm')[0].reset();
+            $('#province').val('').trigger('change');
+        }
+
+        // Edit address
+        function editAddress(addressId) {
+            $.get(`/Address/GetAddress/${addressId}`, function(response) {
+                if (response.result.success) {
+                    const address = response.result.address;
+                    
+                    // Set form values
+                    $('#addressId').val(address.id);
+                    $('#newAddressName').val(address.name);
+                    $('#newAddressPhone').val(address.phone);
+                    $('#newAddressLine').val(address.addressLine);
+                    $('#newAddressIsDefault').prop('checked', address.isDefault);
+
+                    // Disable default checkbox if this is the default address
+                    if (address.isDefault) {
+                        $('#newAddressIsDefault').prop('disabled', true);
+                    } else {
+                        $('#newAddressIsDefault').prop('disabled', false);
+                    }
+
+                    // Show address form
+                    $('#addressList').hide();
+                    $('#addressForm').show();
+                    $('#saveNewAddress').show();
+                    $('#selectAddress').hide();
+
+                    // Always load provinces first
+                    $.get('https://provinces.open-api.vn/api/p', function(data) {
+                        provinces = data;
+                        const provinceSelect = $('#province');
+                        provinceSelect.empty().append('<option value="">Chọn Tỉnh/Thành phố</option>');
+                        provinces.forEach(province => {
+                            provinceSelect.append(`<option value="${province.name}" data-code="${province.code}">${province.name}</option>`);
+                        });
+                        // After loading provinces, set the value and trigger district load
+                        setAddressLocation(address);
+                    });
+                } else {
+                    abp.notify.error(response.error?.message || 'Không thể lấy thông tin địa chỉ');
+                }
+            }).fail(function() {
+                abp.notify.error('Có lỗi xảy ra khi lấy thông tin địa chỉ');
+            });
+        }
+
+        // Helper function to set address location values
+        function setAddressLocation(address) {
+            // Set province and load districts
+            $('#province').val(address.provinceName);
+            const provinceCode = $('#province option:selected').data('code');
+            
+            if (provinceCode) {
+                $.get(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`, function(data) {
+                    districts = data.districts;
+                    const districtSelect = $('#district');
+                    districtSelect.empty().append('<option value="">Chọn Quận/Huyện</option>');
+                    districts.forEach(district => {
+                        districtSelect.append(`<option value="${district.name}" data-code="${district.code}">${district.name}</option>`);
+                    });
+                    
+                    // Set district and load wards
+                    $('#district').val(address.districtName);
+                    const districtCode = $('#district option:selected').data('code');
+                    
+                    if (districtCode) {
+                        $.get(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`, function(data) {
+                            const wardSelect = $('#ward');
+                            wardSelect.empty().append('<option value="">Chọn Phường/Xã</option>');
+                            data.wards.forEach(ward => {
+                                wardSelect.append(`<option value="${ward.name}" data-code="${ward.code}">${ward.name}</option>`);
+                            });
+                            // Set ward after wards are loaded
+                            $('#ward').val(address.wardName);
+                        });
+                    }
+                });
+            }
+        }
+
+        // Delete address
+        function deleteAddress(addressId) {
+            abp.message.confirm(
+                'Bạn có chắc chắn muốn xóa địa chỉ này?',
+                'Xác nhận xóa',
+                function(isConfirmed) {
+                    if (isConfirmed) {
+                        $.ajax({
+                            url: `/Address/DeleteAddress/${addressId}`,
+                            type: 'POST',
+                            success: function(response) {
+                                if (response.success) {
+                                    abp.notify.success('Xóa địa chỉ thành công');
+                                    location.reload();
+                                } else {
+                                    abp.notify.error(response.error?.message || 'Không thể xóa địa chỉ');
+                                }
+                            },
+                            error: function() {
+                                abp.notify.error('Có lỗi xảy ra khi xóa địa chỉ');
+                            }
+                        });
+                    }
+                }
+            );
+        }
+
+        // Show address list when modal is opened
+        $('#newAddressModal').on('show.bs.modal', function() {
+            $('#addressList').show();
+            $('#addressForm').hide();
+            $('#saveNewAddress').hide();
+            $('#selectAddress').show();
+            updateSelectAddressButton();
+        });
+
+        // Handle new address form submission
+        $('#saveNewAddress').on('click', function() {
+            const formData = {
+                Id: parseInt($('#addressId').val()) || 0,
+                Name: $('#newAddressName').val(),
+                Phone: $('#newAddressPhone').val(),
+                ProvinceName: $('#province').val(),
+                DistrictName: $('#district').val(),
+                WardName: $('#ward').val(),
+                AddressLine: $('#newAddressLine').val(),
+                IsDefault: $('#newAddressIsDefault').is(':checked')
+            };
+
+            // Validate form data
+            if (!formData.Name || !formData.Phone || !formData.ProvinceName || 
+                !formData.DistrictName || !formData.WardName || !formData.AddressLine) {
+                abp.notify.error('Vui lòng điền đầy đủ thông tin địa chỉ');
+                return;
+            }
+
+            // Validate phone number format
+            const phoneRegex = /^[0-9]{10,20}$/;
+            if (!phoneRegex.test(formData.Phone)) {
+                abp.notify.error('Số điện thoại không hợp lệ');
+                return;
+            }
+
+            const url = formData.Id > 0 ? '/Address/UpdateAddress' : '/Address/CreateAddress';
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        abp.notify.success(formData.Id > 0 ? 'Cập nhật địa chỉ thành công' : 'Thêm địa chỉ thành công');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        abp.notify.error(response.error?.message || 'Không thể lưu địa chỉ');
                     }
                 },
-                messages: {
-                    Name: {
-                        required: 'Please enter your full name',
-                        maxlength: 'Name must not exceed 256 characters'
-                    },
-                    Address: {
-                        required: 'Please enter your shipping address',
-                        maxlength: 'Address must not exceed 512 characters'
-                    },
-                    Phone: {
-                        required: 'Please enter your phone number',
-                        minlength: 'Phone number must be at least 10 digits',
-                        maxlength: 'Phone number must not exceed 20 digits',
-                        digits: 'Phone number must contain only digits'
+                error: function(xhr) {
+                    let errorMessage = 'Có lỗi xảy ra khi lưu địa chỉ';
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        errorMessage = response.error?.message || errorMessage;
+                    } catch (e) {
+                        console.error('Error parsing error response:', e);
                     }
-                },
-                submitHandler: function(form) {
-                    // Prevent double submission
-                    $(form).find('button[type="submit"]').prop('disabled', true);
-                    form.submit();
+                    abp.notify.error(errorMessage);
                 }
             });
         });
     </script>
-} 
+}

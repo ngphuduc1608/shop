@@ -173,6 +173,20 @@
     </style>
 }
 
+
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Carts/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Carts/Index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+
+
 <div class="container py-4">
     <div class="row">
         <div class="col-12">
@@ -209,11 +223,11 @@
     {
         <div class="row">
             <div class="col-12">
-                <table class="table">
+                <table class="table" id="cartsTable">
                     <thead class="cart-header">
                         <tr>
                             <th style="width: 50px">
-                                <input type="checkbox" id="selectAll" onchange="toggleAllItems(this)">
+                                <input type="checkbox" id="selectAll" >
                             </th>
                             <th>Sản Phẩm</th>
                             <th>Đơn Giá</th>
@@ -228,10 +242,9 @@
                             <tr class="cart-item">
                                 <td>
                                     <input type="checkbox" class="cart-item-checkbox" 
-                                           data-id="@item.Id" 
-                                           data-price="@(item.Product.Price * (1 - item.Product.Discount/100))" 
-                                           data-quantity="@item.Quantity"
-                                           onchange="updateTotal()">
+                                           data-id="@item.Id"
+                                           data-price="@((item.Product.Price * (1M - item.Product.Discount / 100M)).ToString("F2"))"
+                                           data-quantity="@item.Quantity">
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -250,9 +263,9 @@
                                 </td>
                                 <td>
                                     <div class="quantity-control">
-                                        <button type="button" onclick="updateQuantity(@item.Id, @(item.Quantity - 1))">-</button>
+                                        <button type="button" >-</button>
                                         <input type="text" value="@item.Quantity" readonly>
-                                        <button type="button" onclick="updateQuantity(@item.Id, @(item.Quantity + 1))">+</button>
+                                        <button type="button">+</button>
                                     </div>
                                 </td>
                                 <td>
@@ -282,113 +295,4 @@
     }
 </div>
 
-@section scripts {
-    <script>
-        function updateQuantity(cartItemId, newQuantity) {
-            if (newQuantity < 1) return;
-            
-            $.ajax({
-                url: '/Cart/UpdateCartItem',
-                type: 'POST',
-                data: {
-                    cartItemId: cartItemId,
-                    quantity: newQuantity
-                },
-                success: function(response) {
-                    if (response.success) {
-                        const row = document.querySelector(`[data-id="${cartItemId}"]`).closest('tr');
-                        const quantityInput = row.querySelector('.quantity-control input');
-                        const minusButton = row.querySelector('.quantity-control button:first-child');
-                        const plusButton = row.querySelector('.quantity-control button:last-child');
-                        
-                        // Cập nhật số lượng hiển thị
-                        quantityInput.value = newQuantity;
-                        
-                        // Cập nhật onclick cho nút giảm
-                        minusButton.onclick = function() {
-                            updateQuantity(cartItemId, newQuantity - 1);
-                        };
-                        
-                        // Cập nhật onclick cho nút tăng
-                        plusButton.onclick = function() {
-                            updateQuantity(cartItemId, newQuantity + 1);
-                        };
 
-                        // Lấy giá từ data attribute
-                        const checkbox = row.querySelector('.cart-item-checkbox');
-                        const price = parseFloat(checkbox.dataset.price);
-                        
-                        // Cập nhật tổng tiền của item
-                        const totalPriceCell = row.querySelector('td:nth-last-child(2)');
-                        const newTotal = price * newQuantity;
-                        totalPriceCell.textContent = `$${newTotal.toFixed(2)}`;
-
-                        // Cập nhật data-quantity cho checkbox
-                        checkbox.dataset.quantity = newQuantity;
-
-                        // Nếu item đang được check thì cập nhật tổng tiền
-                        if (checkbox.checked) {
-                            updateTotal();
-                        }
-                    }
-                }
-            });
-        }
-
-        function removeFromCart(cartItemId) {
-            $.ajax({
-                url: '/Cart/RemoveFromCart',
-                type: 'POST',
-                data: {
-                    cartItemId: cartItemId
-                },
-                success: function(response) {
-                    if (response.success) {
-                        location.reload();
-                    }
-                }
-            });
-        }
-
-        function checkout() {
-            // Get selected item IDs
-            const selectedItems = Array.from(document.querySelectorAll('.cart-item-checkbox:checked'))
-                .map(checkbox => checkbox.dataset.id);
-            
-            if (selectedItems.length === 0) {
-                alert('Please select items to checkout');
-                return;
-            }
-
-            window.location.href = '/Order/Checkout';
-        }
-
-        function updateTotal() {
-            const checkboxes = document.querySelectorAll('.cart-item-checkbox:checked');
-            let total = 0;
-
-            checkboxes.forEach(checkbox => {
-                const price = parseFloat(checkbox.dataset.price);
-                const quantity = parseInt(checkbox.dataset.quantity);
-                total += price * quantity;
-            });
-
-            document.getElementById('totalAmount').textContent = `$${total.toFixed(2)} USD`;
-            document.getElementById('selectedItemCount').textContent = checkboxes.length;
-            document.getElementById('checkoutButton').disabled = checkboxes.length === 0;
-
-            // Update select all checkbox
-            const allCheckboxes = document.querySelectorAll('.cart-item-checkbox');
-            document.getElementById('selectAll').checked = 
-                checkboxes.length === allCheckboxes.length && allCheckboxes.length > 0;
-        }
-
-        function toggleAllItems(selectAllCheckbox) {
-            const checkboxes = document.querySelectorAll('.cart-item-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = selectAllCheckbox.checked;
-            });
-            updateTotal();
-        }
-    </script>
-} 

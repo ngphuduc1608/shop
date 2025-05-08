@@ -10,6 +10,7 @@ using proj_tt.Orders;
 using proj_tt.Persons;
 using proj_tt.Products;
 using proj_tt.Tasks;
+using proj_tt.Addresses;
 
 namespace proj_tt.EntityFrameworkCore
 {
@@ -24,6 +25,7 @@ namespace proj_tt.EntityFrameworkCore
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Address> Addresses { get; set; }
 
         public proj_ttDbContext(DbContextOptions<proj_ttDbContext> options)
             : base(options)

@@ -1,6 +1,5 @@
 using Abp.Domain.Entities.Auditing;
 using proj_tt.Products;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -78,4 +77,4 @@ namespace proj_tt.Orders
         Delivered = 3,
         Cancelled = 4
     }
-} 
+}

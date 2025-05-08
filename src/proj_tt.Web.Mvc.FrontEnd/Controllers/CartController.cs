@@ -28,28 +28,32 @@ namespace proj_tt.Web.Controllers
         public async Task<ActionResult> AddToCart(AddToCartInput input)
         {
             var cart = await _cartAppService.AddToCartAsync(input);
-            return Json(new { success = true, cart = cart });
+            var count = cart.CartItems.Sum(item => item.Quantity);
+            return Json(new { success = true, cart = cart, count = count });
         }
 
         [HttpPost]
         public async Task<ActionResult> UpdateCartItem(UpdateCartItemInput input)
         {
             var cart = await _cartAppService.UpdateCartItemAsync(input);
-            return Json(new { success = true, cart = cart });
+            var count = cart.CartItems.Sum(item => item.Quantity);
+            return Json(new { success = true, cart = cart, count = count });
         }
 
         [HttpPost]
         public async Task<ActionResult> RemoveFromCart(int cartItemId)
         {
             await _cartAppService.RemoveFromCartAsync(cartItemId);
-            return Json(new { success = true });
+            var cart = await _cartAppService.GetCartAsync();
+            var count = cart.CartItems.Sum(item => item.Quantity);
+            return Json(new { success = true, count = count });
         }
 
         [HttpPost]
         public async Task<ActionResult> ClearCart()
         {
             await _cartAppService.ClearCartAsync();
-            return Json(new { success = true });
+            return Json(new { success = true, count = 0 });
         }
 
         [HttpGet]

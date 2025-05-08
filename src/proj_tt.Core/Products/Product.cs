@@ -28,7 +28,8 @@ namespace proj_tt.Products
         public int Discount { get; set; }
         public DateTime ProductionDate { get; set; }
 
-
+        [Required]
+        public int Stock { get; set; }
 
         [ForeignKey(nameof(CategoryId))]
 
@@ -37,7 +38,7 @@ namespace proj_tt.Products
         public int? CategoryId { get; set; }
 
 
-        public Product(string name, decimal price, string imageUrl, int discount = 0, int? categoryId = null, DateTime productionDate = default)
+        public Product(string name, decimal price, string imageUrl, int discount = 0, int? categoryId = null, DateTime productionDate = default, int stock = 0)
         {
             Name = name;
             Price = price;
@@ -45,7 +46,7 @@ namespace proj_tt.Products
             Discount = discount;
             CategoryId = categoryId;
             ProductionDate = productionDate;
-
+            Stock = stock;
         }
 
     }

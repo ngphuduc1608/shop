@@ -116,6 +116,12 @@
             },
             {
                 targets: 6,
+                data: 'stock',
+                sortable: false,
+
+            },
+            {
+                targets: 7,
                 data: 'productionDate',
                 orderable: true,
                 render: function (data, type, row, meta) {
@@ -125,7 +131,7 @@
                 }
             },
             {
-                targets: 7,
+                targets: 8,
                 data: 'creationTime',
                 orderable: true,
                 render: function (data, type, row, meta) {
@@ -135,7 +141,7 @@
                 }
             },
             {
-                targets: 8,
+                targets: 9,
                 data: 'lastModificationTime',
                 orderable: true,
                 render: function (data, type, row, meta) {
@@ -145,7 +151,7 @@
                 }
             },
             {
-                targets: 9,
+                targets: 10,
                 data: null,
                 sortable: false,
                 autoWidth: false,

@@ -1,9 +1,11 @@
 using Abp.Application.Services.Dto;
 using Microsoft.AspNetCore.Mvc;
+using proj_tt.Addresses;
 using proj_tt.Carts;
 using proj_tt.Carts.Dto;
 using proj_tt.Controllers;
 using proj_tt.Orders;
+using proj_tt.Products;
 using proj_tt.Web.Models.Orders;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,28 +16,48 @@ namespace proj_tt.Web.Controllers
     {
         private readonly IOrderAppService _orderAppService;
         private readonly ICartAppService _cartAppService;
+        private readonly IAddressAppService _addressAppService;
+        private readonly IProductAppService _productAppService;
 
-        public OrderController(IOrderAppService orderAppService, ICartAppService cartAppService)
+        public OrderController(
+            IOrderAppService orderAppService,
+            ICartAppService cartAppService,
+            IAddressAppService addressAppService,
+            IProductAppService productAppService)
         {
             _orderAppService = orderAppService;
             _cartAppService = cartAppService;
+            _addressAppService = addressAppService;
+            _productAppService = productAppService;
         }
 
-        public async Task<ActionResult> Checkout(int? productId = null, string selectedItems = null)
+        public async Task<ActionResult> Checkout(int? productId = null, int? quantity = null, string selectedItems = null)
         {
-            if (productId.HasValue)
+            var addresses = await _addressAppService.GetUserAddresses();
+
+            if (productId.HasValue && quantity.HasValue)
             {
-                // Single product checkout
-                var cartItem = await _cartAppService.GetCartItemByProductIdAsync(productId.Value);
-                if (cartItem == null)
+                // Direct checkout with product and quantity
+                var product = await _productAppService.GetProducts(productId.Value);
+                if (product == null)
                 {
-                    return RedirectToAction("Index", "Cart");
+                    return RedirectToAction("Index", "Product");
                 }
 
-                var model = new CheckoutViewModel(new CartDto
+                var cartItem = new CartItemDto
                 {
-                    CartItems = new System.Collections.Generic.List<CartItemDto> { cartItem }
-                });
+                    ProductId = product.Id,
+                    Product = product,
+                    Quantity = quantity.Value
+                };
+
+                var model = new CheckoutViewModel(
+                    new CartDto
+                    {
+                        CartItems = new System.Collections.Generic.List<CartItemDto> { cartItem }
+                    },
+                    addresses
+                );
                 return View(model);
             }
             else if (!string.IsNullOrEmpty(selectedItems))
@@ -56,10 +78,13 @@ namespace proj_tt.Web.Controllers
                     return RedirectToAction("Index", "Cart");
                 }
 
-                var model = new CheckoutViewModel(new CartDto
-                {
-                    CartItems = filteredItems
-                });
+                var model = new CheckoutViewModel(
+                    new CartDto
+                    {
+                        CartItems = filteredItems
+                    },
+                    addresses
+                );
                 return View(model);
             }
             else
@@ -71,7 +96,7 @@ namespace proj_tt.Web.Controllers
                     return RedirectToAction("Index", "Cart");
                 }
 
-                var model = new CheckoutViewModel(cart);
+                var model = new CheckoutViewModel(cart, addresses);
                 return View(model);
             }
         }

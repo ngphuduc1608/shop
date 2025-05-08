@@ -84,14 +84,14 @@ namespace proj_tt.Web.Startup
             }
 
             //var staticFilePath = Path.GetFullPath(Path.Combine(env.ContentRootPath, @"..\upload\Product"));
-            var staticFilePath = Path.Combine("D:", "upload", "Product");
+            var staticFilePath = Path.Combine("D:", "uploads", "Product");
 
             if (Directory.Exists(staticFilePath))
             {
                 app.UseStaticFiles(new StaticFileOptions
                 {
                     FileProvider = new PhysicalFileProvider(staticFilePath),
-                    RequestPath = "/upload/Product"
+                    RequestPath = "/uploads/Product"
                 });
             }
 

@@ -28,14 +28,14 @@ namespace proj_tt.Web.Controllers
         public async Task<ActionResult> Index()
         {
             var products = await _productAppService.GetProductPaged(new PagedProductDto());
-
+            var result = products.Items.Where(products => products.Stock > 0).ToList();
             var categories = await _categoryAppService.GetAllCategories(new PagedCategoriesDto());
             var categoriesItems = categories.Items.Select(c => new SelectListItem
             {
                 Value = c.Id.ToString(),
                 Text = c.NameCategory
             }).ToList();
-            var model = new IndexViewModel(products.Items, categoriesItems);
+            var model = new IndexViewModel(result, categoriesItems);
             return View(model);
         }
 

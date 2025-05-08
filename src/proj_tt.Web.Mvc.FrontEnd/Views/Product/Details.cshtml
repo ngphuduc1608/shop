@@ -46,71 +46,17 @@
     }
 </style>
 
-<script>
-    // Quantity increment/decrement
-    function incrementQuantity() {
-        const quantityInput = document.getElementById('quantity');
-        let quantity = parseInt(quantityInput.value);
-        if (quantity < 10) {
-            quantityInput.value = quantity + 1;
-        }
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Products/Details.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Products/Details.min.js" asp-append-version="true"></script>
+    </environment>
+
     }
-
-    function decrementQuantity() {
-        const quantityInput = document.getElementById('quantity');
-        let quantity = parseInt(quantityInput.value);
-        if (quantity > 1) {
-            quantityInput.value = quantity - 1;
-        }
-    }
-
-    function addToCart() {
-        const quantity = parseInt(document.getElementById('quantity').value);
-        const productId = @Model.Product.Id;
-
-        $.ajax({
-            url: '/Cart/AddToCart',
-            type: 'POST',
-            data: {
-                productId: productId,
-                quantity: quantity
-            },
-            success: function(response) {
-                if (response.success) {
-                    abp.notify.success('SavedSuccessfully');
-                }
-            },
-            error: function() {
-                abp.notify.error(('FailedToSave'));
-            }
-        });
-    }
-
-    function buyNow() {
-        const quantity = parseInt(document.getElementById('quantity').value);
-        const productId = @Model.Product.Id;
-
-        $.ajax({
-            url: '/Cart/AddToCart',
-            type: 'POST',
-            data: {
-                productId: productId,
-                quantity: quantity
-            },
-            success: function(response) {
-                if (response.success) {
-                    window.location.href = '/Order/Checkout?productId=' + productId;
-                } else {
-                    abp.notify.error(('FailedToSave'));
-                }
-            },
-            error: function() {
-                abp.notify.error(('FailedToSave'));
-            }
-        });
-    }
-
-</script>
 
 
 <div class="container py-4">
@@ -164,18 +110,18 @@
                     <div class="d-flex align-items-center mb-3">
                         <span class="me-3">Quantity:</span>
                         <div class="input-group" style="width: 120px;">
-                            <button class="btn btn-outline-secondary" type="button" onclick="decrementQuantity()">-</button>
-                            <input type="number" id="quantity" class="form-control text-center" value="1" min="1" max="10">
-                            <button class="btn btn-outline-secondary" type="button" onclick="incrementQuantity()">+</button>
+                            <button class="btn btn-outline-secondary" type="button" id="decrementBtn">-</button>
+                            <input type="text" id="quantity" class="form-control text-center" value="1" data-max-stock="@Model.Product.Stock">
+                            <button class="btn btn-outline-secondary" type="button" id="incrementBtn">+</button>
                         </div>
-                        <small class="text-muted ms-2">(Available: 50)</small>
+                        <small class="text-muted ms-2">(Available: @Model.Product.Stock)</small>
                     </div>
 
                     <div class="d-flex gap-2 mb-3">
-                        <button class="btn btn-success flex-grow-1" onclick="addToCart()">
+                        <button class="btn btn-success flex-grow-1" id="addToCartBtn" data-product-id="@Model.Product.Id">
                             <i class="fas fa-shopping-cart me-2"></i> Add to Cart
                         </button>
-                        <button class="btn btn-primary flex-grow-1" onclick="buyNow()">
+                        <button class="btn btn-primary flex-grow-1" id="buyNowBtn" data-product-id="@Model.Product.Id">
                             <i class="fas fa-bolt me-2"></i> Buy Now
                         </button>
                     </div>

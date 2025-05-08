@@ -5,7 +5,6 @@ using Abp.Linq.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using proj_tt.Authorization;
 using proj_tt.Products.Dto;
 using System;
 using System.IO;
@@ -27,9 +26,9 @@ namespace proj_tt.Products
         {
             _productRepository = productRepository;
             _webHostEnvironment = webHostEnvironment;
-            _imageRootPath = Path.Combine("D:", "upload", "Product");
+            _imageRootPath = Path.Combine("D:", "uploads", "Product");
         }
-        [AbpAuthorize(PermissionNames.Pages_Products_Create)]
+        //[AbpAuthorize(PermissionNames.Pages_Products_Create)]
         public async System.Threading.Tasks.Task Create(ProductListDto input)
         {
             // Xử lý upload ảnh nếu có
@@ -47,7 +46,9 @@ namespace proj_tt.Products
                 imagePath,
                 input.Discount,
                 input.CategoryId,
-                input.ProductionDate
+                input.ProductionDate,
+                input.Stock
+
             );
 
             // Thêm sản phẩm vào database
@@ -55,7 +56,7 @@ namespace proj_tt.Products
         }
 
         //[AbpAuthorize]
-        [AbpAuthorize(PermissionNames.Pages_Products)]
+        //[AbpAuthorize(PermissionNames.Pages_Products)]
 
         // phan trang product
         public async Task<PagedResultDto<ProductDto>> GetProductPaged(PagedProductDto input)
@@ -120,13 +121,15 @@ namespace proj_tt.Products
                 CreationTime = p.CreationTime,
                 LastModificationTime = p.LastModificationTime,
                 ProductionDate = p.ProductionDate,
+                Stock = p.Stock,
+
             }).ToList();
 
             return new PagedResultDto<ProductDto>(count, result);
         }
 
 
-        [AbpAuthorize(PermissionNames.Pages_Products_Edit)]
+        //[AbpAuthorize(PermissionNames.Pages_Products_Edit)]
         public async Task Update(UpdateProductDto input)
         {
             var product = await _productRepository.GetAsync(input.Id);
@@ -136,6 +139,8 @@ namespace proj_tt.Products
             product.Discount = input.Discount;
             product.CategoryId = input.CategoryId;
             product.ProductionDate = input.ProductionDate;
+            product.Stock = input.Stock;
+
 
 
             if (input.ImageUrl != null)
@@ -150,72 +155,12 @@ namespace proj_tt.Products
             await _productRepository.UpdateAsync(product);
 
         }
-        [AbpAuthorize(PermissionNames.Pages_Products_Delete)]
+        //[AbpAuthorize(PermissionNames.Pages_Products_Delete)]
         public async Task Delete(int id)
         {
 
             await _productRepository.DeleteAsync(id);
         }
-
-        //private async Task<string> SaveImageAsync(IFormFile file)
-        //{
-        //    if (file == null || file.Length == 0)
-        //    {
-        //        return null;
-        //    }
-        //    // Đường dẫn thư mục lưu ảnh: wwwroot/uploads/products
-        //    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images/products");
-        //    if (!Directory.Exists(uploadsFolder))
-        //    {
-        //        Directory.CreateDirectory(uploadsFolder);
-        //    }
-        //    // Tạo tên file duy nhất
-        //    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-        //    var filePath = Path.Combine(uploadsFolder, fileName);
-        //    // Lưu file ảnh vào thư mục
-        //    using (var stream = new FileStream(filePath, FileMode.Create))
-        //    {
-        //        await file.CopyToAsync(stream);
-        //    }
-        //    // Lưu đường dẫn tương đối vào database
-        //    //return $"/images/products/{fileName}"; // Trả về đường dẫn để lưu vào database
-
-
-        //    // Lấy base URL từ configuration
-        //    var baseUrl = _configuration["App:BaseUrl"];
-        //    if (string.IsNullOrEmpty((string)baseUrl))
-        //    {
-        //        throw new UserFriendlyException("BaseUrl is not configured in appsettings.json");
-        //    }
-
-        //    // Trả về đường dẫn tuyệt đối
-        //    return $"{baseUrl}/images/products/{fileName}";
-
-        //}
-
-        //private async Task<string> SaveImageAsync(IFormFile file)
-        //{
-        //    if (file == null || file.Length == 0)
-        //    {
-        //        return null;
-        //    }
-        //    // Đường dẫn thư mục lưu ảnh: wwwroot/uploads/products
-        //    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads/products");
-        //    if (!Directory.Exists(uploadsFolder))
-        //    {
-        //        Directory.CreateDirectory(uploadsFolder);
-        //    }
-        //    // Tạo tên file duy nhất
-        //    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-        //    var filePath = Path.Combine(uploadsFolder, fileName);
-        //    // Lưu file ảnh vào thư mục
-        //    using (var stream = new FileStream(filePath, FileMode.Create))
-        //    {
-        //        await file.CopyToAsync(stream);
-        //    }
-        //    // Lưu đường dẫn tương đối vào database
-        //    return $"/uploads/products/{fileName}"; // Trả về đường dẫn để lưu vào database
-        //}
 
 
         private async Task<string> SaveImageAsync(IFormFile file)
@@ -235,12 +180,10 @@ namespace proj_tt.Products
             }
 
             // Trả về đường dẫn tương đối để truy cập từ trình duyệt
-            return "/upload/Product/" + fileName;
+            return "/uploads/Product/" + fileName;
         }
 
-        //[AbpAuthorize]
-        [AbpAuthorize(PermissionNames.Pages_Products)]
-
+        [AbpAuthorize]
         public async Task<ProductDto> GetProducts(int id)
         {
 

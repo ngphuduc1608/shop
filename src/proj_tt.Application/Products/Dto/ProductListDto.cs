@@ -27,6 +27,7 @@ namespace proj_tt.Products.Dto
 
 
         public DateTime ProductionDate { get; set; }
+        public int Stock { get; set; }
 
     }
 }

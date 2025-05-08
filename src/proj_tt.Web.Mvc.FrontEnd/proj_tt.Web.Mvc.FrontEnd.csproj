@@ -44,6 +44,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\libs\" />
     <Folder Include="wwwroot\uploads\products\" />
+    <Folder Include="wwwroot\view-resources\Views\Orders\" />
     <Folder Include="wwwroot\view-resources\Views\_Bundles\" />
   </ItemGroup>
 </Project>

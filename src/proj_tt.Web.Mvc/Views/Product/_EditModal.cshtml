@@ -26,6 +26,10 @@
             <input type="number" class="form-control"  name="Discount" value="@Model.Product.Discount" >
         </div>
         <div class="form-group row required">
+            <label for="stock" class="col-md-3 col-form-label">@L("Stock")</label>
+            <input type="number" class="form-control" name="Stock" value="@Model.Product.Stock" required min="0">
+        </div>
+        <div class="form-group row required">
             <label class="col-md-3 col-form-label">@L("CategoryName")</label>
 
             @Html.DropDownList("CategoryId", Model.Categories, @L("CategoryEmpty"), new

@@ -19,6 +19,7 @@ namespace proj_tt.Products.Dto
         public IFormFile ImageUrl { get; set; } // Có thể giữ ảnh cũ hoặc upload ảnh mới
 
         public int Discount { get; set; }
+        public int Stock { get; set; }
 
         public string ExistingImageUrl { get; set; } // Lưu ảnh cũ
 

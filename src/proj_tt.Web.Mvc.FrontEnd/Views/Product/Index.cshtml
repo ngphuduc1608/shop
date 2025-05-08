@@ -4,288 +4,242 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/>
 }
 
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            var currentPage = 1;
-            var pageSize = 15;
-            var totalItems = 0;
-            var totalPages = 0;
-            var selectedCategories = [];
-            var currentMinPrice = 0;
-            var currentMaxPrice = 1000;
-            var isPriceRangeAdjusted = false;
-            var currentSort = "CreationTime desc";
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+<script>
+    $(document).ready(function() {
+    var currentPage = 1;
+    var pageSize = 15;
+    var totalItems = 0;
+    var totalPages = 0;
+    var selectedCategories = [];
+    var currentMinPrice = 0;
+    var currentMaxPrice = 1000;
+    var isPriceRangeAdjusted = false;
+    var currentSort = "CreationTime desc";
 
-            // Get keyword from URL if exists
-            var urlParams = new URLSearchParams(window.location.search);
-            var keyword = urlParams.get('Keyword');
-            if (keyword) {
-                $('#ProductsSearchForm input[name="Keyword"]').val(keyword);
-            }
+    // Get keyword from URL if exists
+    var urlParams = new URLSearchParams(window.location.search);
+    var keyword = urlParams.get('Keyword');
+    if (keyword) {
+    $('#ProductsSearchForm input[name="Keyword"]').val(keyword);
+    }
 
-            // Initialize ionRangeSlider
-            $("#priceRange").ionRangeSlider({
-                type: "double",
-                min: 0,
-                max: 1000,
-                from: 0,
-                to: 1000,
-                step: 10,
-                grid: true,
-                prefix: "$",
-                postfix: "",
-                onFinish: function (data) {
-                    currentMinPrice = data.from;
-                    currentMaxPrice = data.to;
-                    $("#MinPriceInput").val(data.from);
-                    $("#MaxPriceInput").val(data.to);
-                    isPriceRangeAdjusted = true;
-                    isFilterApplied = true;
-                }
-            });
+    // Initialize ionRangeSlider
+    $("#priceRange").ionRangeSlider({
+    type: "double",
+    min: 0,
+    max: 1000,
+    from: 0,
+    to: 1000,
+    step: 10,
+    grid: true,
+    prefix: "$",
+    postfix: "",
+    onFinish: function (data) {
+    currentMinPrice = data.from;
+    currentMaxPrice = data.to;
+    $("#MinPriceInput").val(data.from);
+    $("#MaxPriceInput").val(data.to);
+    isPriceRangeAdjusted = true;
+    isFilterApplied = true;
+    }
+    });
 
-            // Update slider when input values change
-            $("#MinPriceInput").on('change', function() {
-                var value = parseInt($(this).val()) || 0;
-                currentMinPrice = value;
-                $("#priceRange").data("ionRangeSlider").update({
-                    from: value
-                });
-                isPriceRangeAdjusted = true;
-                isFilterApplied = true;
-            });
+    // Update slider when input values change
+    $("#MinPriceInput").on('change', function() {
+    var value = parseInt($(this).val()) || 0;
+    currentMinPrice = value;
+    $("#priceRange").data("ionRangeSlider").update({
+    from: value
+    });
+    isPriceRangeAdjusted = true;
+    isFilterApplied = true;
+    });
 
-            $("#MaxPriceInput").on('change', function() {
-                var value = parseInt($(this).val()) || 1000;
-                currentMaxPrice = value;
-                var slider = $("#priceRange").data("ionRangeSlider");
-                isPriceRangeAdjusted = true;
-                isFilterApplied = true;
+    $("#MaxPriceInput").on('change', function() {
+    var value = parseInt($(this).val()) || 1000;
+    currentMaxPrice = value;
+    var slider = $("#priceRange").data("ionRangeSlider");
+    isPriceRangeAdjusted = true;
+    isFilterApplied = true;
 
-                if (value > slider.options.max) {
-                    slider.update({
-                        max: value,
-                        to: value
-                    });
-                } else {
-                    slider.update({
-                        to: value
-                    });
-                }
-            });
+    if (value > slider.options.max) {
+    slider.update({
+    max: value,
+    to: value
+    });
+    } else {
+    slider.update({
+    to: value
+    });
+    }
+    });
 
-            // Handle category selection
-            $('.category-checkbox').on('change', function() {
-                var categoryId = $(this).val();
-                if ($(this).is(':checked')) {
-                    if (!selectedCategories.includes(categoryId)) {
-                        selectedCategories.push(categoryId);
-                    }
-                } else {
-                    selectedCategories = selectedCategories.filter(id => id !== categoryId);
-                }
-                isFilterApplied = true;
-            });
+    // Handle category selection
+    $('.category-checkbox').on('change', function() {
+    var categoryId = $(this).val();
+    if ($(this).is(':checked')) {
+    if (!selectedCategories.includes(categoryId)) {
+    selectedCategories.push(categoryId);
+    }
+    } else {
+    selectedCategories = selectedCategories.filter(id => id !== categoryId);
+    }
+    isFilterApplied = true;
+    });
 
-            // Handle Apply Filter button click
-            $('.btn-primary').on('click', function() {
-                currentPage = 1;
-                loadProducts(currentPage);
-            });
+    // Handle Apply Filter button click
+    $('.btn-primary').on('click', function() {
+    currentPage = 1;
+    loadProducts(currentPage);
+    });
 
-            // Handle Reset Filter button click
-            $('.btn-outline-secondary').on('click', function() {
-                $("#priceRange").data("ionRangeSlider").reset();
-                $("#MinPriceInput").val('');
-                $("#MaxPriceInput").val('');
-                $('.category-checkbox').prop('checked', false);
-                selectedCategories = [];
-                isPriceRangeAdjusted = false;
-                isFilterApplied = false;
-                currentPage = 1;
-                loadProducts(currentPage);
-            });
+    // Handle Reset Filter button click
+    $('.btn-outline-secondary').on('click', function() {
+    $("#priceRange").data("ionRangeSlider").reset();
+    $("#MinPriceInput").val('');
+    $("#MaxPriceInput").val('');
+    $('.category-checkbox').prop('checked', false);
+    selectedCategories = [];
+    isPriceRangeAdjusted = false;
+    isFilterApplied = false;
+    currentPage = 1;
+    loadProducts(currentPage);
+    });
 
-            // Function to load products
-            function loadProducts(page) {
-                var filter = {};
-                
-                // Add keyword from URL if exists
-                if (keyword) {
-                    filter.Keyword = keyword;
-                }
-                
-                // Add pagination parameters
-                filter.skipCount = (page - 1) * pageSize;
-                filter.maxResultCount = pageSize;
-                
-                // Add sorting
-                filter.sorting = currentSort;
-                
-                // Always add price range if values are set
-                if (currentMinPrice > 0 || currentMaxPrice < 1000) {
-                    filter.minPrice = currentMinPrice;
-                    filter.maxPrice = currentMaxPrice;
-                }
-                
-                // Always add categories if any selected
-                if (selectedCategories.length > 0) {
-                    filter.categoryIds = selectedCategories;
-                }
+    // Function to load products
+    function loadProducts(page) {
+    var filter = {};
 
-                console.log('filter', filter);
+    // Add keyword from URL if exists
+    if (keyword) {
+    filter.Keyword = keyword;
+    }
 
-                // Convert filter to query string
-                var queryString = $.param(filter, true);
+    // Add pagination parameters
+    filter.skipCount = (page - 1) * pageSize;
+    filter.maxResultCount = pageSize;
 
-                $.ajax({
-                    url: '/api/services/app/Product/GetProductPaged?' + queryString,
-                    type: 'GET',
-                    success: function(response) {
-                        if (response.success) {
-                            var products = response.result.items;
-                            totalItems = response.result.totalCount;
-                            totalPages = Math.ceil(totalItems / pageSize);
-                            
-                            updateProductGrid(products);
-                            updatePagination(page);
-                            updateResultsCount(page);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error loading products:', error);
-                    }
-                });
-            }
+    // Add sorting
+    filter.sorting = currentSort;
 
-            // Function to update product grid
-            function updateProductGrid(products) {
-                var $productList = $('.product-list');
-                $productList.empty();
+    // Always add price range if values are set
+    if (currentMinPrice > 0 || currentMaxPrice < 1000) {
+    filter.minPrice = currentMinPrice;
+    filter.maxPrice = currentMaxPrice;
+    }
 
-                if (!products || products.length === 0) {
-                    var noProductsHtml = `
-                        <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="min-height: 60vh;">
-                            <div class="text-center px-4">
-                                <img src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/search/6724b074573bd78dea13.png"
-                                     alt="No products" 
-                                     style="width: 128px; height: 128px; margin-bottom: 24px;">
-                                <h5 class="mb-3">Hix. Không có sản phẩm nào. Bạn thử tắt điều kiện lọc và tìm lại nhé?</h5>
-                                <div class="my-3">
-                                    <span class="text-muted">or</span>
-                                </div>
-                                <button class="btn btn-danger" onclick="$('.btn-outline-secondary').click();">Xóa bộ lọc</button>
-                            </div>
-                        </div>
-                    `;
-                    $productList.append(noProductsHtml);
-                    $('.pagination').parent('nav').hide();
-                    return;
-                }
+    // Always add categories if any selected
+    if (selectedCategories.length > 0) {
+    filter.categoryIds = selectedCategories;
+    }
 
-                $('.pagination').parent('nav').show();
+    console.log('filter', filter);
 
-                products.forEach(function(product) {
-                    var productHtml = `
-                        <div class="col">
-                            <a href="/Product/Details?productId=${product.id}" class="product-item text-decoration-none">
-                                <div class="box position-relative">
-                                    <div class="a-img">
-                                        <img class="thumb w-100" src="${product.imageUrl}" alt="${product.name}">
-                                    </div>
-                                    <div class="status">
-                                        <img style="width: 80%;" src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
-                                    </div>
-                                    <div class="discount-badge">
-                                        <span>${product.discount}%</span>
-                                    </div>
-                                    <div class="product-description">
-                                        <p class="name">
-                                            <span>${product.name}</span>
-                                        </p>
-                                        <div class="price-info">
-                                            <span class="current-price">$${(product.price * (1 - product.discount/100)).toFixed(2)}</span>
-                                            <span class="original-price">$${product.price.toFixed(2)}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    `;
-                    $productList.append(productHtml);
-                });
-            }
+    // Convert filter to query string
+    var queryString = $.param(filter, true);
 
-            // Function to update pagination
-            function updatePagination(currentPage) {
-                var $pagination = $('.pagination');
-                $pagination.empty();
+    $.ajax({
+    url: '/api/services/app/Product/GetProductPaged?' + queryString,
+    type: 'GET',
+    success: function(response) {
+    if (response.success) {
+    var products = response.result.items.filter(p => p.stock > 0);
+    totalItems = response.result.totalCount;
+    totalPages = Math.ceil(totalItems / pageSize);
 
-                // Previous button
-                var prevDisabled = currentPage === 1 ? 'disabled' : '';
-                $pagination.append(`
-                    <li class="page-item ${prevDisabled}">
-                        <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                `);
+    updateProductGrid(products);
+    updatePagination(page);
+    updateResultsCount(page);
+    }
+    },
+    error: function(xhr, status, error) {
+    console.error('Error loading products:', error);
+    }
+    });
+    }
 
-                // Page numbers
-                for (var i = 1; i <= totalPages; i++) {
-                    var active = i === currentPage ? 'active' : '';
-                    $pagination.append(`
-                        <li class="page-item ${active}">
-                            <a class="page-link" href="#" data-page="${i}">${i}</a>
-                        </li>
-                    `);
-                }
+    // Function to update product grid
+    function updateProductGrid(products) {
+    $('.pagination').parent('nav').hide();
+    return;
+    }
 
-                // Next button
-                var nextDisabled = currentPage === totalPages ? 'disabled' : '';
-                $pagination.append(`
-                    <li class="page-item ${nextDisabled}">
-                        <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                `);
-            }
+    $('.pagination').parent('nav').show();
 
-            // Function to update results count
-            function updateResultsCount(currentPage) {
-                var start = (currentPage - 1) * pageSize + 1;
-                var end = Math.min(currentPage * pageSize, totalItems);
-                $('.results-count').html(`Showing <strong>${start}-${end}</strong> of <strong>${totalItems}</strong> products`);
-            }
 
-            // Handle pagination clicks
-            $(document).on('click', '.page-link', function(e) {
-                e.preventDefault();
-                var page = $(this).data('page');
-                if (page >= 1 && page <= totalPages) {
-                    currentPage = page;
-                    loadProducts(currentPage);
-                }
-            });
+    });
+    }
 
-            // Handle sort dropdown selection
-            $('.dropdown-item[data-sort]').on('click', function(e) {
-                e.preventDefault();
-                currentSort = $(this).data('sort');
-                $('#sortDropdown').text('Sort by: ' + $(this).text());
-                loadProducts(currentPage);
-            });
+    // Function to update pagination
+    function updatePagination(currentPage) {
+    var $pagination = $('.pagination');
+    $pagination.empty();
 
-            // Initial load
-            loadProducts(currentPage);
-        });
-    </script>
+    // Previous button
+    var prevDisabled = currentPage === 1 ? 'disabled' : '';
+    $pagination.append(`
+    <li class="page-item ${prevDisabled}">
+    <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous">
+    <span aria-hidden="true">&laquo;</span>
+    </a>
+    </li>
+    `);
+
+    // Page numbers
+    for (var i = 1; i <= totalPages; i++) {
+    var active = i === currentPage ? 'active' : '';
+    $pagination.append(`
+    <li class="page-item ${active}">
+    <a class="page-link" href="#" data-page="${i}">${i}</a>
+    </li>
+    `);
+    }
+
+    // Next button
+    var nextDisabled = currentPage === totalPages ? 'disabled' : '';
+    $pagination.append(`
+    <li class="page-item ${nextDisabled}">
+    <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next">
+    <span aria-hidden="true">&raquo;</span>
+    </a>
+    </li>
+    `);
+    }
+
+    // Function to update results count
+    function updateResultsCount(currentPage) {
+    var start = (currentPage - 1) * pageSize + 1;
+    var end = Math.min(currentPage * pageSize, totalItems);
+    $('.results-count').html(`Showing <strong>${start}-${end}</strong> of <strong>${totalItems}</strong> products`);
+    }
+
+    // Handle pagination clicks
+    $(document).on('click', '.page-link', function(e) {
+    e.preventDefault();
+    var page = $(this).data('page');
+    if (page >= 1 && page <= totalPages) {
+    currentPage = page;
+    loadProducts(currentPage);
+    }
+    });
+
+    // Handle sort dropdown selection
+    $('.dropdown-item[data-sort]').on('click', function(e) {
+    e.preventDefault();
+    currentSort = $(this).data('sort');
+    $('#sortDropdown').text('Sort by: ' + $(this).text());
+    loadProducts(currentPage);
+    });
+
+    // Initial load
+    loadProducts(currentPage);
+    });
+</script>
 }
 
 <div class="container py-4">
@@ -371,6 +325,50 @@
                 <div class="element-product">
                     <div class="products">
                         <div class="product-list row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
+                            @if (Model.Products.Count > 0)
+                            {
+                                @foreach(var products in Model.Products){
+                                    <div class="col">
+                                        <a href="/Product/Details?productId=${product.id}" class="product-item text-decoration-none">
+                                            <div class="box position-relative">
+                                                <div class="a-img">
+                                                    <img class="thumb w-100" src="@products.ImageUrl" alt="@products.Name">
+                                                </div>
+                                                <div class="status">
+                                                    <img style="width: 80%;" src="https://en.chuu.co.kr/web/upload/custom_153.gif" alt="">
+                                                </div>
+                                                <div class="discount-badge">
+                                                    <span>@products.Discount %</span>
+                                                </div>
+                                                <div class="product-description">
+                                                    <p class="name">
+                                                        <span>@products.Name</span>
+                                                    </p>
+                                                    <div class="price-info">
+                                                        <span class="current-price">$ (@products.Price * (1 - @products.Discount/100)).toFixed(2)</span>
+                                                        <span class="original-price">$ (@products.Price).toFixed(2)</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="min-height: 60vh;">
+                                    <div class="text-center px-4">
+                                        <img src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/search/6724b074573bd78dea13.png"
+                                             alt="No products"
+                                             style="width: 128px; height: 128px; margin-bottom: 24px;">
+                                        <h5 class="mb-3">Hix. Không có sản phẩm nào. Bạn thử tắt điều kiện lọc và tìm lại nhé?</h5>
+                                        <div class="my-3">
+                                            <span class="text-muted">or</span>
+                                        </div>
+                                        <button class="btn btn-danger" onclick="$('.btn-outline-secondary').click();">Xóa bộ lọc</button>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

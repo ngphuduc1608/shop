@@ -17,10 +17,10 @@ namespace proj_tt.Web.Views.Shared.Components.RightNavbarUserArea
                 return userName;
             }
 
-            //return LoginInformations.Tenant == null
-            //    ? ".\\" + userName
-            //    : LoginInformations.Tenant.TenancyName + "\\" + userName;
-            return LoginInformations.Tenant.TenancyName + "\\" + userName;
+            return LoginInformations.Tenant == null
+                ? ".\\" + userName
+                : LoginInformations.Tenant.TenancyName + "\\" + userName;
+            //return LoginInformations.Tenant.TenancyName + "\\" + userName;
         }
     }
 }

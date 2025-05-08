@@ -25,12 +25,16 @@
                         <input type="text" class="form-control" name="Discount" max="100" min="0" step="0.01">
                     </div>
                     <div class="form-group row required">
+                        <label for="stock" class="col-md-3 col-form-label">@L("Stock")</label>
+                        <input type="number" class="form-control" name="Stock" required min="0">
+                    </div>
+                    <div class="form-group row required">
                         <label class="col-md-3 col-form-label">@L("CategoryName")</label>
                         @Html.DropDownList("CategoryId", Model.Categories, @L("CategoryEmpty"), new
                             {
                                 @class = "form-control", // tự đătj class và id cho nó 
                                 id = "AssignedPersonCombobox" 
-                            })
+                        })
 
                     </div>
                     <div class="form-group row required">
