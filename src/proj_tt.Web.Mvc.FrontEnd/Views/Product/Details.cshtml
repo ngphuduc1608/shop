@@ -37,6 +37,7 @@
     .main-image-container {
         height: 400px;
         overflow: hidden;
+
     }
 
     .main-image {
@@ -77,6 +78,12 @@
                 <div class="main-image-container position-relative">
                     <img id="mainImage" src="@Model.Product.ImageUrl"
                          class="main-image" alt="ImageUrl">
+                    @if (Model.Product.Stock == 0)
+                    {
+                        <div class="out-of-stock-overlay d-flex justify-content-center align-items-center">
+                            <span class="text-white fw-bold fs-5">HẾT HÀNG</span>
+                        </div>
+                    }
                 </div>
             </div>
 
@@ -110,18 +117,18 @@
                     <div class="d-flex align-items-center mb-3">
                         <span class="me-3">Quantity:</span>
                         <div class="input-group" style="width: 120px;">
-                            <button class="btn btn-outline-secondary" type="button" id="decrementBtn">-</button>
-                            <input type="text" id="quantity" class="form-control text-center" value="1" data-max-stock="@Model.Product.Stock">
-                            <button class="btn btn-outline-secondary" type="button" id="incrementBtn">+</button>
+                            <button class="btn btn-outline-secondary" type="button" id="decrementBtn" @(Model.Product.Stock == 0 ? "disabled" : "")>-</button>
+                            <input type="text" id="quantity" class="form-control text-center" value="1" data-max-stock="@Model.Product.Stock" @(Model.Product.Stock == 0 ? "disabled" : "")>
+                            <button class="btn btn-outline-secondary" type="button" id="incrementBtn" @(Model.Product.Stock == 0 ? "disabled" : "")>+</button>
                         </div>
                         <small class="text-muted ms-2">(Available: @Model.Product.Stock)</small>
                     </div>
 
                     <div class="d-flex gap-2 mb-3">
-                        <button class="btn btn-success flex-grow-1" id="addToCartBtn" data-product-id="@Model.Product.Id">
+                        <button class="btn btn-success flex-grow-1" id="addToCartBtn" data-product-id="@Model.Product.Id" @(Model.Product.Stock == 0 ? "disabled" : "")>
                             <i class="fas fa-shopping-cart me-2"></i> Add to Cart
                         </button>
-                        <button class="btn btn-primary flex-grow-1" id="buyNowBtn" data-product-id="@Model.Product.Id">
+                        <button class="btn btn-primary flex-grow-1" id="buyNowBtn" data-product-id="@Model.Product.Id" @(Model.Product.Stock == 0 ? "disabled" : "")>
                             <i class="fas fa-bolt me-2"></i> Buy Now
                         </button>
                     </div>

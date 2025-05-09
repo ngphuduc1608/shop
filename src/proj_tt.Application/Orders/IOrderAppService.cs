@@ -9,7 +9,7 @@ namespace proj_tt.Orders
     public interface IOrderAppService : IApplicationService
     {
         Task<OrderDto> GetOrder(int id);
-        Task<PagedResultDto<OrderDto>> GetUserOrders(PagedAndSortedResultRequestDto input);
+        Task<PagedResultDto<OrderDto>> GetUserOrders(PagedAndSortedResultRequestDto input, OrderStatus? status = null);
         Task<List<OrderDto>> GetAllOrders();
         Task<OrderDto> CreateOrder(CreateOrderInput input);
         Task<OrderDto> UpdateOrderStatus(UpdateOrderStatusInput input);

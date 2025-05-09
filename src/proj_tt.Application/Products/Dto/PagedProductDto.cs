@@ -17,7 +17,7 @@ namespace proj_tt.Products.Dto
         public DateTime? EndDate { get; set; }
         public decimal? MinPrice { get; set; }
         public decimal? MaxPrice { get; set; }
-        public List<string> CategoryIds { get; set; }
+        public List<int> CategoryIds { get; set; }
 
 
         public void Normalize()

@@ -1,16 +1,11 @@
+
 <div class="d-flex justify-content-center align-items-center w-100 ">
-    <form class="input-group" id="ProductsSearchForm" style="max-width: 500px; width: 100%;" onsubmit="handleSearch(event)">
-        <input type="text" name="Keyword" class="form-control" placeholder="Search ...." />
+    <form class="input-group" action="/Product" id="ProductsSearchForm" style="max-width: 500px; width: 100%;">
+        <input type="text" name="Keyword" class="form-control" placeholder="Search ...." value="@ViewBag.KeyWord"/>
         <button type="submit" class="btn btn-outline-secondary">
             <img src="https://en.chuu.co.kr/images/layout/header/ico-search.png" alt="Search" style="height: 16px;">
         </button>
     </form>
 </div>
 
-<script>
-    function handleSearch(e) {
-        e.preventDefault();
-        const keyword = document.querySelector('#ProductsSearchForm input[name="Keyword"]').value;
-        window.location.href = `/Product?Keyword=${encodeURIComponent(keyword)}`;
-    }
-</script>
+

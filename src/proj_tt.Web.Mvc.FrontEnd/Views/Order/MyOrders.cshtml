@@ -46,6 +46,37 @@
     }
     else
     {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="btn-group" role="group" aria-label="Order status filter">
+                    <a href="@Url.Action("MyOrders", new { status = (OrderStatus?)null })" 
+                       class="btn @(Model.SelectedStatus == null ? "btn-primary" : "btn-outline-primary")">
+                        All
+                    </a>
+                    <a href="@Url.Action("MyOrders", new { status = OrderStatus.Pending })" 
+                       class="btn @(Model.SelectedStatus == OrderStatus.Pending ? "btn-primary" : "btn-outline-primary")">
+                        Pending
+                    </a>
+                    <a href="@Url.Action("MyOrders", new { status = OrderStatus.Processing })" 
+                       class="btn @(Model.SelectedStatus == OrderStatus.Processing ? "btn-primary" : "btn-outline-primary")">
+                        Processing
+                    </a>
+                    <a href="@Url.Action("MyOrders", new { status = OrderStatus.Shipped })" 
+                       class="btn @(Model.SelectedStatus == OrderStatus.Shipped ? "btn-primary" : "btn-outline-primary")">
+                        Shipped
+                    </a>
+                    <a href="@Url.Action("MyOrders", new { status = OrderStatus.Cancelled })" 
+                       class="btn @(Model.SelectedStatus == OrderStatus.Cancelled ? "btn-primary" : "btn-outline-primary")">
+                        Cancelled
+                    </a>
+                    <a href="@Url.Action("MyOrders", new { status = OrderStatus.Delivered })" 
+                       class="btn @(Model.SelectedStatus == OrderStatus.Delivered ? "btn-primary" : "btn-outline-primary")">
+                        Delivered
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-12">
                 <div class="table-responsive">
@@ -96,7 +127,7 @@
                             }
 
                             <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                                <a class="page-link" href="@Url.Action("MyOrders", new { page = Model.CurrentPage - 1, pageSize = Model.PageSize })" aria-label="Previous">
+                                <a class="page-link" href="@Url.Action("MyOrders", new { page = Model.CurrentPage - 1, pageSize = Model.PageSize, status = Model.SelectedStatus })" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
@@ -104,12 +135,12 @@
                             @for (var i = startPage; i <= endPage; i++)
                             {
                                 <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                    <a class="page-link" href="@Url.Action("MyOrders", new { page = i, pageSize = Model.PageSize })">@i</a>
+                                    <a class="page-link" href="@Url.Action("MyOrders", new { page = i, pageSize = Model.PageSize, status = Model.SelectedStatus })">@i</a>
                                 </li>
                             }
 
                             <li class="page-item @(Model.CurrentPage == totalPages ? "disabled" : "")">
-                                <a class="page-link" href="@Url.Action("MyOrders", new { page = Model.CurrentPage + 1, pageSize = Model.PageSize })" aria-label="Next">
+                                <a class="page-link" href="@Url.Action("MyOrders", new { page = Model.CurrentPage + 1, pageSize = Model.PageSize, status = Model.SelectedStatus })" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>

@@ -6,6 +6,8 @@ using proj_tt.Controllers;
 using proj_tt.Products;
 using proj_tt.Products.Dto;
 using proj_tt.Web.Models.Products;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,31 +27,54 @@ namespace proj_tt.Web.Controllers
             //_webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(int page = 1, int pageSize = 15, string sort = "CreationTime desc", decimal? minPrice = null, decimal? maxPrice = null, List<int> categoryIds = null, string keyword = null)
         {
-            var products = await _productAppService.GetProductPaged(new PagedProductDto());
-            var result = products.Items.Where(products => products.Stock > 0).ToList();
+
+            // Create filter DTO
+            var pagedProductDto = new PagedProductDto
+            {
+                SkipCount = (page - 1) * pageSize,
+                MaxResultCount = pageSize,
+                Sorting = sort,
+                MinPrice = minPrice,
+                MaxPrice = maxPrice,
+                CategoryIds = categoryIds,
+                Keyword = keyword
+            };
+            ViewBag.Keyword = keyword;
+            // Get products
+            var products = await _productAppService.GetProductPaged(pagedProductDto);
+            var result = products.Items.ToList();
+
+            // Get categories for filter
             var categories = await _categoryAppService.GetAllCategories(new PagedCategoriesDto());
             var categoriesItems = categories.Items.Select(c => new SelectListItem
             {
                 Value = c.Id.ToString(),
                 Text = c.NameCategory
             }).ToList();
-            var model = new IndexViewModel(result, categoriesItems);
+
+            // Calculate pagination info
+            var totalItems = products.TotalCount;
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var model = new IndexViewModel(result, categoriesItems)
+            {
+                CurrentPage = page,
+                TotalPages = totalPages,
+                TotalItems = totalItems,
+                PageSize = pageSize,
+                CurrentSort = sort,
+                CurrentMinPrice = minPrice,
+                CurrentMaxPrice = maxPrice,
+                SelectedCategoryIds = categoryIds,
+                Keyword = keyword
+            };
+
             return View(model);
         }
 
-        public async Task<IActionResult> Create(ProductListDto input)
-        {
-            await _productAppService.Create(input);
-            return Ok();
-        }
 
-        public async Task<IActionResult> Update(UpdateProductDto input)
-        {
-            await _productAppService.Update(input);
-            return Ok();
-        }
 
         public async Task<IActionResult> Details(int productId)
         {
@@ -62,23 +87,6 @@ namespace proj_tt.Web.Controllers
         }
 
 
-        public async Task<ActionResult> EditModal(int productId)
-        {
-            var product = await _productAppService.GetProducts(productId);
-            var categories = await _categoryAppService.GetAllCategories(new PagedCategoriesDto());
-            var model = new IndexViewModel
-            {
-                Product = product,
-                Categories = categories.Items.Select(x => new SelectListItem
-                {
-                    Value = x.Id.ToString(),
-                    Text = x.NameCategory,
-                    Selected = (x.Id == product.CategoryId)
-                }).ToList()
-            };
-
-            return PartialView("_EditModal", model);
-        }
 
 
     }

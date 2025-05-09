@@ -14,7 +14,9 @@ namespace proj_tt.Orders.Dto
         public long UserId { get; set; }
         public string Username { get; set; }
         public decimal TotalAmount { get; set; }
+        public decimal ShippingFee { get; set; }
         public OrderStatus Status { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
         public List<OrderItemDto> OrderItems { get; set; }
     }
 

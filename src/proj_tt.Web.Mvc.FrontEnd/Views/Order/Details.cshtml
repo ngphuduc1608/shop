@@ -47,6 +47,9 @@
                             <p>
                                 <strong>Order Date:</strong> @Model.Order.CreationTime.ToString("f")<br>
                                 <strong>Order Status:</strong> @Model.Order.Status<br>
+                                <strong>Payment Method:</strong> @Model.Order.PaymentMethod<br>
+                                <strong>Subtotal:</strong> $@(Model.Order.TotalAmount - Model.Order.ShippingFee)<br>
+                                <strong>Shipping Fee:</strong> $@Model.Order.ShippingFee<br>
                                 <strong>Total Amount:</strong> $@Model.Order.TotalAmount
                             </p>
                         </div>

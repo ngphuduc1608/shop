@@ -28,6 +28,12 @@
                         <i class="fas fa-map-marker-alt text-primary me-2"></i>
                         Địa chỉ nhận hàng
                     </h5>
+                    @if (Model.Addresses.Any())
+                    {
+                        <a href="#" class="text-primary text-decoration-none" data-bs-toggle="modal" data-bs-target="#newAddressModal">
+                            Thay đổi
+                        </a>
+                    }
                 </div>
                 @if (Model.Addresses.Any())
                 {
@@ -46,7 +52,10 @@
                 else
                 {
                     <div class="alert alert-warning">
-                        Bạn chưa có địa chỉ nào. Vui lòng thêm địa chỉ mới trước khi đặt hàng.
+                        Bạn chưa có địa chỉ nào. 
+                        <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#newAddressModal">
+                            Thêm địa chỉ mới
+                        </a>
                     </div>
                 }
             </div>
@@ -96,7 +105,7 @@
                 <!-- COD -->
                 <div class="payment-method p-3 border rounded" onclick="selectPayment(this)">
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="PaymentMethod" id="cod" value="COD" checked>
+                        <input class="form-check-input" type="radio" name="PaymentMethod" id="cod" value="Cash" checked>
                         <label class="form-check-label fw-bold" for="cod">
                             Thanh toán khi nhận hàng (COD)
                         </label>
@@ -117,7 +126,7 @@
                 <div class="mb-3">
                     @{
                         var subtotal = Model.Cart.CartItems.Sum(item => item.Product.Price * (1 - item.Product.Discount / 100) * item.Quantity);
-                        var shipping = 20000m; // Fixed shipping cost
+                        var shipping = subtotal < 100 ? 5 : 0; // Free shipping for orders over $100
                         var voucherDiscount = 0m; // Fixed voucher discount
                         var total = subtotal + shipping - voucherDiscount;
                     }
@@ -170,6 +179,8 @@
             <input type="hidden" name="OrderItems[@i].ProductId" value="@Model.Cart.CartItems[i].ProductId">
             <input type="hidden" name="OrderItems[@i].Quantity" value="@Model.Cart.CartItems[i].Quantity">
         }
+        <input type="hidden" name="PaymentMethod" id="selectedPaymentMethod" value="Cash">
+        <input type="hidden" name="ShippingFee" id="shippingFee" value="@shipping">
     </form>
 </div>
 
@@ -282,6 +293,16 @@
         $(document).ready(function() {
             loadProvinces();
             updateSelectAddressButton();
+
+            // Add form submission validation
+            $('#checkoutForm').on('submit', function(e) {
+                if (!@Model.Addresses.Any().ToString().ToLower()) {
+                    e.preventDefault();
+                    abp.notify.error('Vui lòng thêm địa chỉ nhận hàng trước khi đặt hàng');
+                    $('#newAddressModal').modal('show');
+                    return false;
+                }
+            });
         });
 
         // Handle address item click
@@ -370,6 +391,14 @@
             $('#saveNewAddress').show();
             $('#selectAddress').hide();
             resetAddressForm();
+
+            // If this is the first address, set it as default and disable the checkbox
+            if (@Model.Addresses.Count == 0) {
+                $('#newAddressIsDefault').prop('checked', true);
+                $('#newAddressIsDefault').prop('disabled', true);
+            } else {
+                $('#newAddressIsDefault').prop('disabled', false);
+            }
         }
 
         // Reset address form
@@ -377,6 +406,14 @@
             $('#addressId').val(0);
             $('#newAddressForm')[0].reset();
             $('#province').val('').trigger('change');
+            
+            // Reset default checkbox state based on address count
+            if (@Model.Addresses.Count == 0) {
+                $('#newAddressIsDefault').prop('checked', true);
+                $('#newAddressIsDefault').prop('disabled', true);
+            } else {
+                $('#newAddressIsDefault').prop('disabled', false);
+            }
         }
 
         // Edit address
@@ -548,6 +585,24 @@
                     abp.notify.error(errorMessage);
                 }
             });
+        });
+
+        // Handle payment method selection
+        function selectPayment(element) {
+            // Remove active class from all payment methods
+            $('.payment-method').removeClass('active');
+            // Add active class to selected payment method
+            $(element).addClass('active');
+            // Update hidden input value
+            const paymentMethod = $(element).find('input[type="radio"]').val();
+            $('#selectedPaymentMethod').val(paymentMethod);
+        }
+
+        // Initialize payment method selection
+        $(document).ready(function() {
+            // Set initial payment method
+            $('.payment-method').first().addClass('active');
+            $('#selectedPaymentMethod').val($('.payment-method').first().find('input[type="radio"]').val());
         });
     </script>
 }

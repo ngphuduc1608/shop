@@ -29,7 +29,11 @@ namespace proj_tt.Orders
 
         public decimal TotalAmount { get; set; }
 
+        public decimal ShippingFee { get; set; }
+
         public OrderStatus Status { get; set; }
+
+        public PaymentMethod PaymentMethod { get; set; }
 
         public virtual ICollection<OrderItem> OrderItems { get; set; }
 
@@ -40,6 +44,8 @@ namespace proj_tt.Orders
             Phone = phone;
             UserId = userId;
             Status = OrderStatus.Pending;
+            PaymentMethod = PaymentMethod.Cash;
+            ShippingFee = 0;
             OrderItems = new List<OrderItem>();
         }
     }
@@ -76,5 +82,13 @@ namespace proj_tt.Orders
         Shipped = 2,
         Delivered = 3,
         Cancelled = 4
+    }
+
+    public enum PaymentMethod
+    {
+        Cash = 0,
+        CreditCard = 1,
+        BankTransfer = 2,
+        EWallet = 3
     }
 }

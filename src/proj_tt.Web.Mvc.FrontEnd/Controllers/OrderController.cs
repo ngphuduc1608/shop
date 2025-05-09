@@ -116,7 +116,7 @@ namespace proj_tt.Web.Controllers
             return View(model);
         }
 
-        public async Task<ActionResult> MyOrders(int page = 1, int pageSize = 10)
+        public async Task<ActionResult> MyOrders(int page = 1, int pageSize = 10, OrderStatus? status = null)
         {
             var input = new PagedAndSortedResultRequestDto
             {
@@ -124,8 +124,8 @@ namespace proj_tt.Web.Controllers
                 MaxResultCount = pageSize
             };
 
-            var orders = await _orderAppService.GetUserOrders(input);
-            var model = new MyOrdersViewModel(orders, page, pageSize);
+            var orders = await _orderAppService.GetUserOrders(input, status);
+            var model = new MyOrdersViewModel(orders, page, pageSize, status);
             return View(model);
         }
     }

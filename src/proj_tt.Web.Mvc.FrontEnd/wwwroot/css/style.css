@@ -1269,3 +1269,18 @@ ul {
         padding: 3px 6px;
     }
 }
+
+.out-of-stock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 10;
+    border-radius: 0.25rem;
+}
+
+.disabled-link {
+    opacity: 0.6;
+}

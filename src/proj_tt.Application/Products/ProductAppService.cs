@@ -1,7 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
-using Abp.Linq.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -107,23 +106,34 @@ namespace proj_tt.Products
 
             var count = await products.CountAsync();
 
-            var items = await products.OrderBy(input.Sorting).PageBy(input).ToListAsync();
+            // Get all products ordered by creation time
+            var orderedProducts = await products
+                .OrderBy(input.Sorting)
+                .ToListAsync();
 
-            var result = items.Select(p => new ProductDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Price = p.Price,
-                ImageUrl = p.ImageUrl,
-                Discount = p.Discount,
-                CategoryId = p.CategoryId ?? 0,
-                NameCategory = p.Category != null ? p.Category.NameCategory : "",
-                CreationTime = p.CreationTime,
-                LastModificationTime = p.LastModificationTime,
-                ProductionDate = p.ProductionDate,
-                Stock = p.Stock,
+            // Split into in-stock and out-of-stock products, maintaining their relative order
+            var inStockProducts = orderedProducts.Where(p => p.Stock > 0).ToList();
+            var outOfStockProducts = orderedProducts.Where(p => p.Stock == 0).ToList();
 
-            }).ToList();
+            // Combine them: in-stock first, then out-of-stock
+            var result = inStockProducts.Concat(outOfStockProducts)
+                .Select(p => new ProductDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    ImageUrl = p.ImageUrl,
+                    Discount = p.Discount,
+                    CategoryId = p.CategoryId ?? 0,
+                    NameCategory = p.Category != null ? p.Category.NameCategory : "",
+                    CreationTime = p.CreationTime,
+                    LastModificationTime = p.LastModificationTime,
+                    ProductionDate = p.ProductionDate,
+                    Stock = p.Stock,
+                })
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount)
+                .ToList();
 
             return new PagedResultDto<ProductDto>(count, result);
         }
